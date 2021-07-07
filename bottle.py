@@ -1,8 +1,7 @@
-from flask import Flask
+from flask import Flask, request as incoming_request
 import requests
 
 app = Flask(__name__)
-
 
 
 @app.route('/', defaults={'n':10})
@@ -23,3 +22,9 @@ def root(n):
         return r.text
     else:
         return r.url, 'failed'
+
+
+@app.route("/dump")
+def dump():
+    jason = incoming_request.get_json()
+    return jason.get("data", {}), 200
