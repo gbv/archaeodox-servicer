@@ -9,5 +9,10 @@ services:
     ports:
     - 5000:5000
     networks:
-      - easydb_default
+      hostnet: {}
+
+networks:
+  hostnet:
+    external: true
+    name: easydb_default
 
