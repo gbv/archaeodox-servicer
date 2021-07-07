@@ -7,7 +7,7 @@ RUN pip3 install pipenv
 
 WORKDIR /opt/app
 
-COPY * .
+COPY * ./
 
 RUN pipenv install --system
 
