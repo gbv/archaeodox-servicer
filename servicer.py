@@ -4,8 +4,8 @@ import requests
 app = Flask(__name__)
 
 
-@app.route('/', defaults={'n':10})
-@app.route('/<int:n>')
+#@app.route('/', defaults={'n':10})
+#@app.route('/<int:n>')
 def root(n):
     params = {'num': n,
               'min': 1,
