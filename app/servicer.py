@@ -37,9 +37,11 @@ def query_easydb(token, search):
 def dump():
     if incoming_request.method == "POST":
         jason = incoming_request.get_json()
+        app.logger.debug("In dump, got jason:" + str(jason))
         session = jason["session"]
+        app.logger.debug(str(session))
         client = EasydbClient("http://easydb-webfrontend",
                               session["token"])
 
-        app.logger.info(str(client.get_item("teller", "15")))
+        app.logger.debug(str(client.get_item("teller", "15")))
         return jason.get("data", {}), 200
