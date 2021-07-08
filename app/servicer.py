@@ -1,5 +1,7 @@
 from flask import Flask, request as incoming_request
+from .easydb_client import EasydbClient
 import requests
+from dpath import util as dp
 
 app = Flask(__name__)
 
@@ -24,9 +26,20 @@ def root(n):
         return r.url, 'failed'
 
 
+def query_easydb(token, search):
+    params = {'token': token}
+    response = requests.post("http://easydb-webfrontend/api/v1/search",
+                             params=params,
+                             data=search)
+
+
 @app.route("/dump", methods=["GET", "POST"])
 def dump():
     if incoming_request.method == "POST":
         jason = incoming_request.get_json()
-        app.logger.info(str(jason))
+        session = jason["session"]
+        client = EasydbClient("http://easydb-webfrontend",
+                              session["token"])
+
+        app.logger.info(str(client.get_item("teller", "15")))
         return jason.get("data", {}), 200
