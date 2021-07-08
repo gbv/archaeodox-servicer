@@ -1,5 +1,5 @@
 from flask import Flask, request as incoming_request
-from .easydb_client import EasydbClient
+from easydb_client import EasydbClient
 import requests
 from dpath import util as dp
 
