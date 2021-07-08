@@ -28,4 +28,5 @@ def root(n):
 def dump():
     if incoming_request.method == "POST":
         jason = incoming_request.get_json()
+        print(jason)
         return jason.get("data", {}), 200
