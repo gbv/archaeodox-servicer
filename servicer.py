@@ -24,7 +24,8 @@ def root(n):
         return r.url, 'failed'
 
 
-@app.route("/dump", methods=["POST"])
+@app.route("/dump", methods=["GET", "POST"])
 def dump():
-    jason = incoming_request.get_json()
-    return jason.get("data", {}), 200
+    if incoming_request.method == "POST":
+        jason = incoming_request.get_json()
+        return jason.get("data", {}), 200
