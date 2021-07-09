@@ -26,7 +26,5 @@ class EasydbClient:
                   "search": search}
         response = requests.post(self.search_url,
                                  data=data)
-        if response.status_code == 200:
-            return json.loads(response.content)
-        else:
-            return None
+
+        return response.status_code, json.loads(response.content)
