@@ -18,7 +18,7 @@ class EasydbClient:
     def get_item(self, item_type, id, id_field="_id", pretty=0):
         search = {"type": "in",
                   "bool": "must",
-                  "fields": [".".join((type, id_field))],
+                  "fields": [".".join((item_type, id_field))],
                   "in": id
                   }
         data = {"token": self.token,
