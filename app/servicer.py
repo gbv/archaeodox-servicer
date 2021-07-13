@@ -40,8 +40,7 @@ def dump():
         app.logger.debug("In dump, got jason:" + str(jason))
         session = jason["session"]
         app.logger.debug(str(session))
-        client = EasydbClient("http://easydb-webfrontend",
-                              session["token"])
+        client = EasydbClient("http://easydb-webfrontend")
 
         app.logger.debug(str(client.get_item("teller", "15")))
         return jason.get("data", {}), 200
