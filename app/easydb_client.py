@@ -42,7 +42,7 @@ class EasydbClient:
                   "fields": [".".join((item_type, id_field))],
                   "in": id
                   }
-        data = {"token": self.token,
+        data = {"token": self.session_token,
                   "pretty": 0,
                   "search": search}
         headers = {"Content-Type": "text/json"}
