@@ -23,7 +23,9 @@ class EasydbClient:
     def acquire_session(self):
         session_response = requests.get(self.session_url)
         if session_response.status_code == 200:
-            self.session_token = session_response.content
+            session_info = json.loads(session_response.content)
+            self.session_token = session_info['token']
+
             jason = {"token": self.session_token,
                      "login": credentials.USER_NAME,
                      "password": credentials.PASSWORD}
@@ -34,7 +36,6 @@ class EasydbClient:
                 raise ValueError(f"Failed to authenticate: {auth_response.content}")
         else:
             raise ValueError(f"Failed to acquire session from {self.session_url}")
-
 
     def get_item(self, item_type, id, id_field="_id", pretty=0):
         search = {"type": "in",
