@@ -1,4 +1,5 @@
 payload.json
+app/credentials.py
 
 *.pyc
 
