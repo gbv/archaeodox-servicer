@@ -27,7 +27,9 @@ class EasydbClient:
             jason = {"token": self.session_token,
                      "login": credentials.USER_NAME,
                      "password": credentials.PASSWORD}
-            auth_response = requests.post(self.session_auth_url, json=jason)
+            auth_response = requests.post(self.session_auth_url,
+                                          json=jason,
+                                          headers={"ContentType": "text/json"})
             if not auth_response.status_code == 200:
                 raise ValueError(f"Failed to authenticate: {auth_response.content}")
         else:
