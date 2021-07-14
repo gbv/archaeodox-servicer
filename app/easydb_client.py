@@ -44,13 +44,14 @@ class EasydbClient:
                   "fields": [".".join((item_type, id_field))],
                   "in": id
                   }
-        data = {"token": self.session_token,
-                  "pretty": 0,
-                  "search": search}
-        self.logger.debug(f"Searching: {data}")
+        params = {"token": self.session_token}
+        data = {"pretty": 0,
+                "search": search}
+        self.logger.debug(f"Search params: {data}\nWith token: {params}")
         headers = {"Content-Type": "text/json"}
         response = requests.post(self.search_url,
                                  headers=headers,
+                                 params=params,
                                  data=data)
 
         return response.status_code, json.loads(response.content)
