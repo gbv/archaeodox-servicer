@@ -36,11 +36,9 @@ def query_easydb(token, search):
 @app.route("/dump", methods=["GET", "POST"])
 def dump():
     if incoming_request.method == "POST":
-        jason = incoming_request.get_json()
-        app.logger.debug("In dump, got jason:" + str(jason))
-        session = jason["session"]
-        app.logger.debug(str(session))
+        info = incoming_request.get_json().get("info", {})
+        app.logger.debug("In dump, got info:" + str(info))
         client = EasydbClient("http://easydb-webfrontend")
 
-        app.logger.debug(str(client.get_item("teller", "15")))
-        return jason.get("data", {}), 200
+        app.logger.debug("Got item:" + str(client.get_item("teller", "15")))
+        return info.get("data", {}), 200
