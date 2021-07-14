@@ -26,18 +26,12 @@ def root(n):
         return r.url, 'failed'
 
 
-def query_easydb(token, search):
-    params = {'token': token}
-    response = requests.post("http://easydb-webfrontend/api/v1/search",
-                             params=params,
-                             data=search)
-
-
 @app.route("/dump", methods=["GET", "POST"])
 def dump():
     if incoming_request.method == "POST":
-        info = incoming_request.get_json().get("info", {})
+        incoming = incoming_request.get_json()
+        info = incoming.get("info", {})
         app.logger.debug("In dump, got info:" + str(info))
-
-        app.logger.debug("Got item:" + str(edb.get_item("teller", "15")))
+        token = incoming['session']['token']
+        app.logger.debug("Got item:" + str(edb.get_item("teller", "15", token=token)))
         return info, 200

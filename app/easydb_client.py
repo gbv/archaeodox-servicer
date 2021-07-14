@@ -19,7 +19,7 @@ class EasydbClient:
                                           "session",
                                           "authenticate")
         self.logger = logger
-        self.acquire_session()
+        #self.acquire_session()
 
     def acquire_session(self):
         session_response = requests.get(self.session_url)
@@ -38,14 +38,15 @@ class EasydbClient:
         else:
             raise ValueError(f"Failed to acquire session from {self.session_url}")
 
-    def get_item(self, item_type, id, id_field="_id", pretty=0):
+    def get_item(self, item_type, id, id_field="_id", pretty=0, token=None):
         search = {"type": "in",
                   "bool": "must",
                   "fields": [".".join((item_type, id_field))],
                   "in": id
                   }
-        params = {"token": self.session_token}
-        data = {"pretty": 0,
+        token = token if token is not None else self.session_token
+        params = {"token": token}
+        data = {"pretty": pretty,
                 "search": search}
         self.logger.debug(f"Search params: {data}\nWith token: {params}")
         headers = {"Content-Type": "text/json"}
