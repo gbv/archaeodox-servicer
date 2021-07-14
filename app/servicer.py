@@ -41,4 +41,4 @@ def dump():
         client = EasydbClient("http://easydb-webfrontend")
 
         app.logger.debug("Got item:" + str(client.get_item("teller", "15")))
-        return info.get("data", {}), 200
+        return info, 200
