@@ -6,7 +6,7 @@ import credentials
 class EasydbClient:
     API_PATH = "api/v1"
 
-    def __init__(self, url):
+    def __init__(self, url, logger):
         self.url = url
         self.session_url = path_join(url,
                                      EasydbClient.API_PATH,
@@ -18,6 +18,7 @@ class EasydbClient:
                                           EasydbClient.API_PATH,
                                           "session",
                                           "authenticate")
+        self.logger = logger
         self.acquire_session()
 
     def acquire_session(self):
@@ -31,6 +32,7 @@ class EasydbClient:
                       "password": credentials.PASSWORD}
             auth_response = requests.post(self.session_auth_url,
                                           params=params)
+            self.logger.debug(f"Attempting auth: {params}")
             if not auth_response.status_code == 200:
                 raise ValueError(f"Failed to authenticate: {auth_response.content}")
         else:

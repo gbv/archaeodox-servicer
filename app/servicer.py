@@ -4,7 +4,7 @@ import requests
 from dpath import util as dp
 
 app = Flask(__name__)
-
+edb = EasydbClient("http://easydb-webfrontend", app.logger)
 
 #@app.route('/', defaults={'n':10})
 #@app.route('/<int:n>')
@@ -38,7 +38,6 @@ def dump():
     if incoming_request.method == "POST":
         info = incoming_request.get_json().get("info", {})
         app.logger.debug("In dump, got info:" + str(info))
-        client = EasydbClient("http://easydb-webfrontend")
 
-        app.logger.debug("Got item:" + str(client.get_item("teller", "15")))
+        app.logger.debug("Got item:" + str(edb.get_item("teller", "15")))
         return info, 200
