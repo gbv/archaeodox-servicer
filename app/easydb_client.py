@@ -47,6 +47,7 @@ class EasydbClient:
         data = {"token": self.session_token,
                   "pretty": 0,
                   "search": search}
+        self.logger.debug(f"Searching: {data}")
         headers = {"Content-Type": "text/json"}
         response = requests.post(self.search_url,
                                  headers=headers,
