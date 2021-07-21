@@ -42,7 +42,7 @@ class EasydbClient:
         search = [{"type": "in",
                    "bool": "must",
                    "fields": [".".join((item_type, id_field))],
-                   "in": id
+                   "in": [id]
                    }]
         token = token if token is not None else self.session_token
         params = {"token": token}
