@@ -1,6 +1,6 @@
 from flask import Flask, request as incoming_request
 from easydb_client import EasydbClient
-import requests
+import requests, json
 from dpath import util as dp
 
 app = Flask(__name__)
@@ -34,4 +34,4 @@ def dump():
         app.logger.debug("In dump, got info:" + str(info))
         token = incoming['session']['token']
         app.logger.debug("Got item:" + str(edb.get_item("teller", 15, token=token)))
-        return info, 200
+        return json.dumps(info), 200

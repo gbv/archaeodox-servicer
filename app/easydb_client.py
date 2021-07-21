@@ -53,4 +53,4 @@ class EasydbClient:
                                  params=params,
                                  data=json.dumps(data))
 
-        return response.status_code, json.loads(response.content)
+        return response.content, response.status_code
