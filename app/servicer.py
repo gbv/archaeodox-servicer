@@ -33,6 +33,6 @@ def dump():
         info = incoming.get("info", {})
         app.logger.debug("In dump, got info:" + str(info))
         token = incoming['session']['token']
-        app.logger.debug("Got item:" + str(edb.get_item("teller", 15, token=token)))
+        # app.logger.debug("Got item:" + str(edb.get_item("teller", 15, token=token)))
         return incoming, 200
 
