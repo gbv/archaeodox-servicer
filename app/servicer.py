@@ -41,6 +41,7 @@ def root(n):
 def get_wfs_id(item_type, id, token):
     item = edb.get_item(item_type, id, token=token)
     app.logger.debug("Got an item: " + json.dumps(item, indent=2))
+
     return 15
 
 

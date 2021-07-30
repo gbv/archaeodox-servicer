@@ -41,7 +41,7 @@ class WFSClient:
             value = ET.SubElement(property, "wfs:Value")
             value.text = feature[field]
         selector = ET.SubElement(update, "ogc:Filter")
-        ET.SubElement(selector, "ogc:FeatureId", fid=feature_id)
+        ET.SubElement(selector, "ogc:FeatureId", fid=str(feature_id))
         return ET.tostring(transaction)
 
     def get_fields(self, feature):
