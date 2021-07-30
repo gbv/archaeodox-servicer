@@ -1,10 +1,22 @@
+import requests
+import json
+import settings
+import traceback
+
 from flask import Flask, request as incoming_request
 from easydb_client import EasydbClient
-import requests, json
+from wfs_client import WFSClient
 from dpath import util as dp
 
 app = Flask(__name__)
 edb = EasydbClient("http://easydb-webfrontend", app.logger)
+
+wfs = WFSClient(settings.GEO_SERVER_URL,
+                settings.TRANSACTION_ATTRIBUTES,
+                settings.OBJECT_TYPE,
+                settings.ATTRIBUTES,
+                settings.GEOMETRY)
+
 
 @app.route('/', defaults={'n':10})
 @app.route('/<int:n>')
@@ -26,6 +38,12 @@ def root(n):
         return r.url, 'failed'
 
 
+def get_wfs_id(item_type, id, token):
+    item = edb.get_item(item_type, id, token=token)
+    app.logger.debug("Got an item: " + json.dumps(item, indent=2))
+    return 15
+
+
 @app.route("/dump", methods=["GET", "POST"])
 def dump():
     if incoming_request.method == "POST":
@@ -33,6 +51,34 @@ def dump():
         info = incoming.get("info", {})
         app.logger.debug("In dump, got info:" + str(info))
         token = incoming['session']['token']
-        # app.logger.debug("Got item:" + str(edb.get_item("teller", 15, token=token)))
-        return info, 200
+        try:
+            payload = info['data']
+
+            relevant_objects = filter(lambda o: settings.OBJECT_TYPE in o.keys(), payload)
+            if not relevant_objects:
+                return info, 200
+
+            for relevant_object in relevant_objects:
+                index = payload.index(relevant_object)
+                unpacked = relevant_object[settings.OBJECT_TYPE]
+                app.logger.debug('Handling relevant object: ' + settings.OBJECT_TYPE + str(unpacked))
+                keys = unpacked.keys()
+                has_geometry = settings.GEOMETRY in keys
+                created = unpacked.get("_id") is None
+                if created and has_geometry:
+                    app.logger.debug("Attempting CREATE")
+                    id = wfs.create_feature(unpacked)
+                    payload[index][settings.OBJECT_TYPE][settings.RETURN] = id
+                else:
+                    app.logger.debug("Attempting UPDATE")
+                    wfs_id = get_wfs_id(settings.OBJECT_TYPE, unpacked['_id'], token)
+                    data = wfs.update_feature(unpacked, wfs_id)
+                    app.logger.debug(data)
+
+            info['data'] = payload
+            return info, 200
+        except Exception as e:
+            app.logger.error(str(e))
+            app.logger.error(traceback.format_exc(e))
+            raise e
 
