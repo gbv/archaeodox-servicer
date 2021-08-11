@@ -41,10 +41,12 @@ def root(n):
 
 
 def get_wfs_id(item_type, id, token):
-    item = edb.get_item(item_type, id, token=token)
-    app.logger.debug("Got an item: " + json.dumps(item, indent=2))
-
-    return 15
+    items = edb.get_item(item_type, id, token=token)
+    app.logger.debug("Got items: " + json.dumps(items, indent=2))
+    search_result = items[0]
+    first_object = search_result["objects"][0]
+    relevant_object = first_object[settings.OBJECT_TYPE]
+    return relevant_object["feature_id"]
 
 
 @app.route("/dump", methods=["GET", "POST"])
