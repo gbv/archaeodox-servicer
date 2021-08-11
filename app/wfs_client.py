@@ -67,6 +67,7 @@ class WFSClient:
             raise ValueError("Converter returned: " + response.content)
 
     def post_transaction(self, data):
+        self.logger.debug("POSTing to wfs: " + str(data))
         response = requests.post(self.server_url, data=data, headers={"Content-type": "text/xml"})
         if response.status_code != 200:
             raise ValueError("Server Error " + str(response.status_code) + ": " + response.content)
