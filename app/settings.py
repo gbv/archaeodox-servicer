@@ -10,7 +10,7 @@ CONVERSION_URL = "http://converter:5000/gml/"
 TRANSACTION_ATTRIBUTES = {"version": "1.1.0",
                           "service": "WFS",
                           "xmlns": "http://geodienste.gbv.de/nld/hekate/",
-                          "xmlns:gbv": "gbv",
+                          "xmlns:" + OBJECT_NAMESPACE: OBJECT_NAMESPACE,
                           "xmlns:gml": "http://www.opengis.net/gml",
                           "xmlns:ogc": "http://www.opengis.net/ogc",
                           "xmlns:wfs": "http://www.opengis.net/wfs",
