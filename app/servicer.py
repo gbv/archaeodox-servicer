@@ -16,7 +16,8 @@ wfs = WFSClient(settings.GEO_SERVER_URL,
                 settings.OBJECT_TYPE,
                 settings.OBJECT_NAMESPACE,
                 settings.ATTRIBUTES,
-                settings.GEOMETRY)
+                settings.GEOMETRY,
+                app.logger)
 
 
 @app.route('/', defaults={'n':10})

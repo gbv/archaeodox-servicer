@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import requests
 import json
-import logging
+import self.logger
 import settings
 
 
@@ -11,14 +11,14 @@ class WFSClient:
                           "ows": "http://www.opengis.net/ows"
                           }
 
-    def __init__(self, server_url, transaction_attributes, object_type, namespace, fields, geometry_field):
+    def __init__(self, server_url, transaction_attributes, object_type, namespace, fields, geometry_field, logger):
         self.server_url = server_url
         self.transaction_attributes = transaction_attributes
         self.feature_type = object_type
         self.namespace = namespace
         self.fields = fields
         self.geometry_field = geometry_field
-        logging.basicConfig(filename="/var/tmp/plugin.log", level=logging.DEBUG)
+        self.logger = logger
 
     def get_create_xml(self, feature):
         transaction = ET.Element("wfs:Transaction", **self.transaction_attributes)
@@ -60,7 +60,7 @@ class WFSClient:
         response = requests.get(settings.CONVERSION_URL, json=geojson)
         if response.status_code == 200:
             gml = response.content.decode("utf-8")
-            logging.debug("Converter returned: " + gml)
+            self.logger.debug("Converter returned: " + gml)
             geometry_node.append(ET.fromstring(gml))
             return geometry_node
 
@@ -71,7 +71,7 @@ class WFSClient:
         response = requests.post(self.server_url, data=data, headers={"Content-type": "text/xml"})
         if response.status_code != 200:
             raise ValueError("Server Error " + str(response.status_code) + ": " + response.content)
-        logging.debug(response.content)
+        self.logger.debug(response.content)
         transaction_result = ET.fromstring(response.content)
         exception = transaction_result.find("ows:Exception", WFSClient.RESPONSE_NAMESPACE)
         if exception:
@@ -80,12 +80,11 @@ class WFSClient:
 
     def create_feature(self, feature):
         data = self.get_create_xml(feature)
-        logging.debug("POSTing to WFS: " + str(data))
+        self.logger.debug("POSTing to WFS: " + str(data))
         result = self.post_transaction(data)
 
         feature_id = result.find("**/ogc:FeatureId", WFSClient.RESPONSE_NAMESPACE)
         return feature_id.get('fid')
-
 
     def update_feature(self, feature, feature_id):
         data = self.get_update_xml(feature, feature_id)
