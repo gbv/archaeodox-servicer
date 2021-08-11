@@ -58,8 +58,8 @@ class WFSClient:
 
         response = requests.get(settings.CONVERSION_URL, json=geojson)
         if response.status_code == 200:
-            gml = response.content
-            logging.debug("Converter returned: " + gml + '\n' + str(type(gml)))
+            gml = response.content.decode("utf-8")
+            logging.debug("Converter returned: " + gml)
             geometry_node.append(ET.fromstring(gml))
             return geometry_node
 
