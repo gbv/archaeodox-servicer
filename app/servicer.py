@@ -14,6 +14,7 @@ edb = EasydbClient("http://easydb-webfrontend", app.logger)
 wfs = WFSClient(settings.GEO_SERVER_URL,
                 settings.TRANSACTION_ATTRIBUTES,
                 settings.OBJECT_TYPE,
+                settings.OBJECT_NAMESPACE,
                 settings.ATTRIBUTES,
                 settings.GEOMETRY)
 

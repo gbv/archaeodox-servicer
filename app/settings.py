@@ -1,4 +1,5 @@
 OBJECT_TYPE = "teller"
+OBJECT_NAMESPACE = "hekate"
 GEO_SERVER_URL = "https://geodienste.gbv.de/nld/hekate/wfs"
 GEOMETRY = "found_at"
 ATTRIBUTES = ["text", ]

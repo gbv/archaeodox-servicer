@@ -11,10 +11,11 @@ class WFSClient:
                           "ows": "http://www.opengis.net/ows"
                           }
 
-    def __init__(self, server_url, transaction_attributes, object_type, fields, geometry_field):
+    def __init__(self, server_url, transaction_attributes, object_type, namespace, fields, geometry_field):
         self.server_url = server_url
         self.transaction_attributes = transaction_attributes
         self.feature_type = object_type
+        self.namespace = namespace
         self.fields = fields
         self.geometry_field = geometry_field
         logging.basicConfig(filename="/var/tmp/plugin.log", level=logging.DEBUG)
