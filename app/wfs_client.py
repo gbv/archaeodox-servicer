@@ -1,7 +1,6 @@
 import xml.etree.ElementTree as ET
 import requests
 import json
-import self.logger
 import settings
 
 
