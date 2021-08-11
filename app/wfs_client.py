@@ -23,7 +23,7 @@ class WFSClient:
     def get_create_xml(self, feature):
         transaction = ET.Element("wfs:Transaction", **self.transaction_attributes)
         insert = ET.SubElement(transaction, "wfs:Insert")
-        to_insert = ET.SubElement(insert, ":".join((self.transaction_attributes["xmlns:gbv"], self.feature_type)))
+        to_insert = ET.SubElement(insert, ":".join((self.transaction_attributes["xmlns:" + self.namespace], self.feature_type)))
         for field in self.get_fields(feature):
             node = ET.SubElement(to_insert, field)
             node.text = feature.get(field)
@@ -33,7 +33,7 @@ class WFSClient:
 
     def get_update_xml(self, feature, feature_id):
         transaction = ET.Element("wfs:Transaction", self.transaction_attributes)
-        type_name = "gbv:" + self.feature_type
+        type_name = ":".join((self.namespace, self.feature_type))
         update = ET.SubElement(transaction, "wfs:Update", typeName=type_name)
         for field in self.get_fields(feature):
             property = ET.SubElement(update, "wfs:Property")
