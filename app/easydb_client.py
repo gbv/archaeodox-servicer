@@ -18,6 +18,9 @@ class EasydbClient:
                                           EasydbClient.API_PATH,
                                           "session",
                                           "authenticate")
+        self.db_url = path_join(url,
+                                EasydbClient.API_PATH,
+                                "db")
         self.logger = logger
         #self.acquire_session()
 
@@ -49,8 +52,10 @@ class EasydbClient:
         data = {"pretty": pretty,
                 "search": search}
         self.logger.debug(f"Search params: {data}\nWith token: {params}")
-        response = requests.post(self.search_url,
-                                 params=params,
-                                 data=json.dumps(data))
-        # self.logger.debug(f"Search returned: {response.content}")
+        get_url = path_join(self.db_url,
+                            item_type,
+                            "_all_fields",
+                            id)
+
+        response = requests.get(get_url, params=params)
         return json.loads(response.content), response.status_code
