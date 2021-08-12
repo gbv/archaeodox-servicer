@@ -56,4 +56,9 @@ class EasydbClient:
                             str(id))
 
         response = requests.get(get_url, params=params)
-        return json.loads(response.content), response.status_code
+
+        if response.status_code == 200:
+            result = json.loads(response.content)[0]
+        else:
+            result = {}
+        return result, response.status_code
