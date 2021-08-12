@@ -49,13 +49,11 @@ class EasydbClient:
                    }]
         token = token if token is not None else self.session_token
         params = {"token": token}
-        data = {"pretty": pretty,
-                "search": search}
-        self.logger.debug(f"Search params: {data}\nWith token: {params}")
+
         get_url = path_join(self.db_url,
                             item_type,
                             "_all_fields",
-                            id)
+                            str(id))
 
         response = requests.get(get_url, params=params)
         return json.loads(response.content), response.status_code
