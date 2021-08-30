@@ -46,12 +46,12 @@ def get_wfs_id(item_type, id, token):
     return dp.get(result, [item_type, "feature_id"])
 
 
-@app.route("/dump", methods=["GET", "POST"])
-def dump():
+@app.route("/pre-update", methods=["GET", "POST"])
+def pre_update():
     if incoming_request.method == "POST":
         incoming = incoming_request.get_json()
         info = incoming.get("info", {})
-        app.logger.debug("In dump, got info:" + str(info))
+        app.logger.debug("In pre_update, got info:" + str(info))
         token = incoming['session']['token']
         try:
             payload = info['data']
@@ -84,3 +84,22 @@ def dump():
             app.logger.error(traceback.format_exc(e))
             raise e
 
+
+@app.route("post-update", methods="POST")
+def post_update():
+     if incoming_request.method == "POST":
+        incoming = incoming_request.get_json()
+        info = incoming.get("info", {})
+        app.logger.debug("In post_update, got info:" + str(info))
+        token = incoming['session']['token']
+        try:
+            payload = info['data']
+            
+        
+        except Exception as e:
+            app.logger.error(str(e))
+            app.logger.error(traceback.format_exc(e))
+            raise e
+
+            
+        
