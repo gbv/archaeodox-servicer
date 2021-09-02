@@ -49,13 +49,12 @@ def get_wfs_id(item_type, id, token):
 @app.route("/pre-update", methods=["GET", "POST"])
 def pre_update():
     if incoming_request.method == "POST":
-        incoming = incoming_request.get_json()
-        info = incoming.get("info", {})
-        app.logger.debug("In pre_update, got info:" + str(info))
-        token = incoming['session']['token']
+        incoming_json = incoming_request.get_json()
+        
         try:
-            payload = info['data']
-
+            payload = incoming_json['data']
+            token = incoming_json['session']['token']
+            
             relevant_objects = filter(lambda o: settings.OBJECT_TYPE in o.keys(), payload)
             if not relevant_objects:
                 return info, 200
@@ -77,8 +76,7 @@ def pre_update():
                     data = wfs.update_feature(unpacked, wfs_id)
                     app.logger.debug(data)
 
-            info['data'] = payload
-            return info, 200
+            return {'data': payload}, 200
         except Exception as e:
             app.logger.error(str(e))
             app.logger.error(traceback.format_exc(e))
