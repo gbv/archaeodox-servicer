@@ -8,7 +8,7 @@ from easydb_client import EasydbClient
 from wfs_client import WFSClient
 from dpath import util as dp
 
-from dante_field import couch
+from .dante_field import couch
 
 app = Flask(__name__)
 edb = EasydbClient("http://easydb-webfrontend", app.logger)
