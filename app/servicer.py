@@ -7,7 +7,7 @@ from .easydb_client import EasydbClient
 from .wfs_client import WFSClient
 from dpath import util as dp
 
-from dante_field.couch import Client as CouchClient
+from .dante_field.couch import Client as CouchClient
 from . import settings
 
 app = Flask(__name__)
