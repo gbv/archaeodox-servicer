@@ -1,7 +1,11 @@
 payload.json
 app/credentials.py
+app/dante.field/node_modules
 
 *.pyc
 *.mmd
 *.png
 *.svg
+*.pkl
+*.txt
+*.ipynb

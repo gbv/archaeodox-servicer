@@ -1,0 +1,4164 @@
+{
+  "_id": "configuration",
+  "_rev": "575-deecad81adcc4e538bd7da32418b3ea4",
+  "resource": {
+    "identifier": "Configuration",
+    "id": "configuration",
+    "forms": {
+      "Project": {
+        "hidden": [],
+        "fields": {
+          "Esperanto": {
+            "inputType": "input",
+            "constraintIndexed": false
+          },
+          "Zulu": {
+            "inputType": "input",
+            "constraintIndexed": false
+          },
+          "Ful": {
+            "inputType": "input",
+            "constraintIndexed": false
+          },
+          "kreis": {
+            "inputType": "dropdown",
+            "constraintIndexed": false
+          },
+          "gkz": {
+            "inputType": "unsignedInt",
+            "constraintIndexed": false
+          },
+          "agkz": {
+            "inputType": "unsignedInt",
+            "constraintIndexed": false
+          },
+          "vorgang_datum": {
+            "inputType": "date"
+          },
+          "bemerkung": {
+            "inputType": "text"
+          },
+          "abgeschlossen": {
+            "inputType": "checkboxes",
+            "constraintIndexed": false
+          },
+          "flurstueck": {
+            "inputType": "input",
+            "constraintIndexed": false
+          }
+        },
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "shortName",
+              "category",
+              "shortDescription"
+            ]
+          },
+          {
+            "name": "parent",
+            "fields": [
+              "staff",
+              "campaigns",
+              "coordinateReferenceSystem"
+            ]
+          },
+          {
+            "name": "Übersetzungen",
+            "fields": [
+              "Esperanto",
+              "Zulu",
+              "Ful"
+            ]
+          },
+          {
+            "name": "adox",
+            "fields": [
+              "abgeschlossen",
+              "vorgang_datum",
+              "kreis",
+              "flurstueck",
+              "gkz",
+              "agkz",
+              "bemerkung"
+            ]
+          }
+        ],
+        "valuelists": {
+          "kreis": "adox-kreise",
+          "grabungstyp": "adox-grabungstyp",
+          "abgeschlossen": "adox-aktivitaet"
+        }
+      },
+      "Operation": {
+        "hidden": [],
+        "fields": {},
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription"
+            ]
+          },
+          {
+            "name": "position",
+            "fields": [
+              "geometry"
+            ]
+          }
+        ],
+        "valuelists": {
+          "kreis": "adox-kreise",
+          "gkz": "adox-gemeinden",
+          "grabungstyp": "adox-grabungstyp",
+          "agkz": "adox-altgemeinden"
+        }
+      },
+      "Place": {
+        "hidden": [
+          "gazId"
+        ],
+        "fields": {
+          "denkmalgis-id": {
+            "inputType": "unsignedInt",
+            "constraintIndexed": false
+          },
+          "gazId": {
+            "constraintIndexed": false
+          }
+        },
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription"
+            ]
+          },
+          {
+            "name": "parent",
+            "fields": [
+              "gazId"
+            ]
+          },
+          {
+            "name": "position",
+            "fields": [
+              "denkmalgis-id",
+              "geometry"
+            ]
+          }
+        ],
+        "valuelists": {}
+      },
+      "Trench": {
+        "hidden": [],
+        "fields": {},
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription",
+              "campaign"
+            ]
+          },
+          {
+            "name": "position",
+            "fields": [
+              "geometry"
+            ]
+          }
+        ]
+      },
+      "Find": {
+        "hidden": [],
+        "fields": {
+          "fundbezeichnung": {
+            "inputType": "input",
+            "constraintIndexed": false
+          },
+          "bemerkung": {
+            "inputType": "input",
+            "constraintIndexed": false
+          },
+          "anzahl": {
+            "inputType": "unsignedInt",
+            "constraintIndexed": false
+          },
+          "fund_datum": {
+            "inputType": "date"
+          },
+          "datierung_xtree_von": {
+            "inputType": "input"
+          },
+          "datierung_xtree_bis": {
+            "inputType": "input"
+          },
+          "historische_daten": {
+            "inputType": "text"
+          },
+          "alias": {
+            "inputType": "input",
+            "constraintIndexed": false
+          },
+          "adox-radio-stueck-gramm": {
+            "inputType": "radio",
+            "constraintIndexed": false
+          },
+          "warenart": {
+            "inputType": "dropdown",
+            "constraintIndexed": false
+          },
+          "material": {
+            "inputType": "dropdown",
+            "constraintIndexed": false
+          }
+        },
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription"
+            ]
+          },
+          {
+            "name": "identification",
+            "fields": [
+              "isInstanceOf"
+            ]
+          },
+          {
+            "name": "position",
+            "fields": [
+              "geometry"
+            ]
+          },
+          {
+            "name": "adox",
+            "fields": [
+              "fundbezeichnung",
+              "alias",
+              "warenart",
+              "bemerkung",
+              "anzahl",
+              "weight",
+              "adox-radio-stueck-gramm",
+              "fund_datum",
+              "datierung_xtree_von",
+              "datierung_xtree_bis",
+              "material",
+              "historische_daten"
+            ]
+          }
+        ],
+        "valuelists": {
+          "adox-radio-stueck-gramm": "adox-radio-stueck-gramm",
+          "warenart": "adox-warenarten",
+          "material": "adox-material"
+        }
+      },
+      "Feature": {
+        "hidden": [],
+        "fields": {
+          "befundbezeichnung": {
+            "inputType": "input",
+            "constraintIndexed": false
+          },
+          "interpretation": {
+            "inputType": "text"
+          },
+          "bemerkung": {
+            "inputType": "text"
+          },
+          "datierung_xtree_von": {
+            "inputType": "input"
+          },
+          "datierung_xtree_bis": {
+            "inputType": "input"
+          },
+          "befund_datum": {
+            "inputType": "date"
+          },
+          "phase": {
+            "inputType": "dropdown",
+            "constraintIndexed": false
+          },
+          "historische_daten": {
+            "inputType": "text"
+          },
+          "adox-befunde-relevanz": {
+            "inputType": "checkboxes",
+            "constraintIndexed": false
+          }
+        },
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription",
+              "isSameAs"
+            ]
+          },
+          {
+            "name": "position",
+            "fields": [
+              "geometry",
+              "isPresentIn",
+              "borders",
+              "cuts",
+              "isCutBy",
+              "isAbove",
+              "isBelow"
+            ]
+          },
+          {
+            "name": "time",
+            "fields": [
+              "period",
+              "dating",
+              "isAfter",
+              "isBefore",
+              "isContemporaryWith"
+            ]
+          },
+          {
+            "name": "adox",
+            "fields": [
+              "adox-befunde-relevanz",
+              "interpretation",
+              "befundbezeichnung",
+              "processor",
+              "bemerkung",
+              "datierung_xtree_von",
+              "datierung_xtree_bis",
+              "befund_datum",
+              "phase",
+              "historische_daten"
+            ]
+          }
+        ],
+        "valuelists": {
+          "phase": "adox-phasen",
+          "adox-befunde-relevanz": "adox-befunde-relevanz",
+          "period": "adox-phasen"
+        }
+      },
+      "Image": {
+        "hidden": [],
+        "fields": {
+          "alias": {
+            "inputType": "input",
+            "constraintIndexed": false
+          },
+          "timestamp": {
+            "inputType": "date"
+          }
+        },
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription"
+            ]
+          },
+          {
+            "name": "parent",
+            "fields": [
+              "height",
+              "width"
+            ]
+          },
+          {
+            "name": "adox",
+            "fields": [
+              "alias",
+              "timestamp"
+            ]
+          }
+        ]
+      },
+      "Profile": {
+        "fields": {
+          "blickrichtung": {
+            "inputType": "dropdown",
+            "constraintIndexed": false
+          },
+          "bemerkung": {
+            "inputType": "text"
+          },
+          "profil_datum": {
+            "inputType": "date"
+          }
+        },
+        "hidden": [],
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription"
+            ]
+          },
+          {
+            "name": "position",
+            "fields": [
+              "geometry"
+            ]
+          },
+          {
+            "name": "adox",
+            "fields": [
+              "blickrichtung",
+              "bemerkung",
+              "profil_datum"
+            ]
+          }
+        ],
+        "valuelists": {
+          "blickrichtung": "blickrichtung"
+        },
+        "color": "#00ff00"
+      },
+      "Sample": {
+        "fields": {
+          "probe_datum": {
+            "inputType": "date"
+          },
+          "boden": {
+            "inputType": "radio",
+            "constraintIndexed": false
+          },
+          "spezifizierung": {
+            "inputType": "input",
+            "constraintIndexed": false
+          },
+          "menge": {
+            "inputType": "input",
+            "constraintIndexed": false
+          },
+          "verbleib": {
+            "inputType": "input",
+            "constraintIndexed": false
+          }
+        },
+        "hidden": [],
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription"
+            ]
+          },
+          {
+            "name": "position",
+            "fields": [
+              "geometry"
+            ]
+          },
+          {
+            "name": "proben",
+            "fields": [
+              "sampleType",
+              "probe_datum",
+              "boden",
+              "spezifizierung",
+              "menge",
+              "verbleib"
+            ]
+          }
+        ],
+        "valuelists": {
+          "probebezeichnung": "Sample-sampleType-default",
+          "boden": "adox-boden"
+        },
+        "color": "#ff0000"
+      },
+      "Befundkomplex": {
+        "color": "#c45010",
+        "parent": "Feature",
+        "fields": {
+          "interpretation": {
+            "inputType": "text"
+          }
+        },
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription",
+              "isSameAs"
+            ]
+          },
+          {
+            "name": "position",
+            "fields": [
+              "geometry",
+              "isPresentIn",
+              "borders",
+              "cuts",
+              "isCutBy",
+              "isAbove",
+              "isBelow"
+            ]
+          },
+          {
+            "name": "time",
+            "fields": [
+              "period",
+              "dating",
+              "isAfter",
+              "isBefore",
+              "isContemporaryWith"
+            ]
+          },
+          {
+            "name": "adox",
+            "fields": [
+              "interpretation",
+              "befundbezeichnung",
+              "befund_datum",
+              "phase",
+              "historische_daten",
+              "adox-befunde-relevanz",
+              "processor",
+              "bemerkung",
+              "datierung_xtree_von",
+              "datierung_xtree_bis"
+            ]
+          }
+        ]
+      },
+      "Befundanschnitt": {
+        "color": "#3e7e20",
+        "parent": "Feature",
+        "fields": {},
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription",
+              "isSameAs"
+            ]
+          },
+          {
+            "name": "position",
+            "fields": [
+              "geometry",
+              "isPresentIn",
+              "borders",
+              "cuts",
+              "isCutBy",
+              "isAbove",
+              "isBelow"
+            ]
+          },
+          {
+            "name": "time",
+            "fields": [
+              "period",
+              "dating",
+              "isAfter",
+              "isBefore",
+              "isContemporaryWith"
+            ]
+          },
+          {
+            "name": "adox",
+            "fields": [
+              "befundbezeichnung",
+              "interpretation",
+              "bemerkung",
+              "datierung_xtree_von",
+              "datierung_xtree_bis",
+              "befund_datum",
+              "phase",
+              "historische_daten",
+              "adox-befunde-relevanz",
+              "processor"
+            ]
+          }
+        ]
+      },
+      "Planum:default": {
+        "fields": {
+          "Planum": {
+            "inputType": "unsignedInt",
+            "constraintIndexed": false
+          }
+        },
+        "hidden": [],
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription",
+              "processor",
+              "campaign",
+              "beginningDate",
+              "endDate",
+              "diary"
+            ]
+          },
+          {
+            "name": "parent",
+            "fields": [
+              "description"
+            ]
+          },
+          {
+            "name": "dimension",
+            "fields": [
+              "dimensionWidth",
+              "dimensionHeight"
+            ]
+          },
+          {
+            "name": "position",
+            "fields": [
+              "geometry",
+              "dimensionVerticalExtent",
+              "Planum"
+            ]
+          },
+          {
+            "name": "time",
+            "fields": [
+              "period",
+              "dating"
+            ]
+          }
+        ],
+        "color": "#000000"
+      },
+      "Drawing": {
+        "fields": {
+          "typ": {
+            "inputType": "dropdown",
+            "constraintIndexed": false
+          },
+          "freescale": {
+            "inputType": "input"
+          },
+          "zeichenblattnr": {
+            "inputType": "unsignedInt",
+            "constraintIndexed": false
+          },
+          "zeichenblattnrbis": {
+            "inputType": "unsignedInt",
+            "constraintIndexed": false
+          }
+        },
+        "hidden": [],
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription"
+            ]
+          },
+          {
+            "name": "parent",
+            "fields": [
+              "height",
+              "width"
+            ]
+          },
+          {
+            "name": "adox",
+            "fields": [
+              "alias",
+              "timestamp",
+              "typ",
+              "scale",
+              "freescale",
+              "zeichenblattnr",
+              "zeichenblattnrbis",
+              "description"
+            ]
+          }
+        ],
+        "valuelists": {
+          "typ": "dokuschrittTyp-Zeichnung"
+        }
+      },
+      "Photo": {
+        "fields": {
+          "Blickrichtung": {
+            "inputType": "dropdown",
+            "constraintIndexed": false
+          },
+          "Format": {
+            "inputType": "checkboxes",
+            "constraintIndexed": false
+          },
+          "timestamp": {
+            "inputType": "date"
+          },
+          "typ": {
+            "inputType": "dropdown",
+            "constraintIndexed": false
+          }
+        },
+        "hidden": [],
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription"
+            ]
+          },
+          {
+            "name": "parent",
+            "fields": [
+              "height",
+              "width"
+            ]
+          },
+          {
+            "name": "adox",
+            "fields": [
+              "alias",
+              "timestamp",
+              "typ",
+              "Blickrichtung",
+              "Format",
+              "description"
+            ]
+          }
+        ],
+        "valuelists": {
+          "Blickrichtung": "blickrichtung",
+          "bezeichnung": "dokuschrittTyp-Foto",
+          "Format": "check-Bildformat",
+          "typ": "dokuschrittTyp-Foto"
+        }
+      },
+      "Hh9999_1234:Fundzeichnung": {
+        "color": "#0d8085",
+        "parent": "Image",
+        "fields": {},
+        "groups": [
+          {
+            "name": "stem",
+            "fields": [
+              "identifier",
+              "category",
+              "shortDescription"
+            ]
+          },
+          {
+            "name": "parent",
+            "fields": [
+              "height",
+              "width"
+            ]
+          },
+          {
+            "name": "adox",
+            "fields": [
+              "alias",
+              "timestamp"
+            ]
+          }
+        ]
+      }
+    },
+    "order": [
+      "Project",
+      "Place",
+      "Operation",
+      "Trench",
+      "Planum",
+      "Profile",
+      "Feature",
+      "Befundanschnitt",
+      "Befundkomplex",
+      "Find",
+      "Sample",
+      "Image",
+      "Photo",
+      "Drawing",
+      "Hh9999_1234:Fundzeichnung"
+    ],
+    "valuelists": {
+      "blickrichtung": {
+        "values": {
+          "ohne": {
+            "label": {
+              "de": "ohne"
+            }
+          },
+          "N": {},
+          "NE": {},
+          "E": {},
+          "SE": {},
+          "S": {},
+          "SW": {},
+          "W": {},
+          "NW": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {
+          "de": "Blickrichtung",
+          "eo": "ansichtvon CHARACTER VARYING(50)",
+          "zu": "n/a"
+        },
+        "order": [
+          "ohne",
+          "N",
+          "NE",
+          "E",
+          "SE",
+          "S",
+          "SW",
+          "W",
+          "NW"
+        ],
+        "id": "blickrichtung"
+      },
+      "dokuschrittTyp-Foto": {
+        "values": {
+          "Foto": {},
+          "Fotogramm": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {
+          "de": "Dokuschritt Typ Foto"
+        },
+        "order": [
+          "Foto",
+          "Fotogramm"
+        ],
+        "id": "dokuschrittTyp-Foto"
+      },
+      "radio-Bildformat": {
+        "values": {
+          "Digital": {},
+          "Analog": {},
+          "Dia": {},
+          "S/W": {},
+          "Farbe": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {},
+        "order": [
+          "Digital",
+          "Analog",
+          "Dia",
+          "S/W",
+          "Farbe"
+        ],
+        "id": "radio-Bildformat"
+      },
+      "check-Bildformat": {
+        "values": {
+          "Digital": {},
+          "Analog": {},
+          "Dia": {},
+          "S/W": {},
+          "Farbe": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {
+          "de": "Bildformat"
+        },
+        "order": [
+          "Digital",
+          "Analog",
+          "Dia",
+          "S/W",
+          "Farbe"
+        ],
+        "id": "check-Bildformat"
+      },
+      "dokuschrittTyp-Zeichnung": {
+        "values": {
+          "Auswertung": {},
+          "Zeichnung": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {},
+        "order": [
+          "Auswertung",
+          "Zeichnung"
+        ],
+        "id": "dokuschrittTyp-Zeichnung"
+      },
+      "dokuschrittTyp-Messwerte": {
+        "values": {
+          "Vermessung": {},
+          "Katasterdaten": {},
+          "Import": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {},
+        "order": [
+          "Vermessung",
+          "Katasterdaten",
+          "Import"
+        ],
+        "id": "dokuschrittTyp-Messwerte"
+      },
+      "dokuschrittTyp-Dokumente": {
+        "values": {
+          "Bericht": {},
+          "Export": {},
+          "Import": {},
+          "Harris-Matrix": {},
+          "Publikation": {},
+          "Verwaltung": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {},
+        "order": [
+          "Bericht",
+          "Export",
+          "Import",
+          "Harris-Matrix",
+          "Publikation",
+          "Verwaltung"
+        ],
+        "id": "dokuschrittTyp-Dokumente"
+      },
+      "dokuschrittTyp-Beschreibung": {
+        "values": {
+          "Beschreibung": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {},
+        "order": [
+          "Beschreibung"
+        ],
+        "id": "dokuschrittTyp-Beschreibung"
+      },
+      "dokuschrittTyp-GIS": {
+        "values": {
+          "Projekt": {},
+          "Rasterdaten": {},
+          "Vektordaten": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {},
+        "order": [
+          "Projekt",
+          "Rasterdaten",
+          "Vektordaten"
+        ],
+        "id": "dokuschrittTyp-GIS"
+      },
+      "tes_messpunkte": {
+        "values": {
+          "Flächeneinmessung": {},
+          "Profileinmessung": {},
+          "Kontureinmessung": {},
+          "Fundeinmessung": {},
+          "Nivellement": {},
+          "Passpunkte": {},
+          "Hauptmesspunkte": {},
+          "Mittelpunkt": {},
+          "Absteckung": {},
+          "Katasterdaten": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {
+          "eo": "tes_messpunkte",
+          "de": "Art der Messung"
+        },
+        "order": [
+          "Flächeneinmessung",
+          "Profileinmessung",
+          "Kontureinmessung",
+          "Fundeinmessung",
+          "Nivellement",
+          "Passpunkte",
+          "Hauptmesspunkte",
+          "Mittelpunkt",
+          "Absteckung",
+          "Katasterdaten"
+        ],
+        "id": "tes_messpunkte"
+      },
+      "adox-bearbeiter": {
+        "values": {
+          "Räther, Jörg": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {},
+        "id": "adox-bearbeiter"
+      },
+      "adox-phasen": {
+        "values": {
+          "Mittelalter": {
+            "label": {
+              "de": "1 - Mittelalter"
+            }
+          },
+          "Vorkriegsphase": {
+            "label": {
+              "de": "2 - Vorkriegsphase"
+            }
+          },
+          "Nachkriegsphase": {
+            "label": {
+              "de": "3 - Nachkriegsphase"
+            }
+          },
+          "unbestimmt": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {
+          "de": "Aus Phase"
+        },
+        "id": "adox-phasen"
+      },
+      "adox-befunde-relevanz": {
+        "values": {
+          "Ohne archäologische Relevanz": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {},
+        "id": "adox-befunde-relevanz"
+      },
+      "adox-radio-stueck-gramm": {
+        "values": {
+          "Stück": {},
+          "Gramm": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {},
+        "order": [
+          "Stück",
+          "Gramm"
+        ],
+        "id": "adox-radio-stueck-gramm"
+      },
+      "adox-warenarten": {
+        "values": {
+          "Graue Irdenware": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {
+          "de": "Warenarten"
+        },
+        "id": "adox-warenarten"
+      },
+      "adox-material": {
+        "values": {
+          "Glas": {},
+          "Keramik": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-21",
+        "description": {
+          "de": "Material"
+        },
+        "id": "adox-material"
+      },
+      "adox-boden": {
+        "values": {
+          "Feucht": {},
+          "Trocken": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-22",
+        "description": {},
+        "order": [
+          "Feucht",
+          "Trocken"
+        ],
+        "id": "adox-boden"
+      },
+      "adox-proben-fragestellung": {
+        "values": {
+          "Dendrochronologie": {},
+          "Pollenanalyse": {},
+          "14C-Datierung": {},
+          "andere": {},
+          "Sedimentanalyse": {}
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-22",
+        "description": {
+          "de": "Wissenschaftliche Fragestellung"
+        },
+        "order": [
+          "Dendrochronologie",
+          "14C-Datierung",
+          "Pollenanalyse",
+          "Sedimentanalyse",
+          "andere"
+        ],
+        "id": "adox-proben-fragestellung"
+      },
+      "adox-kreise": {
+        "values": {
+          "10": {
+            "label": {
+              "de": "Kreisfreie Stadt"
+            }
+          }
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-24",
+        "description": {},
+        "order": [
+          "10"
+        ],
+        "id": "adox-kreise"
+      },
+      "adox-gemeinden": {
+        "values": {
+          "2": {
+            "label": {
+              "de": "Tespe"
+            }
+          }
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-24",
+        "description": {},
+        "id": "adox-gemeinden"
+      },
+      "adox-grabungstyp": {
+        "values": {
+          "AU": {
+            "label": {
+              "de": "Archäologische Untersuchung"
+            }
+          },
+          "FM": {
+            "label": {
+              "de": "Fundmeldung"
+            }
+          },
+          "DS": {
+            "label": {
+              "de": "Denkmalschutzvorgang"
+            }
+          }
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-24",
+        "description": {},
+        "id": "adox-grabungstyp"
+      },
+      "adox-altgemeinden": {
+        "values": {
+          "10001101": {
+            "label": {
+              "de": "Sünderup"
+            }
+          }
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-24",
+        "description": {},
+        "order": [
+          "10001101"
+        ],
+        "id": "adox-altgemeinden"
+      },
+      "adox-dgis": {
+        "values": {
+          "123": {
+            "label": {
+              "de": "Hamburg 123"
+            }
+          }
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-24",
+        "description": {},
+        "id": "adox-dgis"
+      },
+      "adox-aktivitaet": {
+        "values": {
+          "abgeschlossen": {
+            "label": {
+              "de": "Aktivität abgeschlossen"
+            }
+          }
+        },
+        "createdBy": "anonymous",
+        "creationDate": "2022-03-24",
+        "description": {},
+        "id": "adox-aktivitaet"
+      }
+    },
+    "languages": {
+      "de": {
+        "categories": {
+          "Feature": {
+            "label": "Befund",
+            "fields": {
+              "interpretation": {
+                "label": "Interpretation / Klassifikation 1",
+                "description": "Ansprache/Beschreibung/Notiz/Interpretation"
+              },
+              "phase": {
+                "label": "Aus Phase"
+              },
+              "befundbezeichnung": {
+                "label": "Alias / Klassifikation 2"
+              },
+              "datierung_xtree_von": {
+                "label": "Datierung von"
+              },
+              "datierung_xtree_bis": {
+                "label": "Datierung bis"
+              },
+              "bemerkung": {
+                "label": "Beschreibung"
+              },
+              "befund_datum": {
+                "label": "Aufnahme"
+              },
+              "historische_daten": {
+                "label": "Historische Daten"
+              },
+              "adox-befunde-relevanz": {
+                "label": "Ohne archäologische Relevanz"
+              },
+              "isPresentIn": {
+                "label": "Ist enthalten in FLZ/PRZ"
+              }
+            }
+          },
+          "Project": {
+            "fields": {
+              "Esperanto": {
+                "label": "adox v3"
+              },
+              "Zulu": {
+                "label": "CRM"
+              },
+              "Ful": {
+                "label": "Feld vor Umbenennung"
+              },
+              "kreis": {
+                "label": "Kreis"
+              },
+              "gkz": {
+                "label": "Gemeindekennzeichen"
+              },
+              "agkz": {
+                "label": "Altgemeindekennzeichen"
+              },
+              "vorgang_datum": {
+                "label": "Aufnahme"
+              },
+              "bemerkung": {
+                "label": "Beschreibung"
+              },
+              "abgeschlossen": {
+                "label": "Aktivität abgeschlossen"
+              },
+              "flurstueck": {
+                "label": "Flurstück"
+              }
+            },
+            "label": "Vorgang"
+          },
+          "Find": {
+            "fields": {
+              "weight": {
+                "label": "Gewicht"
+              },
+              "alias": {
+                "label": "Alias"
+              },
+              "adox-radio-stueck-gramm": {
+                "label": "Stück / Gramm"
+              },
+              "anzahl": {
+                "label": "Anzahl"
+              },
+              "bemerkung": {
+                "label": "Bezeichnung"
+              },
+              "datierung_xtree_von": {
+                "label": "Datierung von"
+              },
+              "datierung_xtree_bis": {
+                "label": "Datierung bis"
+              },
+              "historische_daten": {
+                "label": "Historische Daten"
+              },
+              "fund_datum": {
+                "label": "Aufnahme"
+              },
+              "warenart": {
+                "label": "Warenart"
+              },
+              "material": {
+                "label": "Material"
+              },
+              "fundbezeichnung": {
+                "label": "Fundbezeichnung"
+              }
+            }
+          },
+          "Photo": {
+            "fields": {
+              "Format": {
+                "description": "Bildformat"
+              },
+              "description": {
+                "description": "Motivbeschreibung",
+                "label": "Motivbeschreibung"
+              },
+              "timestamp": {
+                "description": "Aufnahmedatum"
+              }
+            }
+          },
+          "Image": {
+            "fields": {
+              "alias": {
+                "description": "Alias",
+                "label": "Alias"
+              },
+              "timestamp": {
+                "description": "Aufnahmedatum",
+                "label": "Aufnahmedatum"
+              }
+            }
+          },
+          "Drawing": {
+            "fields": {
+              "freescale": {
+                "label": "Freier Maßstab"
+              },
+              "typ": {
+                "label": "Typ"
+              },
+              "zeichenblattnr": {
+                "label": "Blattnummer von"
+              },
+              "zeichenblattnrbis": {
+                "label": "Blattnummer bis"
+              },
+              "description": {
+                "label": "Motivbeschreibung"
+              }
+            },
+            "label": "Planzeichnung"
+          },
+          "Planum": {
+            "label": "Flächenzeichnung"
+          },
+          "Profile": {
+            "fields": {
+              "blickrichtung": {
+                "label": "Blickrichtung"
+              },
+              "bemerkung": {
+                "label": "Beschreibung"
+              },
+              "profil_datum": {
+                "label": "Aufnahme"
+              }
+            },
+            "label": "Profilzeichnung"
+          },
+          "Sample": {
+            "fields": {
+              "probe_datum": {
+                "label": "Aufnahme"
+              },
+              "menge": {
+                "label": "Menge"
+              },
+              "spezifizierung": {
+                "label": "Spezifizierung"
+              },
+              "verbleib": {
+                "label": "Verbleib"
+              },
+              "boden": {
+                "label": "Boden"
+              }
+            }
+          },
+          "Befundkomplex": {
+            "fields": {
+              "interpretation": {
+                "label": "Interpretation"
+              }
+            }
+          },
+          "Place": {
+            "fields": {
+              "denkmalgis-id": {
+                "label": "Denkmalgis-ID"
+              }
+            },
+            "label": "Fundplatz"
+          },
+          "Trench": {
+            "label": "Untersuchungsfläche"
+          },
+          "Hh9999_1234:Fundzeichnung": {
+            "label": "Fundzeichnung"
+          }
+        }
+      },
+      "eo": {
+        "categories": {
+          "Feature": {
+            "fields": {
+              "befundbezeichnung": {
+                "label": "befundbezeichnung CHARACTER VARYING(255)"
+              },
+              "interpretation": {
+                "label": "interpretation CHARACTER VARYING(4096)"
+              },
+              "bemerkung": {
+                "label": "bemerkung CHARACTER VARYING(4096)"
+              },
+              "datierung_xtree_von": {
+                "label": "datierung_xtree_von CHARACTER VARYING(255)"
+              },
+              "datierung_xtree_bis": {
+                "label": "datierung_xtree_von CHARACTER VARYING(255)"
+              },
+              "befund_datum": {
+                "label": "befund_datum DATE"
+              },
+              "phase": {
+                "label": "phase UUID"
+              },
+              "historische_daten": {
+                "label": "historische_daten CHARACTER VARYING(4096)"
+              }
+            },
+            "label": "befunde"
+          },
+          "Find": {
+            "fields": {
+              "fundbezeichnung": {
+                "label": "fundbezeichnung CHARACTER VARYING(255)"
+              },
+              "bemerkung": {
+                "label": "bemerkung CHARACTER VARYING(4096)"
+              },
+              "anzahl": {
+                "label": "anzahl INTEGER"
+              },
+              "fund_datum": {
+                "label": "fund_datum DATE"
+              },
+              "weight": {
+                "label": "gewicht INTEGER"
+              },
+              "datierung_xtree_von": {
+                "label": "datierung_xtree_von CHARACTER VARYING(255)"
+              },
+              "datierung_xtree_bis": {
+                "label": "CHARACTER VARYING(255)"
+              },
+              "historische_daten": {
+                "label": "historische_daten CHARACTER VARYING(4096)"
+              },
+              "alias": {
+                "label": "alias CHARACTER VARYING(255)"
+              },
+              "warenart": {
+                "label": "warenarten"
+              },
+              "material": {
+                "label": "material"
+              }
+            },
+            "label": "fundobjekte"
+          },
+          "Sample": {
+            "fields": {
+              "probe_datum": {
+                "label": "probe_datum DATE"
+              },
+              "boden": {
+                "label": "boden INTEGER"
+              },
+              "spezifizierung": {
+                "label": "spezifizierung CHARACTER VARYING(4096)"
+              },
+              "menge": {
+                "label": "menge CHARACTER VARYING(4096)"
+              },
+              "verbleib": {
+                "label": "verbleib CHARACTER VARYING(4096)"
+              }
+            },
+            "label": "proben"
+          },
+          "Planum": {
+            "label": "flaechenplana"
+          },
+          "Profile": {
+            "label": "profile",
+            "fields": {
+              "blickrichtung": {
+                "label": "blickrichtung INTEGER"
+              },
+              "bemerkung": {
+                "label": "bemerkung CHARACTER VARYING(4096)"
+              },
+              "profil_datum": {
+                "label": "profil_datum DATE"
+              }
+            }
+          },
+          "Photo": {
+            "fields": {
+              "Blickrichtung": {
+                "label": "ansichtvon CHARACTER VARYING(50) (INTEGER)"
+              },
+              "Format": {
+                "label": "metadata CHARACTER VARYING(255)"
+              },
+              "description": {
+                "label": "beschreibung TEXT",
+                "description": "Motivbeschreibung"
+              },
+              "timestamp": {
+                "label": "timestamp TIMESTAMP(6) WITH TIME ZONE"
+              },
+              "typ": {
+                "label": "typ INTEGER"
+              }
+            }
+          },
+          "Image": {
+            "fields": {
+              "alias": {
+                "label": "alias CHARACTER VARYING(255)"
+              },
+              "timestamp": {
+                "label": "timestamp TIMESTAMP(6) WITH TIME ZONE"
+              }
+            },
+            "label": "typ INTEGER"
+          },
+          "Drawing": {
+            "fields": {
+              "typ": {
+                "label": "typ INTEGER"
+              },
+              "freescale": {
+                "label": "metadata CHARACTER VARYING(255)"
+              },
+              "zeichenblattnr": {
+                "label": "zeichenblattnr CHARACTER VARYING(255)"
+              },
+              "zeichenblattnrbis": {
+                "label": "zeichenblattnrbis CHARACTER VARYING(255)"
+              },
+              "description": {
+                "description": "Motivbeschreibung"
+              }
+            }
+          },
+          "Befundkomplex": {
+            "fields": {
+              "interpretation": {
+                "label": "interpretation CHARACTER VARYING(4096)"
+              }
+            }
+          },
+          "Project": {
+            "fields": {
+              "kreis": {
+                "label": "kreis INTEGER (tbl_kreise)"
+              },
+              "gkz": {
+                "label": "gkz INTEGER (tbl_gemeinden &_hh)"
+              },
+              "agkz": {
+                "label": "agkz INTEGER tbl_algemeinden &_hh"
+              },
+              "vorgang_datum": {
+                "label": "vorgang_datum DATE"
+              },
+              "bemerkung": {
+                "label": "bemerkung CHARACTER VARYING(4096)"
+              },
+              "abgeschlossen": {
+                "label": "?"
+              },
+              "flurstueck": {
+                "label": "flurstueck CHARACTER VARYING(5000)"
+              }
+            }
+          }
+        },
+        "groups": {
+          "proben": "proben"
+        }
+      },
+      "zu": {
+        "categories": {
+          "Feature": {
+            "fields": {
+              "befundbezeichnung": {
+                "label": "n/a"
+              },
+              "interpretation": {
+                "label": "n/a"
+              },
+              "bemerkung": {
+                "label": "n/a"
+              },
+              "datierung_xtree_von": {
+                "label": "n/a"
+              },
+              "datierung_xtree_bis": {
+                "label": "n/a"
+              },
+              "befund_datum": {
+                "label": "n/a"
+              },
+              "phase": {
+                "label": "n/a"
+              },
+              "historische_daten": {
+                "label": "n/a"
+              }
+            },
+            "label": "A3 Stratigraphic Interface"
+          },
+          "Find": {
+            "fields": {
+              "fundbezeichnung": {
+                "label": "n/a"
+              },
+              "bemerkung": {
+                "label": "n/a"
+              },
+              "anzahl": {
+                "label": "n/a"
+              },
+              "fund_datum": {
+                "label": "n/a"
+              },
+              "weight": {
+                "label": "n/a"
+              },
+              "datierung_xtree_von": {
+                "label": "n/a"
+              },
+              "datierung_xtree_bis": {
+                "label": "n/a"
+              },
+              "historische_daten": {
+                "label": "n/a"
+              },
+              "alias": {
+                "label": "n/a"
+              },
+              "warenart": {
+                "description": "Aus DANTE",
+                "label": "n/a"
+              },
+              "material": {
+                "label": "Aus DANTE"
+              }
+            },
+            "label": "A7 Embedding"
+          },
+          "Sample": {
+            "fields": {
+              "probe_datum": {
+                "label": "n/a"
+              },
+              "boden": {
+                "label": "n/a"
+              },
+              "spezifizierung": {
+                "label": "n/a"
+              },
+              "menge": {
+                "label": "n/a"
+              },
+              "verbleib": {
+                "label": "n/a"
+              }
+            },
+            "label": "n/a"
+          },
+          "Planum": {
+            "label": "n/a"
+          },
+          "Profile": {
+            "label": "n/a",
+            "fields": {
+              "blickrichtung": {
+                "label": "n/a"
+              },
+              "bemerkung": {
+                "label": "n/a"
+              },
+              "profil_datum": {
+                "label": "n/a"
+              }
+            }
+          },
+          "Photo": {
+            "fields": {
+              "Blickrichtung": {
+                "label": "n/a"
+              },
+              "Format": {
+                "label": "n/a"
+              },
+              "description": {
+                "label": "n/a"
+              },
+              "timestamp": {
+                "label": "n/a"
+              },
+              "typ": {
+                "label": "n/a"
+              }
+            }
+          },
+          "Image": {
+            "fields": {
+              "alias": {
+                "label": "n/a"
+              },
+              "timestamp": {
+                "label": "n/a"
+              }
+            },
+            "label": "n/a"
+          },
+          "Drawing": {
+            "fields": {
+              "typ": {
+                "label": "n/a"
+              },
+              "freescale": {
+                "label": "n/a"
+              },
+              "zeichenblattnr": {
+                "label": "n/a"
+              },
+              "zeichenblattnrbis": {
+                "label": "n/a"
+              }
+            }
+          },
+          "Befundkomplex": {
+            "fields": {
+              "interpretation": {
+                "label": "n/a"
+              }
+            }
+          },
+          "Project": {
+            "fields": {
+              "kreis": {
+                "label": "n/a"
+              },
+              "gkz": {
+                "label": "n/a"
+              },
+              "agkz": {
+                "label": "n/a"
+              },
+              "vorgang_datum": {
+                "label": "n/a"
+              },
+              "bemerkung": {
+                "label": "n/a"
+              },
+              "abgeschlossen": {
+                "label": "n/a"
+              },
+              "flurstueck": {
+                "label": "n/a"
+              }
+            }
+          }
+        },
+        "groups": {
+          "proben": "ac_sample"
+        }
+      },
+      "ff": {
+        "categories": {
+          "Find": {
+            "fields": {
+              "weight": {
+                "label": "Gewicht (g)"
+              }
+            }
+          },
+          "Photo": {
+            "fields": {
+              "description": {
+                "description": "Freies Beschreibungsfeld",
+                "label": "Beschreibung"
+              }
+            }
+          },
+          "Place": {
+            "label": "Ort"
+          },
+          "Project": {
+            "label": "Projekt"
+          },
+          "Image": {
+            "label": "Abbildung"
+          }
+        }
+      }
+    },
+    "relations": {},
+    "type": "Configuration"
+  },
+  "created": {
+    "user": "anonymous",
+    "date": "2022-03-03T10:57:24.232Z"
+  },
+  "modified": [
+    {
+      "user": "anonymous",
+      "date": "2022-03-03T10:57:24.232Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-03T10:59:16.105Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-03T11:00:57.806Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-03T11:01:28.079Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-03T11:02:43.679Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-03T11:03:21.336Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-03T11:05:30.893Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-03T11:06:27.880Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-03T11:38:31.566Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-14T16:09:04.293Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-14T16:10:34.324Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-14T16:10:48.028Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-14T16:11:12.492Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T09:48:26.533Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T09:51:50.022Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T09:52:02.450Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T09:52:10.197Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T09:53:23.917Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T09:54:23.973Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T09:55:05.381Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T09:56:05.426Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T09:56:23.393Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T09:57:38.127Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T09:58:33.568Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T09:59:02.085Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:00:08.979Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:15:10.148Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:16:13.123Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:20:40.704Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:27:23.538Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:28:08.035Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:31:01.481Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:31:54.678Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:31:56.801Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:32:13.671Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:32:15.205Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:32:17.382Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:32:22.531Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:32:25.137Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:33:44.861Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:34:36.447Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:02.320Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:09.068Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:10.637Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:12.154Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:13.609Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:14.818Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:16.071Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:17.394Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:18.682Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:20.557Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:21.721Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:24.562Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:57.424Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:35:59.995Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:44:57.146Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:46:32.158Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:51:00.612Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:53:27.521Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:54:03.301Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:55:28.733Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:56:14.860Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:57:01.205Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:57:17.831Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:57:24.797Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:57:29.446Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T10:59:23.007Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T11:00:35.190Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T11:01:51.564Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T11:04:09.373Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T11:08:06.533Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T11:12:34.837Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T11:13:46.294Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T12:19:20.125Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T12:19:56.274Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T12:20:02.689Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T12:22:47.340Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T12:23:19.943Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T12:23:53.417Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T12:25:40.398Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T12:26:31.757Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T12:30:19.887Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T12:32:34.714Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-15T13:01:37.048Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T07:49:14.799Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T07:51:09.034Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T07:54:04.445Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T07:54:29.180Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T07:55:39.277Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:04:17.532Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:05:18.818Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:10:01.642Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:11:58.429Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:13:28.319Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:17:24.322Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:19:52.487Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:20:15.348Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:20:25.461Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:22:02.375Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:22:24.869Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:22:46.359Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:23:36.778Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:25:16.897Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:25:28.157Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:34:34.676Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:35:37.548Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:36:23.163Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:39:11.105Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:39:41.265Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:43:43.808Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:50:12.554Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T08:52:48.174Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:22:08.861Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:22:49.609Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:27:12.140Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:28:41.391Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:29:29.918Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:30:00.771Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:32:20.442Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:33:00.678Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:33:51.568Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:33:55.572Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:39:01.682Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:39:11.749Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:39:45.021Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:43:31.663Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:43:59.473Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:46:45.867Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:51:28.674Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T09:53:19.641Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T10:11:07.379Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T10:15:58.926Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T10:17:04.682Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T10:17:22.213Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T10:22:29.811Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T12:41:52.676Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T12:44:24.350Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T13:40:20.590Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-16T13:52:48.922Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:13:48.506Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:15:35.559Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:17:22.513Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:17:26.435Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:27:22.435Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:27:58.720Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:28:15.195Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:28:46.484Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:31:58.914Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:32:12.756Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:32:48.249Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:33:00.943Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:33:39.297Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:35:35.251Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:35:51.229Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T08:36:10.348Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:15:27.211Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:18:38.908Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:23:37.243Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:36:29.286Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:36:31.519Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:36:34.052Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:36:45.792Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:37:09.686Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:37:24.298Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:37:34.886Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:37:47.430Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:39:43.500Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:39:47.784Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:40:26.593Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:51:17.915Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:51:25.409Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:52:09.560Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:52:18.127Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:52:33.299Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:54:28.303Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T09:54:40.227Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:07:28.508Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:11:33.066Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:23:40.773Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:38:38.336Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:43:43.543Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:45:43.584Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:46:13.525Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:49:19.218Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:51:42.559Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:51:58.446Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:52:56.488Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:53:37.645Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:54:29.042Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:54:36.088Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:54:47.757Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:54:52.489Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:55:18.579Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T10:59:31.468Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T11:00:14.695Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T11:01:13.414Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T11:02:42.492Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T11:03:28.933Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T11:04:32.734Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T11:09:13.261Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T11:09:31.590Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T11:11:53.379Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:10:15.578Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:13:01.071Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:13:22.072Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:13:47.730Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:16:26.028Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:17:09.967Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:17:46.481Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:17:58.443Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:18:25.675Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:19:02.879Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:19:45.614Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:23:18.970Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:23:41.636Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:24:19.032Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:28:21.222Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:29:08.369Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:32:21.188Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:33:33.810Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:36:59.338Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:40:18.247Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:41:00.956Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:41:39.783Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:41:43.468Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:41:51.285Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:41:52.807Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:42:00.172Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:42:05.772Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:42:17.304Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:42:19.029Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:43:57.500Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:45:01.850Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:45:29.836Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:45:35.980Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:46:22.273Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:46:32.045Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:48:43.855Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:51:36.289Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:52:24.505Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:52:51.801Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:54:54.102Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:56:54.635Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:57:18.017Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:58:06.456Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T12:58:37.048Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:00:09.227Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:00:34.124Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:01:00.013Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:02:09.060Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:03:50.345Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:04:52.088Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:05:36.251Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:05:44.543Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:06:13.059Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:06:47.580Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:07:12.502Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:07:45.888Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:07:49.627Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:08:55.202Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:09:20.840Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:09:24.439Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:09:53.332Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:10:21.030Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-17T13:11:19.738Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:09:31.706Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:12:58.460Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:13:25.614Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:14:08.793Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:14:36.624Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:16:55.765Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:24:05.809Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:24:46.382Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:29:34.830Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:29:53.366Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:35:18.585Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:46:31.671Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:46:58.962Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:48:54.588Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:49:45.045Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:58:41.545Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T08:58:45.535Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:00:26.218Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:00:42.290Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:00:47.458Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:04:32.218Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:05:18.873Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:05:24.378Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:20:49.661Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:25:24.776Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:25:35.963Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:26:05.877Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:26:09.625Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:33:59.802Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:34:20.844Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:36:02.154Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:36:08.007Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:39:43.643Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:39:54.841Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:40:16.161Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:40:57.523Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:41:20.742Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:44:08.586Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:44:11.364Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:45:26.019Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:47:37.214Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:48:24.623Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:49:46.969Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:51:04.973Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:51:30.925Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:51:40.618Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:52:29.746Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:52:38.764Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T09:53:32.931Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:08:40.300Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:08:54.872Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:09:10.063Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:09:30.867Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:09:40.094Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:13:00.793Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:14:57.505Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:16:58.726Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:18:56.179Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:19:10.036Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:20:06.500Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:20:12.335Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:20:29.706Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:20:35.566Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:21:15.299Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:21:32.221Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:21:35.217Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:22:02.916Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:30:23.962Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:33:00.332Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:33:03.557Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:49:07.774Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:49:43.684Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:50:17.429Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:53:00.590Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:54:36.765Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:54:45.452Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:55:03.440Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:56:10.512Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T10:56:20.702Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:00:55.130Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:03:16.595Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:04:10.257Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:04:17.843Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:07:01.682Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:07:06.016Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:07:55.975Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:08:10.391Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:09:42.888Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:11:32.286Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:11:36.425Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:11:42.352Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:16:11.968Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:20:30.384Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:20:35.522Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:20:45.487Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:23:51.714Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:24:36.055Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:31:12.975Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:34:29.999Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:34:33.700Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:36:58.329Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T11:39:24.494Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T12:38:02.214Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T12:38:14.976Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T12:38:26.025Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T12:41:53.510Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:09:04.255Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:09:13.730Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:11:35.380Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:11:43.133Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:11:53.083Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:12:41.340Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:12:53.644Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:13:18.147Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:13:44.862Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:13:58.580Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:15:26.918Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:15:44.923Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:15:56.646Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:23:57.643Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:24:01.236Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:24:41.401Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:24:59.115Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:26:52.906Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:27:30.232Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:27:38.606Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:28:05.043Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:33:42.120Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:34:26.698Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:35:32.352Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:35:43.503Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-21T13:36:00.492Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:01:40.098Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:01:44.236Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:02:00.867Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:02:17.484Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:07:24.703Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:07:52.108Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:08:19.479Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:10:14.572Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:10:28.755Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:30:48.217Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:34:38.884Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:34:43.650Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:46:53.395Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:47:02.013Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:47:50.353Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:48:31.706Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:56:53.973Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T09:58:10.517Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T10:05:41.161Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T10:05:43.801Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T10:07:01.291Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T10:41:56.890Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T10:42:04.432Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T10:43:04.029Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T13:10:19.761Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T13:10:26.475Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T13:10:57.590Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T13:11:00.475Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T13:20:42.427Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T13:22:55.045Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T13:25:28.991Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T13:26:19.135Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T13:26:51.877Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T13:41:47.554Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T13:42:15.850Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-22T14:42:38.316Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T08:39:24.406Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T08:39:27.719Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T08:46:21.879Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T08:46:24.131Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T08:46:45.077Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T08:52:47.233Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T08:52:51.347Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T08:59:06.495Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T08:59:17.119Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:03:02.431Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:03:08.566Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:03:29.275Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:04:45.041Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:05:36.249Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:06:23.631Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:12:05.464Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:13:48.569Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:14:41.348Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:15:15.050Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:15:33.862Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:16:21.055Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:16:27.778Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:19:12.275Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T09:26:32.978Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T10:53:16.039Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T10:58:25.256Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:06:59.548Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:07:13.368Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:15:27.242Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:16:17.338Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:17:29.758Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:27:08.348Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:31:24.964Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:34:31.087Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:34:56.126Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:38:43.154Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:39:37.051Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:39:41.775Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:40:23.161Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:40:49.510Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:41:06.792Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:42:08.111Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:42:35.394Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:42:44.686Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:42:52.932Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:45:46.132Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:46:18.634Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:46:27.946Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:46:37.507Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:46:40.667Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:47:34.298Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T11:47:54.618Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T13:17:23.668Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T13:53:26.593Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T13:53:46.404Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T13:54:34.816Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T13:55:13.469Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T14:14:33.568Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T14:15:04.720Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T14:40:07.824Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T14:40:12.870Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-24T14:40:14.899Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:30:31.357Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:30:34.216Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:30:36.673Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:30:38.663Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:30:40.903Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:30:42.753Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:30:44.616Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:30:49.838Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:30:51.946Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:30:53.866Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:31:31.377Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:31:45.247Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:33:10.611Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:35:22.599Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:36:56.955Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:37:40.406Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:37:51.359Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:41:54.744Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:42:25.559Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:42:39.756Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:43:46.078Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:43:58.350Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:47:46.632Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:48:03.360Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:48:22.016Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:48:28.848Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:48:30.256Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:48:31.622Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:48:32.890Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:48:38.856Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:48:43.282Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:49:07.804Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:49:20.302Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:49:32.899Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:50:03.450Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:50:21.127Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:50:23.337Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:50:34.074Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:50:47.233Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:50:58.839Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:53:07.587Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:54:12.250Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:55:34.863Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:55:36.826Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:55:38.735Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:55:44.772Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:56:24.165Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:56:53.038Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:56:55.592Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:58:38.735Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:58:41.334Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:58:50.209Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:59:06.259Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:59:18.816Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T10:59:31.434Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T11:00:15.756Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T11:00:18.758Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T11:00:25.283Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T11:01:50.293Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T11:02:11.975Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T11:02:18.947Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-03-31T11:02:33.189Z"
+    },
+    {
+      "user": "Administrator 01",
+      "date": "2022-04-06T12:02:01.591Z"
+    },
+    {
+      "user": "Administrator 01",
+      "date": "2022-04-06T12:08:22.976Z"
+    },
+    {
+      "user": "Administrator 01",
+      "date": "2022-04-06T12:22:51.350Z"
+    },
+    {
+      "user": "Administrator 01",
+      "date": "2022-04-06T12:23:05.683Z"
+    },
+    {
+      "user": "Administrator 01",
+      "date": "2022-04-06T12:49:20.878Z"
+    },
+    {
+      "user": "Administrator 01",
+      "date": "2022-04-14T08:45:31.322Z"
+    },
+    {
+      "user": "Administrator 01",
+      "date": "2022-04-26T14:40:18.880Z"
+    },
+    {
+      "user": "Administrator 01",
+      "date": "2022-04-26T14:47:17.255Z"
+    },
+    {
+      "user": "Administrator 01",
+      "date": "2022-04-26T14:56:39.530Z"
+    },
+    {
+      "user": "Administrator 01",
+      "date": "2022-04-26T14:58:23.894Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-05-23T06:18:30.519Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-08-03T11:47:24.464Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-08-03T11:51:41.360Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-08-03T11:52:41.436Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-08-03T13:03:15.855Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-08-03T14:00:53.058Z"
+    },
+    {
+      "user": "anonymous",
+      "date": "2022-08-03T14:01:32.935Z"
+    }
+  ]
+}
