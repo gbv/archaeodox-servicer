@@ -48,7 +48,7 @@ def get_wfs_id(item_type, id, token):
     return dp.get(result, [item_type, "feature_id"])
 
 
-@app.route("/pre-update", methods=["GET", "POST"])
+@app.route("/pre-update/parked", methods=["GET", "POST"])
 def pre_update():
     if incoming_request.method == "POST":
         incoming_json = incoming_request.get_json()
@@ -101,7 +101,7 @@ def post_update():
             app.logger.error(traceback.format_exc(e))
             raise e
 
-@app.route('/field_create', methods=['POST'])
+@app.route('/pre-update', methods=['POST'])
 def field_create():
     if incoming_request.method == "POST":
         incoming_json = incoming_request.get_json()
@@ -121,7 +121,7 @@ def field_create():
             db_user = couch_client.create_db_and_user(db_name)
             payload[settings.FIELD_FIELD]['password'] = db_user['password']
 
-            return payload, 200
+            return {'data': payload}, 200
 
         except Exception as e:
             app.logger.error(str(e))
