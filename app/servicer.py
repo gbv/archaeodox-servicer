@@ -8,7 +8,7 @@ from easydb_client import EasydbClient
 from wfs_client import WFSClient
 from dpath import util as dp
 
-from .dante_field import couch
+from dante_field.couch import Client as CouchClient
 
 app = Flask(__name__)
 edb = EasydbClient("http://easydb-webfrontend", app.logger)
@@ -117,7 +117,7 @@ def field_create():
                 return incoming_json.get('info', {}), 200
             
             db_name = field_database['db_name']
-            couch_client = couch.Client(settings.COUCH_HOST, auth_from_env=True)
+            couch_client = CouchClient(settings.COUCH_HOST, auth_from_env=True)
             db_user = couch_client.create_db_and_user(db_name)
             payload[settings.FIELD_FIELD]['password'] = db_user['password']
 
