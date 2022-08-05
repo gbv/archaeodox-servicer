@@ -109,7 +109,7 @@ def field_create():
         try:
             payload = incoming_json['data']
             token = incoming_json['session']['token']
-            field_database = next(filter(lambda f: settings.FIELD_FIELD in f.keys()))
+            field_database = next(filter(lambda f: settings.FIELD_FIELD in f.keys(), payload))
             password = field_database.get('password', False)
 
             if password or (field_database is None):
