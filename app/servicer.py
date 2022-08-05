@@ -103,7 +103,7 @@ def post_update():
 
 @app.route('/pre-update', methods=['POST'])
 def field_create():
-    app.logger.debug(dir(app.setings))
+    app.logger.debug(dir(settings))
     if incoming_request.method == "POST":
         incoming_json = incoming_request.get_json()
         
