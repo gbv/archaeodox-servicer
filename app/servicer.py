@@ -108,20 +108,28 @@ def field_create():
         incoming_json = incoming_request.get_json()
         
         try:
-            payload = incoming_json['data']
+            data = incoming_json['data']
             token = incoming_json['session']['token']
-            field_database = next(filter(lambda f: 'field_database' in f.keys(), payload))
-            password = field_database['field_database'].get('password', False)
-            app.logger.debug(field_database)
-            if password or (field_database is None):
-                return incoming_json.get('info', {}), 200
+            has_db = False
+            for i, entry in data:
+                if settings.FIELD_FIELD in entry.keys():
+                    db_index = i
+                    has_db = True
+                    break
             
-            db_name = field_database['field_database']['db_name']
+            field_database = data[db_index][settings.FIELD_FIELD]
+            password = field_database.get('password', False)
+            app.logger.debug(field_database)
+            
+            if password or not has_db:
+                return {'data': data}, 200
+            
+            db_name = field_database['db_name']
             couch_client = CouchClient(settings.COUCH_HOST, auth_from_env=True)
             db_user = couch_client.create_db_and_user(db_name)
-            field_database['field_database']['password'] = db_user['password']
+            field_database['password'] = db_user['password']
 
-            return {'data': payload}, 200
+            return {'data': data}, 200
 
         except Exception as e:
             app.logger.error(str(e))
