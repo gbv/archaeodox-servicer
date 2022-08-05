@@ -105,7 +105,7 @@ def post_update():
 def field_create():
     if incoming_request.method == "POST":
         incoming_json = incoming_request.get_json()
-        
+        app.logger.debug(incoming_json)
         try:
             payload = incoming_json['data']
             token = incoming_json['session']['token']
