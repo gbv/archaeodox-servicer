@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import requests
 import json
-import settings
+from . import settings
 
 
 class WFSClient:
