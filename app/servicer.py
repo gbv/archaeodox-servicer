@@ -111,7 +111,7 @@ def field_create():
             token = incoming_json['session']['token']
             field_database = next(filter(lambda f: 'field_database' in f.keys(), payload))
             password = field_database.get('password', False)
-            app.logger(field_database)
+            app.logger.debug(field_database)
             if password or (field_database is None):
                 return incoming_json.get('info', {}), 200
             
