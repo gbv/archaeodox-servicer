@@ -1,6 +1,5 @@
 import requests
 import json
-import settings
 import traceback
 
 from flask import Flask, request as incoming_request
@@ -9,6 +8,7 @@ from wfs_client import WFSClient
 from dpath import util as dp
 
 from dante_field.couch import Client as CouchClient
+from . import settings
 
 app = Flask(__name__)
 edb = EasydbClient("http://easydb-webfrontend", app.logger)
