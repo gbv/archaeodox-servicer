@@ -1,6 +1,6 @@
 payload.json
 app/credentials.py
-app/dante.field/node_modules
+app/dante_field/node_modules
 
 *.pyc
 *.mmd
