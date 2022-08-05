@@ -110,15 +110,15 @@ def field_create():
             payload = incoming_json['data']
             token = incoming_json['session']['token']
             field_database = next(filter(lambda f: 'field_database' in f.keys(), payload))
-            password = field_database.get('password', False)
+            password = field_database['field_database'].get('password', False)
             app.logger.debug(field_database)
             if password or (field_database is None):
                 return incoming_json.get('info', {}), 200
             
-            db_name = field_database['db_name']
+            db_name = field_database['field_database']['db_name']
             couch_client = CouchClient(settings.COUCH_HOST, auth_from_env=True)
             db_user = couch_client.create_db_and_user(db_name)
-            payload[settings.FIELD_FIELD]['password'] = db_user['password']
+            field_database['field_database']['password'] = db_user['password']
 
             return {'data': payload}, 200
 
