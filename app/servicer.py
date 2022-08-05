@@ -8,7 +8,7 @@ from easydb_client import EasydbClient
 from wfs_client import WFSClient
 from dpath import util as dp
 
-from dante.field import couch
+from dante_field import couch
 
 app = Flask(__name__)
 edb = EasydbClient("http://easydb-webfrontend", app.logger)
@@ -126,4 +126,4 @@ def field_create():
         except Exception as e:
             app.logger.error(str(e))
             app.logger.error(traceback.format_exc(e))
-            return str(e), 500
+            return {'error': str(e)}, 500
