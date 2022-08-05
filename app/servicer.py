@@ -8,6 +8,8 @@ from easydb_client import EasydbClient
 from wfs_client import WFSClient
 from dpath import util as dp
 
+from dante.field import couch
+
 app = Flask(__name__)
 edb = EasydbClient("http://easydb-webfrontend", app.logger)
 
@@ -99,5 +101,29 @@ def post_update():
             app.logger.error(traceback.format_exc(e))
             raise e
 
-            
+@app.route('/field_create', methods=['POST'])
+def field_create():
+    if incoming_request.method == "POST":
+        incoming_json = incoming_request.get_json()
         
+        try:
+            payload = incoming_json['data']
+            token = incoming_json['session']['token']
+            
+            field_database = payload.get(settings.FIELD_FIELD, None)
+            password = field_database.get('password', False)
+
+            if password or (field_database is None):
+                return incoming_json.get('info', {}), 200
+            
+            db_name = field_database['db_name']
+            couch_client = couch.Client(settings.COUCH_HOST, auth_from_env=True)
+            db_user = couch_client.create_db_and_user(db_name)
+            payload[settings.FIELD_FIELD]['password'] = db_user['password']
+
+            return payload, 200
+
+        except Exception as e:
+            app.logger.error(str(e))
+            app.logger.error(traceback.format_exc(e))
+            return str(e), 500

@@ -2,4 +2,6 @@ payload.json
 app/credentials.py
 
 *.pyc
-
+*.mmd
+*.png
+*.svg
