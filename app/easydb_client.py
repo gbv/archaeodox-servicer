@@ -1,6 +1,6 @@
 import json, requests
 from os.path import join as path_join
-import credentials
+from . import credentials
 
 
 class EasydbClient:
