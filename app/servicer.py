@@ -94,7 +94,7 @@ def post_update():
         try:
             token = incoming['session']['token']
             data = incoming['data']
-            client = EasydbClient('http://easydb-server', app.logger)
+            client = EasydbClient('http://easydb-webfrontend', app.logger)
             object_type = data['_objecttype']
             id = data[object_type]['_id']
             mask = data['_mask']
