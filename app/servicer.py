@@ -85,7 +85,7 @@ def pre_update():
             raise e
 
 
-@app.route("/post-update", methods=["POST"])
+@app.route("/post_update", methods=["POST"])
 def post_update():
      if incoming_request.method == "POST":
         incoming = incoming_request.get_json()
