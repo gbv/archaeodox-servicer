@@ -100,8 +100,10 @@ def post_update():
             item = edb.get_item(item_type=object_type, id=id, token=token)
 
             liberator = EASLiberator(base_path='/eas', base_url='https://hekate.gbv.de/eas/partitions-inline/1/', logger=app.logger)
-            source = dp.search(item, f'{object_type}/project_dump/*/versions/original/url')
-            app.logger.debug(json.dumps(source, indent=2))
+            dict_path, source = next(dp.search(item, f'{object_type}/**/original/url', yielded=True))
+            app.logger.debug(source)
+            if source:
+                app.logger.debug('ready to liberate')
             return {'data': data}, 200
         except Exception as e:
             app.logger.error(str(e))
