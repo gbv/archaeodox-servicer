@@ -1,3 +1,4 @@
+import http
 import requests
 import json
 import traceback
@@ -89,16 +90,21 @@ def pre_update():
 def post_update():
      if incoming_request.method == "POST":
         incoming = incoming_request.get_json()
-        info = incoming.get("info", {})
         app.logger.debug("In post-update, got incoming:\n" + json.dumps(incoming, indent=2))
-        token = incoming['session']['token']
         try:
-            data = info['data']
-            
+            token = incoming['session']['token']
+            data = incoming['data']
+            client = EasydbClient('http://easydb-server', app.logger)
+            object_type = data['_objecttype']
+            id = data[object_type]['_id']
+            mask = data['_mask']
+            item = client.get_item(item_type=object_type, id=id, token=token)
+            app.logger.debug(item)
+            return {'data': data}, 200
         except Exception as e:
             app.logger.error(str(e))
             app.logger.error(traceback.format_exc(e))
-            {'error': str(e)}, 500
+            return {'error': str(e)}, 500
 
 @app.route('/pre-update', methods=['POST'])
 def field_create():
