@@ -97,14 +97,15 @@ def post_update():
             object_type = data['_objecttype']
             id = data[object_type]['_id']
             mask = data['_mask']
-            item = edb.get_item(item_type=object_type, id=id, token=token)
+            item, status = edb.get_item(item_type=object_type, id=id, token=token)
             app.logger.debug('ITEM:')
             app.logger.debug(item)
-            liberator = EASLiberator(base_path='/eas', base_url='https://hekate.gbv.de/eas/partitions-inline/1/', logger=app.logger)
-            dict_path, source = next(dp.search(item, f'{object_type}/**/original/url', yielded=True))
-            app.logger.debug(source)
-            if source:
-                app.logger.debug('ready to liberate')
+            if status == 200:
+                liberator = EASLiberator(base_path='/eas', base_url='https://hekate.gbv.de/eas/partitions-inline/1/', logger=app.logger)
+                dict_path, source = next(dp.search(incoming, f'{object_type}/**/original/url', yielded=True))
+                app.logger.debug(source)
+                if source:
+                    app.logger.debug('ready to liberate')
             return {'data': data}, 200
         except Exception as e:
             app.logger.error(str(e))
