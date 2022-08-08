@@ -85,18 +85,16 @@ def pre_update():
             raise e
 
 
-@app.route("/post_update", methods=["POST"])
+@app.route("/post-update", methods=["POST"])
 def post_update():
      if incoming_request.method == "POST":
         incoming = incoming_request.get_json()
         info = incoming.get("info", {})
-        app.logger.debug("In post_update, got info:" + str(info))
+        app.logger.debug("In post-update, got info:" + json.dumps(info, indent=2))
         token = incoming['session']['token']
         try:
             data = info['data']
-            app.logger.debug('post_update:')
-            app.logger.debug(json.dumps(data, indent=2))
-        
+            
         except Exception as e:
             app.logger.error(str(e))
             app.logger.error(traceback.format_exc(e))
