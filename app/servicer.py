@@ -119,13 +119,15 @@ def field_create():
                     db_index = i
                     has_db = True
                     break
-            if password or not has_db:
+            if not has_db:
                 return {'data': data}, 200
             
             field_database = data[db_index][settings.FIELD_FIELD]
             password = field_database.get('password', False)
-            app.logger.debug(field_database)
-            
+
+            if password:
+                return {'data': data}, 200
+           
             db_name = field_database['db_name']
             couch_client = CouchClient(settings.COUCH_HOST, auth_from_env=True)
             db_user = couch_client.create_db_and_user(db_name)
