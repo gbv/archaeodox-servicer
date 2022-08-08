@@ -102,7 +102,7 @@ def post_update():
             app.logger.debug(item)
             if status == 200:
                 liberator = EASLiberator(base_path='/eas', base_url='https://hekate.gbv.de/eas/partitions-inline/1/', logger=app.logger)
-                dict_path, source = next(dp.search(incoming, f'{object_type}/**/original/url', yielded=True))
+                dict_path, source = next(dp.search(incoming, f'**/{object_type}/**/original/url', yielded=True))
                 app.logger.debug(source)
                 if source:
                     app.logger.debug('ready to liberate')
