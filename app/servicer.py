@@ -94,6 +94,7 @@ def post_update():
         token = incoming['session']['token']
         try:
             data = info['data']
+            app.logger.debug('post_update:')
             app.logger.debug(json.dumps(data, indent=2))
         
         except Exception as e:
@@ -110,6 +111,8 @@ def field_create():
         try:
             data = incoming_json['data']
             token = incoming_json['session']['token']
+            app.logger.debug('pre-update:')
+            app.logger.debug(json.dumps(data, indent=2))
             has_db = False
             for i, entry in data:
                 if settings.FIELD_FIELD in entry.keys():
