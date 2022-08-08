@@ -90,7 +90,7 @@ def post_update():
      if incoming_request.method == "POST":
         incoming = incoming_request.get_json()
         info = incoming.get("info", {})
-        app.logger.debug("In post-update, got info:" + json.dumps(info, indent=2))
+        app.logger.debug("In post-update, got incoming:\n" + json.dumps(incoming, indent=2))
         token = incoming['session']['token']
         try:
             data = info['data']
