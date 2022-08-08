@@ -98,7 +98,8 @@ def post_update():
             id = data[object_type]['_id']
             mask = data['_mask']
             item = edb.get_item(item_type=object_type, id=id, token=token)
-
+            app.logger.debug('ITEM:')
+            app.logger.debug(item)
             liberator = EASLiberator(base_path='/eas', base_url='https://hekate.gbv.de/eas/partitions-inline/1/', logger=app.logger)
             dict_path, source = next(dp.search(item, f'{object_type}/**/original/url', yielded=True))
             app.logger.debug(source)
