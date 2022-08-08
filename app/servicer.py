@@ -114,18 +114,17 @@ def field_create():
             app.logger.debug('pre-update:')
             app.logger.debug(json.dumps(data, indent=2))
             has_db = False
-            for i, entry in data:
+            for i, entry in enumerate(data):
                 if settings.FIELD_FIELD in entry.keys():
                     db_index = i
                     has_db = True
                     break
+            if password or not has_db:
+                return {'data': data}, 200
             
             field_database = data[db_index][settings.FIELD_FIELD]
             password = field_database.get('password', False)
             app.logger.debug(field_database)
-            
-            if password or not has_db:
-                return {'data': data}, 200
             
             db_name = field_database['db_name']
             couch_client = CouchClient(settings.COUCH_HOST, auth_from_env=True)
