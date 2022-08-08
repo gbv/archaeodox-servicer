@@ -93,13 +93,13 @@ def post_update():
         app.logger.debug("In post_update, got info:" + str(info))
         token = incoming['session']['token']
         try:
-            payload = info['data']
-            
+            data = info['data']
+            app.logger.debug(json.dumps(data, indent=2))
         
         except Exception as e:
             app.logger.error(str(e))
             app.logger.error(traceback.format_exc(e))
-            raise e
+            {'error': str(e)}, 500
 
 @app.route('/pre-update', methods=['POST'])
 def field_create():
