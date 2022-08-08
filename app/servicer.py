@@ -4,7 +4,7 @@ import json
 import traceback
 
 from flask import Flask, request as incoming_request
-from .easydb_client import EasydbClient
+from .easydb_client import EasydbClient, EASLiberator
 from .wfs_client import WFSClient
 from dpath import util as dp
 
@@ -94,12 +94,14 @@ def post_update():
         try:
             token = incoming['session']['token']
             data = incoming['data']
-            client = EasydbClient('http://easydb-webfrontend', app.logger)
             object_type = data['_objecttype']
             id = data[object_type]['_id']
             mask = data['_mask']
-            item = client.get_item(item_type=object_type, id=id, token=token)
-            app.logger.debug(item)
+            item = edb.get_item(item_type=object_type, id=id, token=token)
+
+            liberator = EASLiberator(base_path='/eas', base_url='https://hekate.gbv.de/eas/partitions-inline/1/', logger=app.logger)
+            source = dp.search(item, f'{object_type}/project_dump/*/versions/original/url')
+            app.logger.debug(json.dumps(source, indent=2))
             return {'data': data}, 200
         except Exception as e:
             app.logger.error(str(e))
