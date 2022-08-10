@@ -107,7 +107,7 @@ def post_update():
                 if source:
                     liberator = EASLiberator(base_path='/eas_assets', base_url='https://hekate.gbv.de/eas/partitions-inline/1/', logger=app.logger)
                     report = liberator.grab_from_url(source, '/field_imports', '.shp', '.jpg', '.shx', '.prj', '.dbf')
-                    app.logger.debug(report)
+                    app.logger.debug(dict_path)
             return {'data': data}, 200
         except Exception as e:
             app.logger.error(str(e))
