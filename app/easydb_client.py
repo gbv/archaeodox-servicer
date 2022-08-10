@@ -104,7 +104,7 @@ class EASLiberator:
     def extract_and_copy(self, source, dest, *extensions):
         with zipfile.ZipFile(source, 'r') as archive:
             archive.extractall(self.temp_dir.name)
-        
+        report = []
         to_copy = []
         for extension in list(extensions):
             path = f'{self.temp_dir.name}/*.{extension}'
@@ -113,10 +113,14 @@ class EASLiberator:
         for found_file in to_copy:
             try:
                 shutil.copy(found_file, dest)  
+                log = f'Copied {found_file} to {dest}/'
                 self.logger.info(f'Copied {found_file} to {dest}/')
+                report.append(log)
             except Exception as e:
                 self.logger.error(str(e))
+                report.append(str(e))
         self.clean_up()
+        return '\n'.join(report)
 
     def grab_from_url(self, url, dest, *extensions):
         file_name = url.replace(self.base_url, '')
@@ -124,7 +128,7 @@ class EASLiberator:
 
         file_name = join(self.base_path, file_name)
 
-        self.extract_and_copy(file_name, dest, *extensions)
+        return self.extract_and_copy(file_name, dest, *extensions)
     
 
 
