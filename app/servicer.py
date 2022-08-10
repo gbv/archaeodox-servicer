@@ -98,7 +98,7 @@ def post_update():
             id = data[object_type]['_id']
             mask = data['_mask']
             item, status = edb.get_item(item_type=object_type, id=id, token=token)
-            
+            report = 'Nichts getan'
             if status == 200:
                 dict_path, source = next(dp.search(item, f'{object_type}/**/original/url', yielded=True))
             else:
@@ -107,7 +107,9 @@ def post_update():
                 if source:
                     liberator = EASLiberator(base_path='/eas_assets', base_url='https://hekate.gbv.de/eas/partitions-inline/1/', logger=app.logger)
                     report = liberator.grab_from_url(source, '/field_imports', '.shp', '.jpg', '.shx', '.prj', '.dbf')
-                    app.logger.debug(dict_path)
+                    # data/field_project/
+            data[object_type]['import_result'] = report
+            app.logger.debug(report)
             return {'data': data}, 200
         except Exception as e:
             app.logger.error(str(e))
