@@ -12,7 +12,7 @@ services:
       hostnet: {}
     volumes:
     - ./app:/opt/app
-    - /srv/easydb/eas/lib/assets/orig/0:/eas_assets
+    - /srv/easydb/eas/lib/assets/orig:/eas_assets
     - /home/trapp/geoserver-dc/geoserver_data/data/shapefiles/field_imports:/field_imports
 
 networks:
