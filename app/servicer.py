@@ -1,3 +1,5 @@
+from crypt import methods
+from enum import Enum
 import http
 import requests
 import json
@@ -21,6 +23,41 @@ wfs = WFSClient(settings.GEO_SERVER_URL,
                 settings.ATTRIBUTES,
                 settings.GEOMETRY,
                 app.logger)
+
+class Servicer:
+    def __init__(self) -> None:
+        self.handlers = {}
+
+    class Hooks(Enum):
+        DB_PRE_UPDATE_ONE = 'db_pre_update_one'
+        DB_PRE_UPDATE = 'db_pre_update'
+        DB_PRE_DELETE_ONE = 'db_pre_delete_one'
+        DB_PRE_DELETE = 'db_pre_delete'
+        DB_POST_UPDATE_ONE = 'db_post_update_one'
+        DB_POST_UPDATE = 'db_post_update'
+        DB_POST_DELETE_ONE = 'db_post_delete_one'
+        DB_POST_DELETE = 'db_post_delete'
+
+
+    
+    def handle_edb_hook(self, hook, object_type, incoming_request):
+        handler = self.acquire_handler(hook, object_type)
+        return handler.process_request(hook, object_type, incoming_request)
+
+    def register_handler(self, hook, object_type, handler):
+        self.handlers[(hook, object_type)] = handler
+
+    def acquire_handler(self, hook, object_type):
+        return self.handlers[(hook, object_type)]
+
+
+servicer = Servicer()
+
+@app.route('/<str:hook>/<str:object_type', methods=['POST'])
+def generic_edb_hook(hook, object_type):
+    app.logger.debug(f"From edb: {hook}, {object_type}")
+    return servicer.handle_edb_hook(hook, object_type, incoming_request)
+
 
 
 @app.route('/', defaults={'n':10})
