@@ -30,6 +30,8 @@ class DummyLogger:
 class EasydbClient:
     API_PATH = "api/v1"
 
+    
+
     def __init__(self, url, logger):
         self.url = url
         self.session_url = join(url,

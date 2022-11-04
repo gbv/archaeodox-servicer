@@ -24,6 +24,8 @@ wfs = WFSClient(settings.GEO_SERVER_URL,
                 settings.GEOMETRY,
                 app.logger)
 
+app.logger.debug('Moin')
+
 class Servicer:
     def __init__(self) -> None:
         self.handlers = {}
