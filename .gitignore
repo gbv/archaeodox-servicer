@@ -9,3 +9,5 @@ app/dante_field/node_modules
 *.pkl
 *.txt
 *.ipynb
+
+.python-version

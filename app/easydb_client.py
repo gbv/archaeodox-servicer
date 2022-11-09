@@ -30,23 +30,21 @@ class DummyLogger:
 class EasydbClient:
     API_PATH = "api/v1"
 
-    
-
     def __init__(self, url, logger):
         self.url = url
         self.session_url = join(url,
-                                     EasydbClient.API_PATH,
-                                     "session")
-        self.search_url = join(url,
-                                    EasydbClient.API_PATH,
-                                    "search")
-        self.session_auth_url = join(url,
-                                          EasydbClient.API_PATH,
-                                          "session",
-                                          "authenticate")
-        self.db_url = join(url,
                                 EasydbClient.API_PATH,
-                                "db")
+                                "session")
+        self.search_url = join(url,
+                               EasydbClient.API_PATH,
+                               "search")
+        self.session_auth_url = join(url,
+                                     EasydbClient.API_PATH,
+                                     "session",
+                                     "authenticate")
+        self.db_url = join(url,
+                           EasydbClient.API_PATH,
+                           "db")
         self.logger = logger
         #self.acquire_session()
 
