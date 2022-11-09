@@ -8,7 +8,7 @@ import traceback
 from flask import Flask, request as incoming_request
 from .easydb_client import EasydbClient, EASLiberator
 from .wfs_client import WFSClient
-from .edbHandler import EdbHandler
+from .edbHandler import EdbHandler, DbCreatingHandler
 from dpath import util as dp
 
 from .dante_field.couch import Client as CouchClient
@@ -44,14 +44,12 @@ class Servicer:
 
     
     def handle_edb_hook(self, hook, object_type, incoming_request):
-        handler = self.acquire_handler(hook, object_type)
-        return handler.process_request(hook, object_type, incoming_request)
+        handler = self.handlers[(hook, object_type)](incoming_request)
+        return handler.process_request()
 
-    def register_handler(self, hook, object_type, handler):
-        self.handlers[(hook, object_type)] = handler
+    def register_handler(self, hook, object_type, handler_class):
+        self.handlers[(hook, object_type)] = handler_class
 
-    def acquire_handler(self, hook, object_type):
-        return self.handlers[(hook, object_type)]
 
 
 @app.route('/<string:hook>/<string:object_type>', methods=['POST'])
@@ -70,6 +68,8 @@ def get_wfs_id(item_type, id, token):
     return dp.get(result, [item_type, "feature_id"])
 
 
+
+
 servicer = Servicer()
-servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE.value, 'field_database', EdbHandler())
+servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_database', DbCreatingHandler)
 app.logger.debug(f'Currently registered handlers: {servicer.handlers}')
