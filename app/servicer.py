@@ -60,6 +60,7 @@ def generic_edb_hook(hook, object_type):
     try:
         return servicer.handle_edb_hook(hook, object_type, incoming_request)
     except Exception as exception:
+        app.logger.exception(exception)
         return str(exception), 500
 
 
