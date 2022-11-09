@@ -44,7 +44,7 @@ class Servicer:
 
     
     def handle_edb_hook(self, hook, object_type, incoming_request):
-        handler = self.handlers[(hook, object_type)](incoming_request)
+        handler = self.handlers[(hook, object_type)](incoming_request, app.logger)
         return handler.process_request()
 
     def register_handler(self, hook, object_type, handler_class):
