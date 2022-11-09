@@ -7,8 +7,8 @@ class EdbHandler:
         self.logger = logger
     
     def process_request(self):
-        self.logger.debug(f'Handling {self.data}')
-        return self.data
+        self.logger.debug(f'Handling {self.object_data}')
+        return self.full_data
 
 
 class DbCreatingHandler(EdbHandler):
@@ -17,4 +17,4 @@ class DbCreatingHandler(EdbHandler):
         
         database = self.object_data
         database['password'] = 'geheim'
-        return self.data
+        return self.full_data
