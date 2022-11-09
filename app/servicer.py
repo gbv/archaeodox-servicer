@@ -8,6 +8,7 @@ import traceback
 from flask import Flask, request as incoming_request
 from .easydb_client import EasydbClient, EASLiberator
 from .wfs_client import WFSClient
+from .edbHandler import EdbHandler
 from dpath import util as dp
 
 from .dante_field.couch import Client as CouchClient
@@ -69,3 +70,4 @@ def get_wfs_id(item_type, id, token):
 
 
 servicer = Servicer()
+servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE, 'field_database', EdbHandler())
