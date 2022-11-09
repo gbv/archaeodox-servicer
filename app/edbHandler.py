@@ -1,6 +1,6 @@
 class EdbHandler:
     def __init__(self, incoming_request, logger):
-        self.data = incoming_request.get_json()
+        self.data = incoming_request.get_json()['data']
         self.logger = logger
     
     def process_request(self):
