@@ -58,8 +58,8 @@ def generic_edb_hook(hook, object_type):
     app.logger.debug(f"From edb: {hook}, {object_type}")
     try:
         return servicer.handle_edb_hook(hook, object_type, incoming_request)
-    except exception:
-        return str(Exception), 500
+    except Exception as exception:
+        return str(exception), 500
 
 
 def get_wfs_id(item_type, id, token):
