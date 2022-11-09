@@ -1,6 +1,9 @@
 class EdbHandler:
     def __init__(self, incoming_request, logger):
-        self.data = incoming_request.get_json()['data']
+        self.full_data = incoming_request.get_json()
+        self.inner_data = self.full_data['data']
+        self.object_type = self.inner_data['_objecttype']
+        self.object_data = self.inner_data[self.object_type]
         self.logger = logger
     
     def process_request(self):
@@ -12,6 +15,6 @@ class DbCreatingHandler(EdbHandler):
     def process_request(self):
         self.logger.debug(f'Handling {self.data}')
         
-        database = self.data['field_database']
+        database = self.object_data
         database['password'] = 'geheim'
         return self.data
