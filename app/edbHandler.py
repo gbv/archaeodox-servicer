@@ -13,7 +13,7 @@ class EdbHandler:
 
 class DbCreatingHandler(EdbHandler):
     def process_request(self):
-        self.logger.debug(f'Handling {self.data}')
+        self.logger.debug(f'Handling {self.inner_data}')
         
         database = self.object_data
         database['password'] = 'geheim'
