@@ -27,7 +27,7 @@ class DbCreatingHandler(EdbHandler):
         self.logger.debug(f'Handling {self.inner_data}')
         couch = CouchClient(COUCH_HOST, auth_from_env=True)
         database = self.object_data
-        database_name = database['db_name'].lower()
+        database_name = database['db_name'].lower().strip()
         database['db_name'] = database_name
 
         if not database['password']:

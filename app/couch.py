@@ -46,11 +46,17 @@ class Client:
     def prepend_host(self, *args):
         return os.path.join(self.host, *args)
 
+    @classmethod
+    def check_db_name(cls, db_name, raise_error=False):
+        valid = re.match(r'^[a-z][a-z0-9_$()+/-]*$', db_name)
+        if raise_error and not valid:
+            raise ValueError('The project name may only contain lower case letters and characters _, $, (, ), +, -, / and must start with a letter ')
+        return valid
+
     def create_database(self, db_name):
         db_name = db_name.lower()
-        if not re.match(r'^[a-z][a-z0-9_$()+/-]*$', db_name):
-            raise ValueError('The project name may only contain lower case letters and characters _, $, (, ), +, -, / and must start with a letter ')
-        
+        Client.check_db_name(db_name, True)
+            
         response = requests.put(url=self.prepend_host(db_name), auth=self.auth)
         if not response.ok:
             raise ConnectionError(response.content)
