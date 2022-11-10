@@ -1,5 +1,6 @@
 import os
 from .couch import Client as CouchClient
+from .easydb_client import EasydbClient
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -45,4 +46,15 @@ class DbCreatingHandler(EdbHandler):
             
             database['password'] = user['password']
 
+        
+
+class FileImportingHandler(EdbHandler):
+    def process_request(self):
+        easydb_client = EasydbClient('https://hekate.gbv.de', self.logger)
+        easydb_client.acquire_session()
+
+        id = self.object_data['_id']
+        dump = easydb_client.get_by_id(self.object_type, id)
+        self.logger.debug(f'Retrieved from edb: {dump}')
+        
         return self.full_data
