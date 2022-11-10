@@ -11,7 +11,7 @@ from .wfs_client import WFSClient
 from .edbHandler import EdbHandler, DbCreatingHandler
 from dpath import util as dp
 
-from .dante_field.couch import Client as CouchClient
+from .couch import Client as CouchClient
 from . import settings
 
 app = Flask(__name__)
