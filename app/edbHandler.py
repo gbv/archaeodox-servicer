@@ -18,7 +18,8 @@ class EdbHandler:
         self.logger = logger
     
     def process_request(self):
-        self.logger.debug(f'Handling {self.object_data}')
+        self.logger.debug(f"Handling: {self.full_data}")
+        self.logger.debug(f'Object data {self.object_data}')
         return self.full_data
 
 
@@ -28,6 +29,8 @@ class DbCreatingHandler(EdbHandler):
         couch = CouchClient(COUCH_HOST, auth_from_env=True)
         database = self.object_data
         database_name = database['db_name'].lower().strip()
+        CouchClient.check_db_name(database_name, True)
+        
         database['db_name'] = database_name
 
         if not database['password']:
