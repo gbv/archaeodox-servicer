@@ -72,6 +72,6 @@ def get_wfs_id(item_type, id, token):
 
 servicer = Servicer()
 servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_database', DbCreatingHandler)
-servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'csv_dump', EdbHandler)
+servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_project', EdbHandler)
 
 app.logger.debug(f'Currently registered handlers: {servicer.handlers}')
