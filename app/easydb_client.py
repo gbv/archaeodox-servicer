@@ -75,9 +75,9 @@ class EasydbClient:
         params = {"token": token}
 
         get_url = join(self.db_url,
-                            item_type,
-                            "_all_fields",
-                            str(id))
+                       item_type,
+                       "_all_fields",
+                       str(id))
 
         response = requests.get(get_url, params=params)
 
@@ -87,6 +87,20 @@ class EasydbClient:
             result = {}
         return result, response.status_code
 
+    def get_by_id(self, item_type, id, token=None):
+        get_url = join(self.db_url,
+                       f'{item_type}/{item_type}__all_fields/',
+                       str(id))
+        params = {"token": token if token is not None else self.session_token}
+        params['format': 'long']
+
+        response = requests.get(get_url, params=params)
+
+        if response.status_code == 200:
+            result = json.loads(response.content)[0]
+        else:
+            result = {}
+        return result, response.status_code
 
 class EASLiberator:
     def __init__(self, base_path='', base_url = '', logger=None):
