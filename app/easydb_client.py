@@ -92,7 +92,7 @@ class EasydbClient:
                        f'{item_type}/{item_type}__all_fields/',
                        str(id))
         params = {"token": token if token is not None else self.session_token}
-        params['format': 'long']
+        params['format'] = 'long'
 
         response = requests.get(get_url, params=params)
 
