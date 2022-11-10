@@ -37,7 +37,7 @@ class DbCreatingHandler(EdbHandler):
                 couch.add_user_to_db(user['name'], database_name)  
             else:
                 self.logger.info("Creating user.")
-                user = couch.create_db_and_user(database_name, database_name)
+                user = couch.create_db_and_user(database_name)
             
             database['password'] = user['password']
 

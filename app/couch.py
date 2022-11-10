@@ -92,10 +92,13 @@ class Client:
             raise ConnectionError(str(response.content))
         return response.ok
     
-    def create_db_and_user(self, db_name):
+    def create_db_and_user(self, db_name, user_name=None):
+        if user_name is None:
+            user_name = db_name
+        
         self.create_database(db_name)
-        user = self.create_db_user(db_name, db_name)
-        self.add_user_to_db(db_name, db_name)
+        user = self.create_db_user(db_name, user_name)
+        self.add_user_to_db(user_name, db_name)
         return user
 
     def copy_config(self, source, dest):
