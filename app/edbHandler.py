@@ -32,11 +32,11 @@ class DbCreatingHandler(EdbHandler):
         if not database['password']:
             self.logger.info(f"No credentials for {database_name} found, rectifying this.")
             if couch.has_database(database_name=database_name):
-                self.logger.info("Creaitng database and user.")
+                self.logger.info("Creating database and user.")
                 user = couch.create_db_user(database_name, database_name)
                 couch.add_user_to_db(user['name'], database_name)  
             else:
-                self.logger.info("Creaitng user.")
+                self.logger.info("Creating user.")
                 user = couch.create_db_and_user(database_name, database_name)
             
             database['password'] = user['password']
