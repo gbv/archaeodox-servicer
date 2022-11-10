@@ -97,6 +97,7 @@ class EasydbClient:
         response = requests.get(get_url, params=params)
 
         if response.status_code == 200:
+            self.logger.debug(response.content)
             result = json.loads(response.content)[0]
         else:
             result = {}
