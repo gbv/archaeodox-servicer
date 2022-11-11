@@ -8,7 +8,7 @@ import traceback
 from flask import Flask, request as incoming_request
 from .easydb_client import EasydbClient, EASLiberator
 from .wfs_client import WFSClient
-from .edbHandler import EdbHandler, DbCreatingHandler, FileImportingHandler, ImportInitiatingHandler
+from .edbHandlers import EdbHandler, DbCreatingHandler, FileImportingHandler, ImportInitiatingHandler
 
 from dpath import util as dp
 
