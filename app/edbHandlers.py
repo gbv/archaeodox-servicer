@@ -46,15 +46,24 @@ class DbCreatingHandler(EdbHandler):
             
             database['password'] = user['password']
 
+
+class ImportInitiatingHandler(EdbHandler):
+    INITIATION_MESSAGE = 'Import vorbereitet.'
+    RESULT_FIELD = 'import_result'
+    
+    def process_request(self):
+        self.object_data[ImportInitiatingHandler.RESULT_FIELD] = ImportInitiatingHandler.INITIATION_MESSAGE
         
+        return self.full_data
 
 class FileImportingHandler(EdbHandler):
     def process_request(self):
         easydb_client = EasydbClient('https://hekate.gbv.de', self.logger)
         easydb_client.acquire_session()
-
+        
         id = self.object_data['_id']
         dump = easydb_client.get_by_id(self.object_type, id)
         self.logger.debug(f'Retrieved from edb: {dump}')
         
         return self.full_data
+

@@ -8,7 +8,8 @@ import traceback
 from flask import Flask, request as incoming_request
 from .easydb_client import EasydbClient, EASLiberator
 from .wfs_client import WFSClient
-from .edbHandler import EdbHandler, DbCreatingHandler, FileImportingHandler
+from .edbHandler import EdbHandler, DbCreatingHandler, FileImportingHandler, ImportInitiatingHandler
+
 from dpath import util as dp
 
 from .couch import Client as CouchClient
@@ -72,6 +73,7 @@ def get_wfs_id(item_type, id, token):
 
 servicer = Servicer()
 servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_database', DbCreatingHandler)
-servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_project', FileImportingHandler)
+servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_project', ImportInitiatingHandler)
+servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value, 'field_project', FileImportingHandler)
 
 app.logger.debug(f'Currently registered handlers: {servicer.handlers}')
