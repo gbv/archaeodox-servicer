@@ -66,13 +66,13 @@ class ImportInitiatingHandler(EdbHandler):
 class FileImportingHandler(EdbHandler):
     def process_request(self):
         super().process_request()
-        file_url = dp.get(self.object_data, 'project_dump/versions/original/download_url')
         easydb_client = EasydbClient('https://hekate.gbv.de', self.logger)
         easydb_client.acquire_session()
 
         id = self.object_data['_id']
         dump = easydb_client.get_by_id(self.object_type, id)
         self.logger.debug(f'Retrieved from edb: {dump}')
-        
+        file_url = dp.get(dump, 'project_dump/versions/original/download_url')
+
         return self.full_data
 
