@@ -8,6 +8,7 @@ dpath = "*"
 requests = "*"
 flask = "*"
 python-dotenv = "*"
+pillow = "*"
 
 [dev-packages]
 

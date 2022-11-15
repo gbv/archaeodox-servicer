@@ -1,7 +1,10 @@
 import os
-from .couch import Client as CouchClient
+from .couch import CouchClient as CouchClient
+from .field_client import FieldClient
 from .easydb_client import EasydbClient
 from dotenv import load_dotenv
+from dpath import util as dp
+
 
 load_dotenv()
 
@@ -19,7 +22,8 @@ class EdbHandler:
         self.logger = logger
     
     def process_request(self):
-        self.logger.debug(f"Handling: {self.full_data}")
+        self.logger.debug(f"Handler: {self.__class__.__name__}")
+        self.logger.debug(f"Full data: {self.full_data}")
         self.logger.debug(f'Object data {self.object_data}')
         return self.full_data
 
@@ -61,7 +65,8 @@ class ImportInitiatingHandler(EdbHandler):
 
 class FileImportingHandler(EdbHandler):
     def process_request(self):
-        self.logger.debug(f"post_update inner data: {self.inner_data}")
+        super().process_request()
+        file_url = dp.get(self.object_data, 'project_dump/versions/original/download_url')
         easydb_client = EasydbClient('https://hekate.gbv.de', self.logger)
         easydb_client.acquire_session()
 

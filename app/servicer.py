@@ -12,7 +12,7 @@ from .edbHandlers import EdbHandler, DbCreatingHandler, FileImportingHandler, Im
 
 from dpath import util as dp
 
-from .couch import Client as CouchClient
+from .couch import CouchClient as CouchClient
 from . import settings
 
 app = Flask(__name__)

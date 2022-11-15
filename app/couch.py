@@ -1,12 +1,11 @@
 import json, os, requests, string, random
 from uuid import uuid4
-from ntpath import join
 
 from dpath import util as dp
 import re
 
 
-class Client:
+class CouchClient:
     CONFIG_DOCUMENT = 'configuration'
     META_KEYS = ['_id',
                  '_rev',
@@ -21,7 +20,7 @@ class Client:
         self.host = host
             
     def get_config(self, database):
-        url = os.path.join(self.host, database, Client.CONFIG_DOCUMENT)
+        url = os.path.join(self.host, database, CouchClient.CONFIG_DOCUMENT)
         response = requests.get(url=url, auth=self.auth)
         if response.ok:
             return response.json()
@@ -29,7 +28,7 @@ class Client:
     def inject_config(self, database, path, patch):
         config = self.get_config(database)
         dp.new(config, path, patch)
-        url = self.prepend_host(database, Client.CONFIG_DOCUMENT)
+        url = self.prepend_host(database, CouchClient.CONFIG_DOCUMENT)
         response = requests.put(url=url, data=json.dumps(config), auth=self.auth)
         return response.content
 
@@ -55,7 +54,7 @@ class Client:
 
     def create_database(self, db_name):
         db_name = db_name.lower()
-        Client.check_db_name(db_name, True)
+        CouchClient.check_db_name(db_name, True)
             
         response = requests.put(url=self.prepend_host(db_name), auth=self.auth)
         if not response.ok:
@@ -72,7 +71,7 @@ class Client:
             'name': user_name,
             'type': 'user',
             'roles': [],
-            'password': Client.generate_password()
+            'password': CouchClient.generate_password()
         }
         response = requests.put(url=self.prepend_host('_users', user_id),
                                                  data=json.dumps(user),
@@ -108,46 +107,29 @@ class Client:
         return user
 
     def copy_config(self, source, dest):
-        response = requests.get(url=self.prepend_host(source, Client.CONFIG_DOCUMENT),
+        response = requests.get(url=self.prepend_host(source, CouchClient.CONFIG_DOCUMENT),
                                 auth=self.auth)
         if not response.ok:
             raise ConnectionError(str(response.content))
         config = json.loads(response.content.decode('utf-8'))
         
-        response = self.put_doc(dest, Client.CONFIG_DOCUMENT, config)
+        response = self.put_doc(dest, CouchClient.CONFIG_DOCUMENT, config)
         if not response.ok:
             raise ConnectionError(response.content.decode('utf-8'))
         return response
     
     def put_doc(self, db_name, doc_id, document, sanitize=True):
         if sanitize:
-            for meta_key in Client.META_KEYS:
+            for meta_key in CouchClient.META_KEYS:
                 document.pop(meta_key, None)
         response = requests.put(self.prepend_host(db_name, doc_id), auth=self.auth, data=json.dumps(document))
         return response
 
-    def get_or_create_id(self, database, identifier, field='resource'):
-        mango =  {'selector': {f'{field}.identifier': identifier},
-                  'fields': [field, '_id']
-                  }
-        search_results = requests.post(self.prepend_host(database, '_find'), auth=self.auth, json=mango)
-        if search_results.ok:
-            documents = search_results.json()['docs']
-            if documents:
-                return documents[0]['_id']
-            else:
-                id = str(uuid4())
-                document = {'resource': {'identifier': identifier, 'id': id}}
-                self.put_doc(database, id, document)
-                return id
-        else:
-            raise ValueError(search_results.json()['reason'])
-
-        
+         
 
 if __name__=='__main__':
     
-    couch = Client('http://esx-80.gbv.de:5984', auth_from_env=True)
+    couch = CouchClient('http://esx-80.gbv.de:5984', auth_from_env=True)
     r = couch.copy_config('hh9999_1234', 'amh_test')
     print(r.content)
     
