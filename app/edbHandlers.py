@@ -70,7 +70,7 @@ class FileImportingHandler(EdbHandler):
         easydb_client.acquire_session()
 
         id = self.object_data['_id']
-        dump = easydb_client.get_by_id(self.object_type, id)
+        dump = easydb_client.get_by_id(self.object_type, id, delay=4)
         self.logger.debug(f'Retrieved from edb: {dump}')
         file_url = dp.get(dump, 'project_dump/versions/original/download_url')
 

@@ -1,6 +1,7 @@
 import json, requests
 import zipfile, tempfile, shutil, glob
 from os.path import join
+from time import sleep
 from . import credentials
 
 
@@ -87,7 +88,9 @@ class EasydbClient:
             result = {}
         return result, response.status_code
 
-    def get_by_id(self, item_type, id, token=None):
+    def get_by_id(self, item_type, id, token=None, delay=0):
+        if delay:
+            sleep(delay)
         get_url = join(self.db_url,
                        f'{item_type}/{item_type}__all_fields/',
                        str(id))
