@@ -98,7 +98,7 @@ class Servicer:
             return handler.process_request()
 
     def register_handler(self, hook, object_type, handler_class, delayed=False):
-        self.handlers[(hook, object_type)] = handler_class
+        self.handlers[(hook, object_type)] = (handler_class, delayed)
 
 
 delayed_task_queue = Queue(app.logger, 4)
