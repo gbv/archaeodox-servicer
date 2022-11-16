@@ -51,6 +51,7 @@ class Queue():
 
         if matured_tasks:
             time_stamp, next_task = matured_tasks.pop()
+            self.logger.debug(f'Popped Task: {next_task.label}')
             next_task.run()
             return next_task.label
         else:
@@ -104,12 +105,11 @@ class Servicer:
         self.handlers[(hook, object_type)] = (handler_class, delayed)
 
 
-delayed_task_queue = Queue(app.logger, 4)
 
 @app.route('/run-delayed', methods=['GET'])
 def run_delayed():
     try:
-        task_label = delayed_task_queue.pop()
+        task_label = servicer.delayed_task_queue.pop()
         return task_label, 200
     except Exception as exception:
         return str(exception), 500
