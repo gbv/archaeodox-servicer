@@ -75,7 +75,7 @@ class Servicer:
     def __init__(self, logger) -> None:
         self.handlers = {}
         self.logger = logger
-        self.delayed_queue = Queue(logger, 4)
+        self.delayed_task_queue = Queue(logger, 4)
 
     class Hooks(Enum):
         DB_PRE_UPDATE_ONE = 'db_pre_update_one'
