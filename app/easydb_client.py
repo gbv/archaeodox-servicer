@@ -88,9 +88,7 @@ class EasydbClient:
             result = {}
         return result, response.status_code
 
-    def get_by_id(self, item_type, id, token=None, delay=0):
-        if delay:
-            sleep(delay)
+    def get_by_id(self, item_type, id, token=None):
         get_url = join(self.db_url,
                        f'{item_type}/{item_type}__all_fields/',
                        str(id))

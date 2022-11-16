@@ -70,8 +70,10 @@ class Task:
 
 
 class Servicer:
-    def __init__(self) -> None:
+    def __init__(self, logger) -> None:
         self.handlers = {}
+        self.logger = logger
+        self.delayed_queue = Queue(logger, 4)
 
     class Hooks(Enum):
         DB_PRE_UPDATE_ONE = 'db_pre_update_one'
@@ -86,11 +88,18 @@ class Servicer:
 
     
     def handle_edb_hook(self, hook, object_type, incoming_request):
-        handler = self.handlers[(hook, object_type)](incoming_request, app.logger)
-        return handler.process_request()
+        handler, delayed = self.handlers[(hook, object_type)](incoming_request, app.logger)
+        if delayed:
+            task_label = '_'.join((hook, object_type, str(time.time())))
+            task = Task(task_label, self.logger, handler.process_request)
+            self.delayed_queue.append(task)
+            return f'Enqueued {task_label}', 200
+        else:
+            return handler.process_request()
 
-    def register_handler(self, hook, object_type, handler_class):
+    def register_handler(self, hook, object_type, handler_class, delayed=False):
         self.handlers[(hook, object_type)] = handler_class
+
 
 delayed_task_queue = Queue(app.logger, 4)
 
@@ -124,6 +133,9 @@ def get_wfs_id(item_type, id, token):
 servicer = Servicer()
 servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_database', DbCreatingHandler)
 servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_project', ImportInitiatingHandler)
-servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value, 'field_project', FileImportingHandler)
+servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
+                          'field_project',
+                          FileImportingHandler,
+                          delayed=True)
 
 app.logger.debug(f'Currently registered handlers: {servicer.handlers}')
