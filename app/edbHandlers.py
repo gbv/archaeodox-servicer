@@ -21,7 +21,7 @@ class EdbHandler:
         self.object_data = self.inner_data[self.object_type]
         self.logger = logger
     
-    def process_request(self):
+    def process_request(self, *args, **kwargs):
         self.logger.debug(f"Handler: {self.__class__.__name__}")
         self.logger.debug(f"Full data: {self.full_data}")
         self.logger.debug(f'Object data {self.object_data}')
@@ -29,7 +29,7 @@ class EdbHandler:
 
 
 class DbCreatingHandler(EdbHandler):
-    def process_request(self):
+    def process_request(self, *args, **kwargs):
         self.logger.debug(f'Handling {self.inner_data}')
         couch = CouchClient(COUCH_HOST, auth_from_env=True)
         database = self.object_data
@@ -55,7 +55,7 @@ class ImportInitiatingHandler(EdbHandler):
     INITIATION_MESSAGE = 'Import vorbereitet.'
     RESULT_FIELD = 'import_result'
     
-    def process_request(self):
+    def process_request(self, *args, **kwargs):
         result = self.object_data[ImportInitiatingHandler.RESULT_FIELD]
         self.logger.debug(self.object_data)
         if not result:
@@ -64,7 +64,7 @@ class ImportInitiatingHandler(EdbHandler):
         return self.full_data
 
 class FileImportingHandler(EdbHandler):
-    def process_request(self):
+    def process_request(self, *args, **kwargs):
         super().process_request()
         easydb_client = EasydbClient('https://hekate.gbv.de', self.logger)
         easydb_client.acquire_session()
