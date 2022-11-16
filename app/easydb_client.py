@@ -103,14 +103,19 @@ class EasydbClient:
             result = {}
         return result, response.status_code
 
-    def update_item(self, item_type, object_data, token=None):
-        current_version = object_data[item_type]['_version']
-        object_data[item_type]['_version'] = current_version + 1
-
+    def update_item(self, item_type, id, up_data, token=None):
+        latest = self.get_by_id(item_type=item_type, id=id, token=token)
+        current_version = latest[item_type]['_version']
+        latest[item_type]['_version'] = current_version + 1
+        for k, v in up_data:
+            latest[item_type][k] = v
+        
         update_url = join(self.db_url,
                           item_type)
         params = {"token": token if token is not None else self.session_token}
-        response = requests.post(update_url, data=object_data, params=params)
+        response = requests.post(update_url, data=[latest], params=params)
+        if not response.ok:
+            raise ConnectionError(response.text)
         return response.ok
 
 

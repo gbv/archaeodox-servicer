@@ -79,13 +79,12 @@ class FileImportingHandler(EdbHandler):
                 file_url = dp.get(inner_object_data, 'project_dump/*/versions/original/download_url')
             except KeyError:
                 self.logger.debug(f'No media associated with {self.object_type} {id}.')
-                inner_object_data['import_result'] = f'Failed: No media found'
-                easydb_client.update_item(self.object_type, wrapped_object_data)
+                easydb_client.update_item(self.object_type, id, {'import_result': 'Failed: No media found'})
                 return self.full_data
             
             self.logger.debug(f'acquired url {file_url}')
-            inner_object_data['import_result'] = f'Import initiated.'
-            easydb_client.update_item(self.object_type, wrapped_object_data)
+            
+            easydb_client.update_item(self.object_type,id, {'import_result': f'Import initiated.'})
                 
         else:
             self.logger.debug(f'Failed to retrieve project for id: {id}.')
