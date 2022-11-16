@@ -88,7 +88,8 @@ class Servicer:
 
     
     def handle_edb_hook(self, hook, object_type, incoming_request):
-        handler, delayed = self.handlers[(hook, object_type)](incoming_request, app.logger)
+        handler_class, delayed = self.handlers[(hook, object_type)]
+        handler = handler_class(incoming_request, app.logger)
         if delayed:
             task_label = '_'.join((hook, object_type, str(time.time())))
             task = Task(task_label, self.logger, handler.process_request)
