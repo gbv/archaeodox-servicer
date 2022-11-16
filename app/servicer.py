@@ -95,8 +95,8 @@ class Servicer:
         if delayed:
             task_label = '_'.join((hook, object_type, str(time.time())))
             task = Task(task_label, self.logger, handler.process_request)
-            self.delayed_queue.append(task)
-            self.logger.debug(self.delayed_queue.tasks)
+            self.delayed_task_queue.append(task)
+            self.logger.debug(self.delayed_task_queue.tasks)
             return f'Enqueued {task_label}', 200
         else:
             return handler.process_request()
