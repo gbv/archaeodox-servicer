@@ -38,6 +38,7 @@ class Queue():
     def append(self, task):
         time_stamp = time.time()
         self.tasks.append((time_stamp, task))
+        self.logger.debug(f'Enqueued {task}.')
 
     def pop(self):
         
@@ -94,6 +95,7 @@ class Servicer:
             task_label = '_'.join((hook, object_type, str(time.time())))
             task = Task(task_label, self.logger, handler.process_request)
             self.delayed_queue.append(task)
+            self.logger.debug(self.delayed_queue.tasks)
             return f'Enqueued {task_label}', 200
         else:
             return handler.process_request()
