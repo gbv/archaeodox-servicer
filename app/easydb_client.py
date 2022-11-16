@@ -104,7 +104,9 @@ class EasydbClient:
         return result, response.status_code
 
     def update_item(self, item_type, id, up_data, token=None):
-        latest = self.get_by_id(item_type=item_type, id=id, token=token)
+        latest, return_code = self.get_by_id(item_type=item_type, id=id, token=token)
+        if not return_code == 200:
+            raise ValueError(f'No {item_type} for id {id} found to update: {return_code}')
         current_version = latest[item_type]['_version']
         latest[item_type]['_version'] = current_version + 1
         for k, v in up_data:
