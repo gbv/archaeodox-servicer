@@ -115,7 +115,7 @@ class EasydbClient:
         update_url = join(self.db_url,
                           item_type)
         params = {"token": token if token is not None else self.session_token}
-        response = requests.post(update_url, data=[latest], params=params)
+        response = requests.post(update_url, json=[latest], params=params)
         if not response.ok:
             raise ConnectionError(response.text)
         return response.ok
