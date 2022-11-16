@@ -103,6 +103,18 @@ class EasydbClient:
             result = {}
         return result, response.status_code
 
+    def update_item(self, item_type, object_data, token=None):
+        current_version = object_data[item_type]['_version']
+        object_data[item_type]['_version'] = current_version + 1
+
+        update_url = join(self.db_url,
+                          item_type)
+        params = {"token": token if token is not None else self.session_token}
+        response = requests.post(update_url, data=object_data, params=params)
+        return response.ok
+
+
+
 class EASLiberator:
     def __init__(self, base_path='', base_url = '', logger=None):
         self.temp_dir = tempfile.TemporaryDirectory()
