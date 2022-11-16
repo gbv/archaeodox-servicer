@@ -45,7 +45,7 @@ class Queue():
         def sufficiently_aged(time_task_pair):
             now = time.time()
             max_time_stamp = now - self.delay
-            return time_task_pair <= max_time_stamp
+            return time_task_pair[0] <= max_time_stamp
 
         matured_tasks = list(filter(sufficiently_aged, self.tasks))
 
