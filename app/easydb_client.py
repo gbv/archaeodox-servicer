@@ -109,7 +109,7 @@ class EasydbClient:
             raise ValueError(f'No {item_type} for id {id} found to update: {return_code}')
         current_version = latest[item_type]['_version']
         latest[item_type]['_version'] = current_version + 1
-        for k, v in up_data:
+        for k, v in up_data.items():
             latest[item_type][k] = v
         
         update_url = join(self.db_url,
