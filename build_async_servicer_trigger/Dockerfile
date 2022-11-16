@@ -1,7 +1,7 @@
 FROM debian:buster-slim
 
 RUN apt update
-RUN apt -y install cron
+RUN apt -y install cron curl
 
 COPY task.sh ./opt
 COPY trigger-crontab /etc/cron.d/trigger-crontab
