@@ -75,6 +75,10 @@ class FileImportingHandler(EdbHandler):
         if reply_code == 200:
             inner_object_data = wrapped_object_data[self.object_type]
             self.logger.debug(f'Retrieved from edb: {wrapped_object_data}')
+            import_result = inner_object_data['import_result']
+            if import_result != 'Import vorbereitet.':
+                return
+
             try:
                 file_url = dp.get(inner_object_data, 'project_dump/*/versions/original/download_url')
             except KeyError:
