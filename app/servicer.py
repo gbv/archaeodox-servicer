@@ -112,6 +112,7 @@ def run_delayed():
         task_label = servicer.delayed_task_queue.pop()
         return task_label, 200
     except Exception as exception:
+        app.logger.exception(exception)
         return str(exception), 500
 
 @app.route('/<string:hook>/<string:object_type>', methods=['POST'])
