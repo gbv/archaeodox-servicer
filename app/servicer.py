@@ -52,6 +52,8 @@ class Queue():
             time_stamp, next_task = matured_tasks.pop()
             next_task.run()
             return next_task.label
+        else:
+            return 'No scheduled tasks.'
 
 class Task:
     def __init__(self, label, logger, function, *args, **kwargs) -> None:
