@@ -4,6 +4,7 @@ import http
 import requests
 import json
 import traceback
+import time
 
 from flask import Flask, request as incoming_request
 from .easydb_client import EasydbClient, EASLiberator
@@ -28,6 +29,44 @@ wfs = WFSClient(settings.GEO_SERVER_URL,
 
 app.logger.debug('Started servicer')
 
+class Queue():
+    def __init__(self, logger, delay) -> None:
+        self.tasks = []
+        self.logger = logger
+        self.delay = delay
+
+    def append(self, task):
+        time_stamp = time.time()
+        self.tasks.append((time_stamp, task))
+
+    def pop(self):
+        
+        def sufficiently_aged(time_task_pair):
+            now = time.time()
+            max_time_stamp = now - self.delay
+            return time_task_pair <= max_time_stamp
+
+        matured_tasks = list(filter(sufficiently_aged, self.tasks))
+
+        if matured_tasks:
+            time_stamp, next_task = matured_tasks.pop()
+            next_task.run()
+            return next_task.label
+
+class Task:
+    def __init__(self, label, logger, function, *args, **kwargs) -> None:
+        self.label = label
+        self.logger = logger
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
+        self.kwargs['logger'] = logger
+
+    def run(self):
+        self.logger.info(f"Running task {self.label}.")
+        return self.function(*self.args, **self.kwargs)
+
+
 class Servicer:
     def __init__(self) -> None:
         self.handlers = {}
@@ -51,7 +90,15 @@ class Servicer:
     def register_handler(self, hook, object_type, handler_class):
         self.handlers[(hook, object_type)] = handler_class
 
+delayed_task_queue = Queue(app.logger, 4)
 
+@app.route('/run-delayed', methods=['GET'])
+def run_delayed():
+    try:
+        task_label = delayed_task_queue.pop()
+        return task_label, 200
+    except Exception as exception:
+        return str(exception), 500
 
 @app.route('/<string:hook>/<string:object_type>', methods=['POST'])
 def generic_edb_hook(hook, object_type):
@@ -67,6 +114,7 @@ def get_wfs_id(item_type, id, token):
     result, code = edb.get_item(item_type, id, token=token)
     app.logger.debug("Got items: " + json.dumps(result, indent=2))
     return dp.get(result, [item_type, "feature_id"])
+
 
 
 

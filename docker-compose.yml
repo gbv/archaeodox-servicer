@@ -14,6 +14,14 @@ services:
     - ./app:/opt/app
     - /srv/easydb/eas/lib/assets/orig:/eas_assets
     - /home/trapp/geoserver-dc/geoserver_data/data/shapefiles/field_imports:/field_imports
+  
+  async_servicer_trigger:
+    container_name: async_servicer_trigger
+    build:
+      context: ./build_async_servicer_trigger
+    restart: unless-stopped
+    networks:
+      hostnet: {}
 
 networks:
   hostnet:
