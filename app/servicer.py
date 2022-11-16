@@ -50,7 +50,7 @@ class Queue():
         matured_tasks = list(filter(sufficiently_aged, self.tasks))
 
         if matured_tasks:
-            time_stamp, next_task = matured_tasks.pop()
+            time_stamp, next_task = self.tasks.pop(0)
             self.logger.debug(f'Popped Task: {next_task.label}')
             next_task.run()
             return next_task.label
