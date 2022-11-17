@@ -125,7 +125,9 @@ class CouchClient:
         response = requests.put(self.prepend_host(db_name, doc_id), auth=self.auth, data=json.dumps(document))
         return response
 
-         
+    def update_doc(self, db_name, doc_id, document):
+        response = requests.post(self.prepend_host(db_name, doc_id), auth=self.auth, data=json.dumps(document))
+        return response
 
 if __name__=='__main__':
     

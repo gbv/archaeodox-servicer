@@ -78,9 +78,9 @@ class FileImportingHandler(EdbHandler):
             import_result = inner_object_data['import_result']
             if import_result != 'Import vorbereitet.':
                 return
-
             try:
                 file_url = dp.get(inner_object_data, 'project_dump/*/versions/original/download_url')
+                
             except KeyError:
                 self.logger.debug(f'No media associated with {self.object_type} {id}.')
                 easydb_client.update_item(self.object_type, id, {'import_result': 'Failed: No media found'})
