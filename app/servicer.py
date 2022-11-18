@@ -14,17 +14,17 @@ from .edbHandlers import EdbHandler, DbCreatingHandler, FileImportingHandler, Im
 from dpath import util as dp
 
 from .couch import CouchClient as CouchClient
-from . import settings
+from . import WFS_settings
 
 app = Flask(__name__)
 edb = EasydbClient("http://easydb-webfrontend", app.logger)
 
-wfs = WFSClient(settings.GEO_SERVER_URL,
-                settings.TRANSACTION_ATTRIBUTES,
-                settings.OBJECT_TYPE,
-                settings.OBJECT_NAMESPACE,
-                settings.ATTRIBUTES,
-                settings.GEOMETRY,
+wfs = WFSClient(WFS_settings.GEO_SERVER_URL,
+                WFS_settings.TRANSACTION_ATTRIBUTES,
+                WFS_settings.OBJECT_TYPE,
+                WFS_settings.OBJECT_NAMESPACE,
+                WFS_settings.ATTRIBUTES,
+                WFS_settings.GEOMETRY,
                 app.logger)
 
 app.logger.debug('Started servicer')
