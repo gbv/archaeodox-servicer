@@ -71,7 +71,7 @@ class FileImportingHandler(EdbHandler):
         self.edb_client.acquire_session()
         id = self.object_data['_id']
         try:
-            wrapped_object_data = easydb_client.get_object_by_id(self.object_type, id)
+            wrapped_object_data = self.edb_client.get_object_by_id(self.object_type, id)
         except ValueError as error:
             self.logger.exception(error)
             self.edb_client.update_item(self.object_type,id, {'import_result': f'Import initiated.'})
