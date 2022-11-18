@@ -1,5 +1,5 @@
 class Easydb:
-
+    HOST_URL = "http://easydb-webfrontend"
     FIELD_DB_NAME_PATH = ""
     FIELD_DB_PASSWORD_PATH = ""
 

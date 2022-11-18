@@ -15,9 +15,10 @@ from dpath import util as dp
 
 from .couch import CouchClient as CouchClient
 from . import WFS_settings
+from . import global_settings
 
 app = Flask(__name__)
-edb = EasydbClient("http://easydb-webfrontend", app.logger)
+edb = EasydbClient(global_settings.Easydb.HOST_URL, app.logger)
 
 wfs = WFSClient(WFS_settings.GEO_SERVER_URL,
                 WFS_settings.TRANSACTION_ATTRIBUTES,
