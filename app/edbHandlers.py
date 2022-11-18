@@ -86,7 +86,7 @@ class FileImportingHandler(EdbHandler):
             import_file = EasydbClient.get_preferred_media(wrapped_object_data,
                                                            global_settings.Easydb.FIELD_IMPORT_MEDIA_FIELD)
             
-            file_url = import_file['versions/original/download_url']
+            file_url = dp.get(import_file, 'versions/original/download_url')
             self.logger.debug(file_url)
         except KeyError:
             self.logger.debug(f'No media associated with {self.object_type} {id}.')
