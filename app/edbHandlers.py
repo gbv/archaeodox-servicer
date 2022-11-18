@@ -2,13 +2,14 @@ import os
 from .couch import CouchClient as CouchClient
 from .field_client import FieldClient
 from .easydb_client import EasydbClient
+from . import global_settings
 from dotenv import load_dotenv
 from dpath import util as dp
 
 
 load_dotenv()
 
-COUCH_HOST = "http://esx-80.gbv.de:5984"
+COUCH_HOST = ""
 COUCHDB_ADMIN_USER = os.getenv('COUCHDB_ADMIN_USER')
 COUCHDB_ADMIN_PASSWORD = os.getenv('COUCHDB_ADMIN_PASSWORD')
 
@@ -31,7 +32,7 @@ class EdbHandler:
 class DbCreatingHandler(EdbHandler):
     def process_request(self, *args, **kwargs):
         self.logger.debug(f'Handling {self.inner_data}')
-        couch = CouchClient(COUCH_HOST, auth_from_env=True)
+        couch = CouchClient(global_settings.Couch.HOST_URL, auth_from_env=True)
         database = self.object_data
         database_name = database['db_name'].lower().strip()
         CouchClient.check_db_name(database_name, True)

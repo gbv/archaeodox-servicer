@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import requests
 import json
-from . import settings
+from . import WFS_settings
 
 
 class WFSClient:
@@ -56,7 +56,7 @@ class WFSClient:
         concept = json.loads(feature[self.geometry_field]['conceptURI'])
         geojson = concept['geometry']
 
-        response = requests.get(settings.CONVERSION_URL, json=geojson)
+        response = requests.get(WFS_settings.CONVERSION_URL, json=geojson)
         if response.status_code == 200:
             gml = response.content.decode("utf-8")
             self.logger.debug("Converter returned: " + gml)
