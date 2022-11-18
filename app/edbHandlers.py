@@ -1,6 +1,6 @@
 import os
 from .couch import CouchClient as CouchClient
-from .field_client import FieldClient
+from .field_client import FieldDatabase
 from .easydb_client import EasydbClient
 from . import global_settings
 from dotenv import load_dotenv
@@ -33,7 +33,7 @@ class EdbHandler:
 class DbCreatingHandler(EdbHandler):
     def process_request(self, *args, **kwargs):
         self.logger.debug(f'Handling {self.inner_data}')
-        couch = CouchClient(global_settings.Couch.HOST_URL, auth_from_env=True)
+        couch = CouchClient(global_settings.Couch.HOST_URL, auth_from_module=True)
         database = self.object_data
         database_name = database['db_name'].lower().strip()
         CouchClient.check_db_name(database_name, True)
@@ -54,14 +54,11 @@ class DbCreatingHandler(EdbHandler):
 
 
 class ImportInitiatingHandler(EdbHandler):
-    INITIATION_MESSAGE = 'Import vorbereitet.'
-    RESULT_FIELD = 'import_result'
-    
     def process_request(self, *args, **kwargs):
-        result = self.object_data[ImportInitiatingHandler.RESULT_FIELD]
+        result = self.object_data[global_settings.Easydb.IMPORT_RESULT_FIELD]
         self.logger.debug(self.object_data)
         if not result:
-            self.object_data[ImportInitiatingHandler.RESULT_FIELD] = ImportInitiatingHandler.INITIATION_MESSAGE
+            self.object_data[global_settings.Easydb.IMPORT_RESULT_FIELD] = global_settings.Easydb.IMPORT_REGISTRATION_MESSAGE
         
         return self.full_data
 
@@ -74,13 +71,14 @@ class FileImportingHandler(EdbHandler):
             wrapped_object_data = self.edb_client.get_object_by_id(self.object_type, id)
         except ValueError as error:
             self.logger.exception(error)
-            self.edb_client.update_item(self.object_type,id, {'import_result': f'Import initiated.'})
+            self.edb_client.update_item(self.object_type,id, {global_settings.Easydb.IMPORT_RESULT_FIELD: 
+                                                              global_settings.Easydb.IMPORT_INITIATION_MESSAGE})
 
         
         inner_object_data = wrapped_object_data[self.object_type]
         self.logger.debug(f'Retrieved from edb: {wrapped_object_data}')
-        import_result = inner_object_data['import_result']
-        if import_result != 'Import vorbereitet.':
+        import_result = inner_object_data[global_settings.Easydb.IMPORT_RESULT_FIELD]
+        if import_result != global_settings.Easydb.IMPORT_REGISTRATION_MESSAGE:
             return
         try:
             import_file = EasydbClient.get_preferred_media(wrapped_object_data,
@@ -90,12 +88,14 @@ class FileImportingHandler(EdbHandler):
             self.logger.debug(file_url)
         except KeyError:
             self.logger.debug(f'No media associated with {self.object_type} {id}.')
-            self.edb_client.update_item(self.object_type, id, {'import_result': 'Failed: No media found'})
+            self.edb_client.update_item(self.object_type, id, {global_settings.Easydb.IMPORT_RESULT_FIELD:
+                                                               global_settings.Easydb.IMPORT_FAILURE_MESSAGE})
             return self.full_data
         
         self.logger.debug(f'acquired url {file_url}')
         
-        self.edb_client.update_item(self.object_type,id, {'import_result': f'Import initiated.'})
+        self.edb_client.update_item(self.object_type,id, {global_settings.Easydb.IMPORT_RESULT_FIELD:
+                                                          global_settings.Easydb.IMPORT_INITIATION_MESSAGE})
                 
         
         return self.full_data

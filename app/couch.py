@@ -3,24 +3,30 @@ from uuid import uuid4
 
 from dpath import util as dp
 import re
+from . import credentials
 
 
-class CouchClient:
+class Server:
     CONFIG_DOCUMENT = 'configuration'
     META_KEYS = ['_id',
                  '_rev',
                  'created',
                  'modified']
 
-    def __init__(self, host, user_name=None, password=None, auth_from_env=False) -> None:
-        if auth_from_env:
-            user_name = os.getenv('COUCHDB_ADMIN_USER')
-            password = os.getenv('COUCHDB_ADMIN_PASSWORD')
-        self.auth = (user_name, password)
+    def __init__(self, host, user_name=None, password=None, auth_from_module=False) -> None:
+        self.session = requests.Session()
+        if auth_from_module:
+            user_name = credentials.COUCHDB_ADMIN_USER
+            password = credentials.COUCHDB_ADMIN_PASSWORD
+        self.set_auth(user_name, password)
         self.host = host
-            
+        
+    def set_auth(self, user_name, password):
+        self.auth = (user_name, password)
+        self.session.auth = self.auth
+  
     def get_config(self, database):
-        url = os.path.join(self.host, database, CouchClient.CONFIG_DOCUMENT)
+        url = os.path.join(self.host, database, Server.CONFIG_DOCUMENT)
         response = requests.get(url=url, auth=self.auth)
         if response.ok:
             return response.json()
@@ -28,7 +34,7 @@ class CouchClient:
     def inject_config(self, database, path, patch):
         config = self.get_config(database)
         dp.new(config, path, patch)
-        url = self.prepend_host(database, CouchClient.CONFIG_DOCUMENT)
+        url = self.prepend_host(database, Server.CONFIG_DOCUMENT)
         response = requests.put(url=url, data=json.dumps(config), auth=self.auth)
         return response.content
 
@@ -54,7 +60,7 @@ class CouchClient:
 
     def create_database(self, db_name):
         db_name = db_name.lower()
-        CouchClient.check_db_name(db_name, True)
+        Server.check_db_name(db_name, True)
             
         response = requests.put(url=self.prepend_host(db_name), auth=self.auth)
         if not response.ok:
@@ -71,7 +77,7 @@ class CouchClient:
             'name': user_name,
             'type': 'user',
             'roles': [],
-            'password': CouchClient.generate_password()
+            'password': Server.generate_password()
         }
         response = requests.put(url=self.prepend_host('_users', user_id),
                                                  data=json.dumps(user),
@@ -107,31 +113,60 @@ class CouchClient:
         return user
 
     def copy_config(self, source, dest):
-        response = requests.get(url=self.prepend_host(source, CouchClient.CONFIG_DOCUMENT),
+        response = requests.get(url=self.prepend_host(source, Server.CONFIG_DOCUMENT),
                                 auth=self.auth)
         if not response.ok:
             raise ConnectionError(str(response.content))
         config = json.loads(response.content.decode('utf-8'))
         
-        response = self.put_doc(dest, CouchClient.CONFIG_DOCUMENT, config)
+        response = self.put_doc(dest, Server.CONFIG_DOCUMENT, config)
         if not response.ok:
             raise ConnectionError(response.content.decode('utf-8'))
         return response
     
     def put_doc(self, db_name, doc_id, document, sanitize=True):
         if sanitize:
-            for meta_key in CouchClient.META_KEYS:
+            for meta_key in Server.META_KEYS:
                 document.pop(meta_key, None)
-        response = requests.put(self.prepend_host(db_name, doc_id), auth=self.auth, data=json.dumps(document))
+        response = self.session.put(self.prepend_host(db_name, doc_id), data=json.dumps(document))
         return response
 
     def update_doc(self, db_name, doc_id, document):
-        response = requests.post(self.prepend_host(db_name, doc_id), auth=self.auth, data=json.dumps(document))
+        response = self.session.put(self.prepend_host(db_name, doc_id), data=json.dumps(document))
         return response
+
+class Database:
+    def __init__(self, server, name):
+        self.server = server
+        self.session = server.session
+        self.name = name
+        self.auth = self.server.auth
+        self.url = server.prepend_host(name)
+        self.search_url = server.prepend_host(name, '_find')
+
+
+    def set_auth(self, user_name, password):
+        self.auth = (user_name, password)
+        self.server.set_auth(user_name, password)
+
+    def put_doc(self, doc_id, document, sanitize=True):
+        return self.server.put_doc(self.name, doc_id, document, sanitize)
+
+    def update_doc(self, doc_id, document):
+        existing = self.get_doc(doc_id).json()
+        current_revision = existing['_rev']
+
+        return self.session.put(f'{self.url}/{doc_id}',
+                                params={'rev': current_revision},
+                                data=json.dumps(document))
+
+    def get_doc(self, doc_id):
+        return self.session.get(f'{self.url}/{doc_id}')
+
 
 if __name__=='__main__':
     
-    couch = CouchClient('http://esx-80.gbv.de:5984', auth_from_env=True)
+    couch = Server('http://esx-80.gbv.de:5984', auth_from_module=True)
     r = couch.copy_config('hh9999_1234', 'amh_test')
     print(r.content)
     
