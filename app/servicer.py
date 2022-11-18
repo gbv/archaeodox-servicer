@@ -18,7 +18,6 @@ from . import WFS_settings
 from . import global_settings
 
 app = Flask(__name__)
-edb = EasydbClient(global_settings.Easydb.HOST_URL, app.logger)
 
 wfs = WFSClient(WFS_settings.GEO_SERVER_URL,
                 WFS_settings.TRANSACTION_ATTRIBUTES,
@@ -73,10 +72,11 @@ class Task:
 
 
 class Servicer:
-    def __init__(self, logger) -> None:
+    def __init__(self, logger, edb_client) -> None:
         self.handlers = {}
         self.logger = logger
         self.delayed_task_queue = Queue(logger, 4)
+        self.edb_client = edb_client
 
     class Hooks(Enum):
         DB_PRE_UPDATE_ONE = 'db_pre_update_one'
@@ -88,11 +88,9 @@ class Servicer:
         DB_POST_DELETE_ONE = 'db_post_delete_one'
         DB_POST_DELETE = 'db_post_delete'
 
-
-    
     def handle_edb_hook(self, hook, object_type, incoming_request):
         handler_class, delayed = self.handlers[(hook, object_type)]
-        handler = handler_class(incoming_request, app.logger)
+        handler = handler_class(incoming_request, app.logger, self.edb_client)
         if delayed:
             task_label = '_'.join((hook, object_type, str(time.time())))
             task = Task(task_label, self.logger, handler.process_request)
@@ -132,10 +130,9 @@ def get_wfs_id(item_type, id, token):
     return dp.get(result, [item_type, "feature_id"])
 
 
+edb = EasydbClient(global_settings.Easydb.HOST_URL, app.logger)
 
-
-
-servicer = Servicer(app.logger)
+servicer = Servicer(app.logger, edb)
 servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_database', DbCreatingHandler)
 servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_project', ImportInitiatingHandler)
 servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,

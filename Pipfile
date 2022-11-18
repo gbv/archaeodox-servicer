@@ -11,6 +11,8 @@ python-dotenv = "*"
 pillow = "*"
 
 [dev-packages]
+ipykernel = "*"
+jupyter = "*"
 
 [requires]
 python_version = "3.9"

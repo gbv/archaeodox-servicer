@@ -3,6 +3,7 @@ import zipfile, tempfile, shutil, glob
 from os.path import join
 from time import sleep
 from . import credentials
+from dpath import util as dp
 
 
 class DummyLogger:
@@ -46,6 +47,9 @@ class EasydbClient:
         self.db_url = join(url,
                            EasydbClient.API_PATH,
                            "db")
+        self.objects_url = join(url,
+                                EasydbClient.API_PATH,
+                                "objects")
         self.logger = logger
         #self.acquire_session()
 
@@ -88,7 +92,21 @@ class EasydbClient:
             result = {}
         return result, response.status_code
 
-    def get_by_id(self, item_type, id, token=None):
+    def get_by_global_id(self, id, version='latest', token=None):
+        get_url = f'{self.objects_url}/id/{id}/{version}'
+        params = {"token": token if token is not None else self.session_token}
+        params['format'] = 'long'
+
+        response = requests.get(get_url, params=params)
+
+        if response.status_code == 200:
+            result = json.loads(response.content)
+        else:
+            raise ValueError(f'{response.status_code}: {response.status_code}')
+        return result        
+
+
+    def get_object_by_id(self, item_type, id, token=None):
         get_url = join(self.db_url,
                        f'{item_type}/{item_type}__all_fields/',
                        str(id))
@@ -100,13 +118,11 @@ class EasydbClient:
         if response.status_code == 200:
             result = json.loads(response.content)[0]
         else:
-            result = {}
-        return result, response.status_code
+            raise ValueError(f'{response.status_code}: {response.status_code}')
+        return result
 
     def update_item(self, item_type, id, up_data, token=None):
-        latest, return_code = self.get_by_id(item_type=item_type, id=id, token=token)
-        if not return_code == 200:
-            raise ValueError(f'No {item_type} for id {id} found to update: {return_code}')
+        latest = self.get_object_by_id(item_type=item_type, id=id, token=token)
         current_version = latest[item_type]['_version']
         latest[item_type]['_version'] = current_version + 1
         for k, v in up_data.items():
@@ -120,10 +136,15 @@ class EasydbClient:
             raise ConnectionError(response.text)
         return response.ok
 
-    def get_preferred_media(self, object_type, id, media_field, token=None):
-        wrapped_outer_object, status = self.get_by_id(object_type, id, token)
-        media = wrapped_outer_object[object_type][media_field]
-        preferred = list(filter(lambda m: m['preferred'], media))
+    @staticmethod
+    def get_preferred_media(object_data, media_field, object_type = None):
+        if object_type is None:
+            object_type = object_data['_objecttype']
+        try:
+            media_list = dp.get(object_data, f'**/{media_field}')
+        except KeyError:
+            media_list = []
+        preferred = list(filter(lambda m: m['preferred'], media_list))
         if preferred:
             return preferred[0]
         return None
@@ -171,6 +192,8 @@ class EASLiberator:
         file_name = join(self.base_path, file_name)
 
         return self.extract_and_copy(file_name, dest, *extensions)
+
+    
     
 
 

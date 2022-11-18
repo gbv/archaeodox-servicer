@@ -15,12 +15,13 @@ COUCHDB_ADMIN_PASSWORD = os.getenv('COUCHDB_ADMIN_PASSWORD')
 
 
 class EdbHandler:
-    def __init__(self, incoming_request, logger):
+    def __init__(self, incoming_request, logger, edb_client):
         self.full_data = incoming_request.get_json()
         self.inner_data = self.full_data['data']
         self.object_type = self.inner_data['_objecttype']
         self.object_data = self.inner_data[self.object_type]
         self.logger = logger
+        self.edb_client = edb_client
     
     def process_request(self, *args, **kwargs):
         self.logger.debug(f"Handler: {self.__class__.__name__}")
@@ -67,35 +68,35 @@ class ImportInitiatingHandler(EdbHandler):
 class FileImportingHandler(EdbHandler):
     def process_request(self, *args, **kwargs):
         super().process_request()
-        easydb_client = EasydbClient('https://hekate.gbv.de', self.logger)
-        easydb_client.acquire_session()
-
+        self.edb_client.acquire_session()
         id = self.object_data['_id']
-        wrapped_object_data, reply_code = easydb_client.get_by_id(self.object_type, id)
+        try:
+            wrapped_object_data = easydb_client.get_object_by_id(self.object_type, id)
+        except ValueError as error:
+            self.logger.exception(error)
+            self.edb_client.update_item(self.object_type,id, {'import_result': f'Import initiated.'})
+
         
-        if reply_code == 200:
-            inner_object_data = wrapped_object_data[self.object_type]
-            self.logger.debug(f'Retrieved from edb: {wrapped_object_data}')
-            import_result = inner_object_data['import_result']
-            if import_result != 'Import vorbereitet.':
-                return
-            try:
-                import_file = easydb_client.get_preferred_media(global_settings.Easydb.FIELD_IMPORT_FILE_OBJECT_NAME,
-                                                                id,
-                                                                global_settings.Easydb.FIELD_IMPORT_MEDIA_FIELD)
-                file_url = import_file['download_url']
-                self.logger.debug(file_url)
-            except KeyError:
-                self.logger.debug(f'No media associated with {self.object_type} {id}.')
-                easydb_client.update_item(self.object_type, id, {'import_result': 'Failed: No media found'})
-                return self.full_data
+        inner_object_data = wrapped_object_data[self.object_type]
+        self.logger.debug(f'Retrieved from edb: {wrapped_object_data}')
+        import_result = inner_object_data['import_result']
+        if import_result != 'Import vorbereitet.':
+            return
+        try:
+            import_file = EasydbClient.get_preferred_media(wrapped_object_data,
+                                                           global_settings.Easydb.FIELD_IMPORT_MEDIA_FIELD)
             
-            self.logger.debug(f'acquired url {file_url}')
-            
-            easydb_client.update_item(self.object_type,id, {'import_result': f'Import initiated.'})
+            file_url = import_file['versions/original/download_url']
+            self.logger.debug(file_url)
+        except KeyError:
+            self.logger.debug(f'No media associated with {self.object_type} {id}.')
+            self.edb_client.update_item(self.object_type, id, {'import_result': 'Failed: No media found'})
+            return self.full_data
+        
+        self.logger.debug(f'acquired url {file_url}')
+        
+        self.edb_client.update_item(self.object_type,id, {'import_result': f'Import initiated.'})
                 
-        else:
-            self.logger.debug(f'Failed to retrieve project for id: {id}.')
-            
+        
         return self.full_data
 
