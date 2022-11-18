@@ -120,6 +120,14 @@ class EasydbClient:
             raise ConnectionError(response.text)
         return response.ok
 
+    def get_preferred_media(self, object_type, id, media_field, token=None):
+        wrapped_outer_object = self.get_by_id(object_type, id, token)
+        media = wrapped_outer_object[object_type][media_field]
+        preferred = list(filter(lambda m: m['preferred'], media))
+        if preferred:
+            return preferred[0]
+        return None
+
 
 
 class EASLiberator:
