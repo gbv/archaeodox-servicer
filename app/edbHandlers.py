@@ -1,4 +1,4 @@
-import os
+import os, json
 from .couch import CouchDBServer
 from .field_client import FieldDatabase
 from .easydb_client import EasydbClient
@@ -17,6 +17,7 @@ COUCHDB_ADMIN_PASSWORD = os.getenv('COUCHDB_ADMIN_PASSWORD')
 class EdbHandler:
     def __init__(self, incoming_request, logger, edb_client):
         self.full_data = incoming_request.get_json()
+        self.logger.debug(f"Created handler for object: \n\n{json.dumps(self.full_data, indent=2)}")
         self.inner_data = self.full_data['data']
         self.object_type = self.inner_data['_objecttype']
         self.object_data = self.inner_data[self.object_type]
@@ -51,7 +52,7 @@ class DbCreatingHandler(EdbHandler):
                 couch_database, user = couch.create_db_and_user(database_name)
             
             database['password'] = user['password']
-        return database
+        return self.full_data
 
 class ImportInitiatingHandler(EdbHandler):
     def process_request(self, *args, **kwargs):
