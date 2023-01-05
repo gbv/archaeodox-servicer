@@ -1,5 +1,5 @@
 import os
-from .couch import CouchClient as CouchClient
+from .couch import CouchDBServer
 from .field_client import FieldDatabase
 from .easydb_client import EasydbClient
 from . import global_settings
@@ -33,10 +33,10 @@ class EdbHandler:
 class DbCreatingHandler(EdbHandler):
     def process_request(self, *args, **kwargs):
         self.logger.debug(f'Handling {self.inner_data}')
-        couch = CouchClient(global_settings.Couch.HOST_URL, auth_from_module=True)
+        couch = CouchDBServer(global_settings.Couch.HOST_URL, auth_from_module=True)
         database = self.object_data
         database_name = database['db_name'].lower().strip()
-        CouchClient.check_db_name(database_name, True)
+        CouchDBServer.check_db_name(database_name, True)
         
         database['db_name'] = database_name
 

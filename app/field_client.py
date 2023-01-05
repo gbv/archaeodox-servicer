@@ -33,13 +33,13 @@ class CSV:
         return CSV.inflate(row)
 
 
-class FieldHub(couch.Server):
+class FieldHub(couch.CouchDBServer):
     CONFIG_DOCUMENT = 'configuration'
     PROJECT_DOCUMENT_ID = 'project'
     
     def __init__(self, host, template_project_name, user_name=None, password=None, auth_from_module=False) -> None:
         super().__init__(host, user_name, password, auth_from_module)
-        self.template = couch.Database(self, template_project_name)
+        self.template = couch.CouchDatabase(self, template_project_name)
 
     def get_config(self):
         return self.template.get_doc(FieldHub.CONFIG_DOCUMENT).json()
@@ -56,7 +56,7 @@ class FieldHub(couch.Server):
         database.create_doc(FieldHub.PROJECT_DOCUMENT_ID, project)
         return user
 
-class FieldDatabase(couch.Database):
+class FieldDatabase(couch.CouchDatabase):
     OBJECT_TYPES = ['Feature',
                     'Befundanschnitt',
                     'Befundkomplex',

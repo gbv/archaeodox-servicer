@@ -6,7 +6,7 @@ import re
 from . import credentials
 
 
-class Server:
+class CouchDBServer:
     def __init__(self, host, user_name=None, password=None, auth_from_module=False) -> None:
         self.session = requests.Session()
         if auth_from_module:
@@ -20,7 +20,7 @@ class Server:
         self.session.auth = self.auth
   
     def get_config(self, database):
-        url = os.path.join(self.host, database, Server.CONFIG_DOCUMENT)
+        url = os.path.join(self.host, database, CouchDBServer.CONFIG_DOCUMENT)
         response = requests.get(url=url, auth=self.auth)
         if response.ok:
             return response.json()
@@ -28,7 +28,7 @@ class Server:
     def inject_config(self, database, path, patch):
         config = self.get_config(database)
         dp.new(config, path, patch)
-        url = self.prepend_host(database, Server.CONFIG_DOCUMENT)
+        url = self.prepend_host(database, CouchDBServer.CONFIG_DOCUMENT)
         response = requests.put(url=url, data=json.dumps(config), auth=self.auth)
         return response.content
 
@@ -54,12 +54,12 @@ class Server:
 
     def create_database(self, db_name):
         db_name = db_name.lower()
-        Server.check_db_name(db_name, True)
+        CouchDBServer.check_db_name(db_name, True)
             
         response = requests.put(url=self.prepend_host(db_name), auth=self.auth)
         if not response.ok:
             raise ConnectionError(response.content)
-        database = Database(self, db_name)
+        database = CouchDatabase(self, db_name)
         return database
         
     def drop_db(self, db_name):
@@ -72,7 +72,7 @@ class Server:
             'name': user_name,
             'type': 'user',
             'roles': [],
-            'password': Server.generate_password()
+            'password': CouchDBServer.generate_password()
         }
         response = requests.put(url=self.prepend_host('_users', user_id),
                                                  data=json.dumps(user),
@@ -108,7 +108,7 @@ class Server:
         return database, user
 
 
-class Database:
+class CouchDatabase:
     META_KEYS = ['_rev']
 
     def __init__(self, server, name):
@@ -157,7 +157,7 @@ class Database:
 
 if __name__=='__main__':
     
-    couch = Server('http://esx-80.gbv.de:5984', auth_from_module=True)
+    couch = CouchDBServer('http://esx-80.gbv.de:5984', auth_from_module=True)
     r = couch.copy_config('hh9999_1234', 'amh_test')
     print(r.content)
     

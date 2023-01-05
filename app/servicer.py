@@ -13,7 +13,6 @@ from .edbHandlers import EdbHandler, DbCreatingHandler, FileImportingHandler, Im
 
 from dpath import util as dp
 
-from .couch import CouchClient as CouchClient
 from . import WFS_settings
 from . import global_settings
 
