@@ -17,11 +17,11 @@ COUCHDB_ADMIN_PASSWORD = os.getenv('COUCHDB_ADMIN_PASSWORD')
 class EdbHandler:
     def __init__(self, incoming_request, logger, edb_client):
         self.full_data = incoming_request.get_json()
-        self.logger.debug(f"Created handler for object: \n\n{json.dumps(self.full_data, indent=2)}")
         self.inner_data = self.full_data['data']
         self.object_type = self.inner_data['_objecttype']
         self.object_data = self.inner_data[self.object_type]
         self.logger = logger
+        self.logger.debug(f"Created handler for object: \n\n{json.dumps(self.full_data, indent=2)}")
         self.edb_client = edb_client
     
     def process_request(self, *args, **kwargs):
