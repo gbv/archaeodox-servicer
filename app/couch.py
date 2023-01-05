@@ -7,12 +7,6 @@ from . import credentials
 
 
 class Server:
-    CONFIG_DOCUMENT = 'configuration'
-    META_KEYS = ['_id',
-                 '_rev',
-                 'created',
-                 'modified']
-
     def __init__(self, host, user_name=None, password=None, auth_from_module=False) -> None:
         self.session = requests.Session()
         if auth_from_module:
@@ -53,9 +47,9 @@ class Server:
 
     @classmethod
     def check_db_name(cls, db_name, raise_error=False):
-        valid = re.match(r'^[a-z][a-z0-9_$()+/-]*$', db_name)
+        valid = re.match(r'^[a-z][a-z0-9_()-]*$', db_name)
         if raise_error and not valid:
-            raise ValueError('The project name may only contain lower case letters and characters _, $, (, ), +, -, / and must start with a letter ')
+            raise ValueError('The project name may only contain lower case letters and characters _, (, ), - and must start with a letter ')
         return valid
 
     def create_database(self, db_name):
@@ -65,7 +59,8 @@ class Server:
         response = requests.put(url=self.prepend_host(db_name), auth=self.auth)
         if not response.ok:
             raise ConnectionError(response.content)
-        return response.ok
+        database = Database(self, db_name)
+        return database
         
     def drop_db(self, db_name):
         response = requests.delete(self.prepend_host(db_name), auth=self.auth)
@@ -107,61 +102,57 @@ class Server:
         if user_name is None:
             user_name = db_name
         
-        self.create_database(db_name)
+        database = self.create_database(db_name)
         user = self.create_db_user(db_name, user_name)
         self.add_user_to_db(user_name, db_name)
-        return user
+        return database, user
 
-    def copy_config(self, source, dest):
-        response = requests.get(url=self.prepend_host(source, Server.CONFIG_DOCUMENT),
-                                auth=self.auth)
-        if not response.ok:
-            raise ConnectionError(str(response.content))
-        config = json.loads(response.content.decode('utf-8'))
-        
-        response = self.put_doc(dest, Server.CONFIG_DOCUMENT, config)
-        if not response.ok:
-            raise ConnectionError(response.content.decode('utf-8'))
-        return response
-    
-    def put_doc(self, db_name, doc_id, document, sanitize=True):
-        if sanitize:
-            for meta_key in Server.META_KEYS:
-                document.pop(meta_key, None)
-        response = self.session.put(self.prepend_host(db_name, doc_id), data=json.dumps(document))
-        return response
-
-    def update_doc(self, db_name, doc_id, document):
-        response = self.session.put(self.prepend_host(db_name, doc_id), data=json.dumps(document))
-        return response
 
 class Database:
+    META_KEYS = ['_rev']
+
     def __init__(self, server, name):
         self.server = server
+        if not server.has_database(name):
+            server.create_database(name)
         self.session = server.session
         self.name = name
         self.auth = self.server.auth
         self.url = server.prepend_host(name)
         self.search_url = server.prepend_host(name, '_find')
 
-
     def set_auth(self, user_name, password):
         self.auth = (user_name, password)
         self.server.set_auth(user_name, password)
 
-    def put_doc(self, doc_id, document, sanitize=True):
-        return self.server.put_doc(self.name, doc_id, document, sanitize)
+    def create_doc(self, doc_id, document):
+        response = self.session.put(os.path.join(self.url, doc_id), data=json.dumps(document))
+        return response
 
     def update_doc(self, doc_id, document):
+        if not 'created' in document.keys():
+            raise ValueError(f"Document has never been created: {document}")
         existing = self.get_doc(doc_id).json()
-        current_revision = existing['_rev']
-
+        try:
+            current_revision = existing['_rev']
+        except:
+            print(doc_id)
+            print(document)
+            raise
         return self.session.put(f'{self.url}/{doc_id}',
                                 params={'rev': current_revision},
                                 data=json.dumps(document))
 
     def get_doc(self, doc_id):
         return self.session.get(f'{self.url}/{doc_id}')
+
+    def get_all_ids(self):
+        response = self.session.get(f"{self.url}/_all_docs", auth=self.auth)
+        if response.ok:
+            rows = response.json()['rows']
+            ids = [row['id'] for row in rows]
+            return ids
+
 
 
 if __name__=='__main__':

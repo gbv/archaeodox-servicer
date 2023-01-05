@@ -64,9 +64,9 @@ class EasydbClient:
                       "password": credentials.PASSWORD}
             auth_response = requests.post(self.session_auth_url,
                                           params=params)
-            self.logger.debug(f"Attempting auth: {params}")
+            self.logger.debug(f"Attempting auth.")
             if not auth_response.status_code == 200:
-                raise ValueError(f"Failed to authenticate: {auth_response.content}")
+                raise ValueError(f"Failed to authenticate: {auth_response.text}")
         else:
             raise ValueError(f"Failed to acquire session from {self.session_url}")
 
@@ -91,6 +91,13 @@ class EasydbClient:
         else:
             result = {}
         return result, response.status_code
+
+    def get_tags(self, token=None):
+        tags_url = join(self.url,
+                        EasydbClient.API_PATH,
+                        "tags")
+        params = {"token": token if token is not None else self.session_token}
+        return requests.get(tags_url, params=params).json()
 
     def get_by_global_id(self, id, version='latest', token=None):
         get_url = f'{self.objects_url}/id/{id}/{version}'
@@ -121,17 +128,26 @@ class EasydbClient:
             raise ValueError(f'{response.status_code}: {response.status_code}')
         return result
 
-    def update_item(self, item_type, id, up_data, token=None):
+    def update_item(self, item_type, id, token=None):
         latest = self.get_object_by_id(item_type=item_type, id=id, token=token)
         current_version = latest[item_type]['_version']
         latest[item_type]['_version'] = current_version + 1
         for k, v in up_data.items():
             latest[item_type][k] = v
-        
         update_url = join(self.db_url,
                           item_type)
         params = {"token": token if token is not None else self.session_token}
         response = requests.post(update_url, json=[latest], params=params)
+        if not response.ok:
+            raise ConnectionError(response.text)
+        return response.ok
+
+    def create_object(self, object_type, data, token=None):
+        params = {"token": token if token is not None else self.session_token}
+        data[object_type]['_version'] = 1
+        insert_url = join(self.db_url,
+                          object_type)
+        response = requests.put(insert_url, params=params, json=[data])
         if not response.ok:
             raise ConnectionError(response.text)
         return response.ok
@@ -149,6 +165,33 @@ class EasydbClient:
             return preferred[0]
         return None
 
+
+class EdbObject:
+    TAG_MODE_ADD = 'tag_add'
+    TAG_MODE_REPLACE = 'tag_replace'
+    TAG_MODE_REMOVE = 'tag_remove'
+    TAG_MODE_REMOVEALL = 'tag_remove_all'
+    
+
+    def __init__(self, object_type, data, mask='_all_fields', tags=[], tag_mode=None) -> None:
+        self.object_type = object_type
+        self.data = data
+        self.mask = mask
+        self.tags = tags
+        self.tag_mode = tag_mode
+
+    def get_edb_format(self):
+        wrapped = {self.object_type: self.data}
+        wrapped['_mask'] = self.mask
+        if self.tags:
+            wrapped['_tags'] = [{'_id': tag} for tag in self.tags]
+        if self.tag_mode:
+            wrapped['_tags:group_mode'] = self.tag_mode
+        return wrapped
+
+    def set_tags(self, tags, tag_mode):
+        self.tags = tags
+        self.tag_mode = tag_mode
 
 
 class EASLiberator:

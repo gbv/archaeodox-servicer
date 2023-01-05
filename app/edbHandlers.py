@@ -51,7 +51,7 @@ class DbCreatingHandler(EdbHandler):
                 user = couch.create_db_and_user(database_name)
             
             database['password'] = user['password']
-
+        return database
 
 class ImportInitiatingHandler(EdbHandler):
     def process_request(self, *args, **kwargs):
