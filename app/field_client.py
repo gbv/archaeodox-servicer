@@ -45,7 +45,10 @@ class FieldHub(couch.CouchDBServer):
         return self.template.get_doc(FieldHub.CONFIG_DOCUMENT).json()
 
     def create_project(self, project_id):
-        database, user = self.create_db_and_user(project_id, project_id)
+        creation_info = requests.post(f'{global_settings.FieldHub.PROJECT_URL}/{project_id}',
+                                      auth=self.auth).json()
+        database = couch.CouchDatabase(self, project_id)
+        
         config = self.get_config()
         database.create_doc(FieldHub.CONFIG_DOCUMENT, config)
         project = {'resource': {
@@ -54,7 +57,8 @@ class FieldHub(couch.CouchDBServer):
             'category': 'Project'
         }}
         database.create_doc(FieldHub.PROJECT_DOCUMENT_ID, project)
-        return user
+        return creation_info['info']['password']
+
 
 class FieldDatabase(couch.CouchDatabase):
     OBJECT_TYPES = ['Feature',

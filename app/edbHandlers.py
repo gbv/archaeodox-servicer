@@ -1,6 +1,6 @@
 import os, json
 from .couch import CouchDBServer
-from .field_client import FieldDatabase
+from .field_client import FieldDatabase, FieldHub
 from .easydb_client import EasydbClient
 from . import global_settings
 from dotenv import load_dotenv
@@ -34,7 +34,9 @@ class EdbHandler:
 class DbCreatingHandler(EdbHandler):
     def process_request(self, *args, **kwargs):
         self.logger.debug(f'Handling {self.inner_data}')
-        couch = CouchDBServer(global_settings.Couch.HOST_URL, auth_from_module=True)
+        hub = FieldHub(global_settings.Couch.HOST_URL,
+                       global_settings.FieldHub.TEMPLATE_PROJECT_NAME,
+                       auth_from_module=True)
         database = self.object_data
         database_name = database['db_name'].lower().strip()
         CouchDBServer.check_db_name(database_name, True)
@@ -43,15 +45,7 @@ class DbCreatingHandler(EdbHandler):
 
         if not database['password']:
             self.logger.info(f"No credentials for {database_name} found, rectifying this.")
-            if couch.has_database(database_name=database_name):
-                self.logger.info("Creating database and user.")
-                user = couch.create_db_user(database_name, database_name)
-                couch.add_user_to_db(user['name'], database_name)  
-            else:
-                self.logger.info("Creating user.")
-                couch_database, user = couch.create_db_and_user(database_name)
-            
-            database['password'] = user['password']
+            database['password'] = hub.create_project(database_name)
         return self.full_data
 
 class ImportInitiatingHandler(EdbHandler):
