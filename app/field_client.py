@@ -94,31 +94,67 @@ class FieldDatabase(couch.CouchDatabase):
         else:
             raise ValueError(search_results.json()['reason'])
 
-   
+    @staticmethod
+    def generate_thumbnail(pil_image_object, format):
+        cloned_image = pil_image_object.copy()
+        cloned_image.thumbnail((10 * global_settings.FieldHub.THUMBNAIL_HEIGHT, global_settings.FieldHub.THUMBNAIL_HEIGHT))
+        out_bytes = io.BytesIO()
+        cloned_image.save(out_bytes, format)
+        return out_bytes
+
+
     def upload_image(self, image_file_name):
-        identifier = self.get_or_create_document(image_file_name)['_id']
+        image_document = self.get_or_create_document(image_file_name)
+        identifier = image_document['_id']
         image = Image.open(image_file_name)
-        width, height = image.size
-        meta_data = self.database[identifier]
-        resource = meta_data['resource']
-        resource['width'] = width
-        resource['height'] = height
-        resource['originalFilename'] = image_file_name
         
         mimetype, encoding = mimetypes.guess_type(image_file_name)
         if mimetype is None:
             return
-        headers = {'Content-type': mimetype}
-        params = {'type': 'original_image'}
+        format = basename(mimetype)
+        headers = { 'Content-type': mimetype }
         target_url = self.media_url + identifier
         
-        response = requests.put(target_url,
+        response = self.upload_original_image(image, format, headers, target_url)
+        if response.ok:
+            self.update_image_document(image_document, image_file_name, image)
+            self.upload_thumbnail_image(image, format, headers, target_url)
+        else:
+            raise ConnectionError(response.content)
+        print(response.content)
+        
+        
+    def update_image_document(self, image_document, image_file_name, image):
+        width, height = image.size
+        resource = image_document['resource']
+        resource['width'] = width
+        resource['height'] = height
+        resource['originalFilename'] = image_file_name
+        
+        
+    def upload_original_image(self, image, format, headers, target_url):
+        params = { 'type': 'original_image' }
+        with io.BytesIO() as image_bytes:
+            image.save(image_bytes, format)
+            print(image_bytes.getvalue())
+            return requests.put(target_url,
                                 headers=headers,
                                 params=params,
                                 auth=self.auth,
-                                data=open(image_file_name, 'rb'))
-        if response.ok:
-            self.database[identifier] = meta_data
+                                data=image_bytes.getvalue())
+                        
+    
+    def upload_thumbnail_image(self, image, format, headers, target_url):
+        thumbnail_bytes = FieldDatabase.generate_thumbnail(image, format)
+        params = { 'type': 'thumbnail_image' }
+        print(thumbnail_bytes.getvalue())
+        with thumbnail_bytes:
+            return requests.put(target_url,
+                                headers=headers,
+                                params=params,
+                                auth=self.auth,
+                                data=thumbnail_bytes.getvalue())
+            
 
     def populate_resource(self, resource_data, resource_type):
         identifier = resource_data['identifier']

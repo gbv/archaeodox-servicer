@@ -21,6 +21,7 @@ class Couch:
 
 class FieldHub:
     MEDIA_URL = "http://esx-80.gbv.de:4001/files"
+    THUMBNAIL_HEIGHT = 320
 
 class GeometryParser:
     FIND_SECTION_ID_TEMPLATE = "BA {strat_unit}.{exca_int}"

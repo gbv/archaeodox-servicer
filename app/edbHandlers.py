@@ -65,12 +65,14 @@ class ImportInitiatingHandler(EdbHandler):
 
 class FileImportingHandler(EdbHandler):
     def process_request(self, *args, **kwargs):
+        # Check returns of every path
         super().process_request()
         self.edb_client.acquire_session()
         id = self.object_data['_id']
         try:
             wrapped_object_data = self.edb_client.get_object_by_id(self.object_type, id)
         except ValueError as error:
+            # DOES THIS MAKE SENSE??
             self.logger.exception(error)
             self.edb_client.update_item(self.object_type,id, {global_settings.Easydb.IMPORT_RESULT_FIELD: 
                                                               global_settings.Easydb.IMPORT_INITIATION_MESSAGE})
@@ -98,6 +100,6 @@ class FileImportingHandler(EdbHandler):
         self.edb_client.update_item(self.object_type,id, {global_settings.Easydb.IMPORT_RESULT_FIELD:
                                                           global_settings.Easydb.IMPORT_INITIATION_MESSAGE})
                 
-        
+        # We should now pass the url to ingest_from_url@field_client
         return self.full_data
 
