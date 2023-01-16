@@ -6,6 +6,9 @@ from datetime import datetime, timezone
 from . import couch, global_settings
 from dpath import util as dp
 from PIL import Image
+from geotiff import GeoTiff
+from tifffile import TiffFile
+
 
 def iso_utc():
     return datetime.utcnow().replace(tzinfo=timezone.utc).isoformat()
@@ -109,26 +112,41 @@ class FieldDatabase(couch.CouchDatabase):
 
     def upload_image(self, image_file_name):
         image_document = self.get_or_create_document(image_file_name)
-        identifier = image_document['_id']
+        id = image_document['_id']
         image = Image.open(image_file_name)
-        
+        FieldDatabase.initialize_image_document(image_document, image_file_name, image)
+
         mimetype, encoding = mimetypes.guess_type(image_file_name)
         if mimetype is None:
             return
+        if mimetype == 'image/tiff':
+            # Tiffs are being converted to pngs on the fly. 
+            # The file name is not changed.
+            # This behaviour is creepy and will be changed once 
+            # the handling of tiffs by the desktop client
+            # has been defined.
+            #
+            format = 'PNG'
+            mimetype = 'image/png'
+            tiff = TiffFile(image_file_name)
+            if tiff.is_geotiff:
+                FieldDatabase.append_georeference(image_document, image_file_name)
+
         format = basename(mimetype)
         headers = { 'Content-type': mimetype }
-        target_url = self.media_url + identifier
+        target_url = self.media_url + id
         
         response = self.upload_original_image(image, format, headers, target_url)
         if response.ok:
-            self.update_image_document(image_document, image_file_name, image)
             self.upload_thumbnail_image(image, format, headers, target_url)
         else:
             raise ConnectionError(response.content)
         print(response.content)
+        self.update_doc(id, image_document)
         
-        
-    def update_image_document(self, image_document, image_file_name, image):
+
+    @staticmethod
+    def initialize_image_document(image_document, image_file_name, image):
         width, height = image.size
         resource = image_document['resource']
         resource['width'] = width
@@ -140,7 +158,6 @@ class FieldDatabase(couch.CouchDatabase):
         params = { 'type': 'original_image' }
         with io.BytesIO() as image_bytes:
             image.save(image_bytes, format)
-            print(image_bytes.getvalue())
             return requests.put(target_url,
                                 headers=headers,
                                 params=params,
@@ -151,7 +168,6 @@ class FieldDatabase(couch.CouchDatabase):
     def upload_thumbnail_image(self, image, format, headers, target_url):
         thumbnail_bytes = FieldDatabase.generate_thumbnail(image, format)
         params = { 'type': 'thumbnail_image' }
-        print(thumbnail_bytes.getvalue())
         with thumbnail_bytes:
             return requests.put(target_url,
                                 headers=headers,
@@ -159,6 +175,25 @@ class FieldDatabase(couch.CouchDatabase):
                                 auth=self.auth,
                                 data=thumbnail_bytes.getvalue())
             
+
+    @staticmethod
+    def append_georeference(image_document, image_file_name):
+        width = image_document['resource']['width']
+        height = image_document['resource']['height']
+
+        geotiff = GeoTiff(image_file_name)
+        original_crs = geotiff.crs_code
+        geotiff = GeoTiff(image_file_name, as_crs=original_crs)
+
+        upper_left = (0, 0)
+        upper_right = (width, 0)
+        lower_left = (0, height)
+        
+        image_document['resource']['georeference'] = {'topLeftCoordinates': geotiff.get_coords(*upper_left),
+                                                      'topRightCoordinates': geotiff.get_coords(*upper_right),
+                                                      'bottomLeftCoordinates': geotiff.get_coords(*lower_left)
+                                                      }
+
 
     def populate_resource(self, resource_data, resource_type):
         identifier = resource_data['identifier']

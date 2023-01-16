@@ -9,6 +9,8 @@ requests = "*"
 flask = "*"
 python-dotenv = "*"
 pillow = "*"
+geotiff = "*"
+tifffile = "*"
 
 [dev-packages]
 ipykernel = "*"
