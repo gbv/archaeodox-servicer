@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from dpath import util as dp
 import re
-from . import credentials
+from .. import credentials
 
 
 class CouchDBServer:

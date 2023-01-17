@@ -3,7 +3,8 @@ from uuid import uuid4
 from os.path import basename
 from datetime import datetime, timezone
 
-from . import couch, global_settings
+from . import couch
+from .. import settings
 from dpath import util as dp
 from PIL import Image
 from geotiff import GeoTiff
@@ -48,7 +49,7 @@ class FieldHub(couch.CouchDBServer):
         return self.template.get_doc(FieldHub.CONFIG_DOCUMENT).json()
 
     def create_project(self, project_id):
-        creation_info = requests.post(f'{global_settings.FieldHub.PROJECT_URL}/{project_id}',
+        creation_info = requests.post(f'{settings.FieldHub.PROJECT_URL}/{project_id}',
                                       auth=self.auth).json()
         database = couch.CouchDatabase(self, project_id)
         
@@ -79,7 +80,7 @@ class FieldDatabase(couch.CouchDatabase):
 
     def __init__(self, server, name):
         super().__init__(server, name)
-        self.media_url = f'{global_settings.FieldHub.MEDIA_URL}/{self.name}/'
+        self.media_url = f'{settings.FieldHub.MEDIA_URL}/{self.name}/'
 
     def get_or_create_document(self, identifier):
         mango =  {'selector': {f'resource.identifier': identifier}}
@@ -104,7 +105,7 @@ class FieldDatabase(couch.CouchDatabase):
     @staticmethod
     def generate_thumbnail(pil_image_object, format):
         cloned_image = pil_image_object.copy()
-        cloned_image.thumbnail((10 * global_settings.FieldHub.THUMBNAIL_HEIGHT, global_settings.FieldHub.THUMBNAIL_HEIGHT))
+        cloned_image.thumbnail((10 * settings.FieldHub.THUMBNAIL_HEIGHT, settings.FieldHub.THUMBNAIL_HEIGHT))
         out_bytes = io.BytesIO()
         cloned_image.save(out_bytes, format)
         return out_bytes
@@ -233,20 +234,20 @@ class FieldDatabase(couch.CouchDatabase):
             raise ValueError(response.text)
 
     def ingest_shp(self, zipped_shapes):
-        converter_response = requests.post(global_settings.GeometryParser.CONVERSION_URL,
+        converter_response = requests.post(settings.GeometryParser.CONVERSION_URL,
                                            files={zipped_shapes: open(zipped_shapes, 'rb')})
         for feature in converter_response.json()['features']:
             feature_properties = feature['properties']
             resource_type = 'Unknown'
             if 'Befunde' in feature_properties['source_file']:
-                feature_identifier = global_settings.GeometryParser.FIND_SECTION_ID_TEMPLATE.format(**feature_properties)
+                feature_identifier = settings.GeometryParser.FIND_SECTION_ID_TEMPLATE.format(**feature_properties)
                 resource_type = 'Befundanschnitt'
             else:
                 feature_identifier = feature_properties['id']
 
             feature_properties['identifier'] = feature_identifier
 
-            for source, target in global_settings.GeometryParser.PROPERTY_MAP.items():
+            for source, target in settings.GeometryParser.PROPERTY_MAP.items():
                 copied_value = feature_properties.get(source, None)
                 if not copied_value is None:
                     feature_properties[target] = copied_value

@@ -2,7 +2,7 @@ import os, json
 from .couch import CouchDBServer
 from .field_client import FieldDatabase, FieldHub
 from .easydb_client import EasydbClient
-from . import global_settings
+from .. import settings
 from dotenv import load_dotenv
 from dpath import util as dp
 
@@ -34,8 +34,8 @@ class EdbHandler:
 class DbCreatingHandler(EdbHandler):
     def process_request(self, *args, **kwargs):
         self.logger.debug(f'Handling {self.inner_data}')
-        hub = FieldHub(global_settings.Couch.HOST_URL,
-                       global_settings.FieldHub.TEMPLATE_PROJECT_NAME,
+        hub = FieldHub(settings.Couch.HOST_URL,
+                       settings.FieldHub.TEMPLATE_PROJECT_NAME,
                        auth_from_module=True)
         database = self.object_data
         database_name = database['db_name'].lower().strip()
@@ -50,10 +50,10 @@ class DbCreatingHandler(EdbHandler):
 
 class ImportInitiatingHandler(EdbHandler):
     def process_request(self, *args, **kwargs):
-        result = self.object_data[global_settings.Easydb.IMPORT_RESULT_FIELD]
+        result = self.object_data[settings.Easydb.IMPORT_RESULT_FIELD]
         self.logger.debug(self.object_data)
         if not result:
-            self.object_data[global_settings.Easydb.IMPORT_RESULT_FIELD] = global_settings.Easydb.IMPORT_REGISTRATION_MESSAGE
+            self.object_data[settings.Easydb.IMPORT_RESULT_FIELD] = settings.Easydb.IMPORT_REGISTRATION_MESSAGE
         
         return self.full_data
 
@@ -68,31 +68,31 @@ class FileImportingHandler(EdbHandler):
         except ValueError as error:
             # DOES THIS MAKE SENSE??
             self.logger.exception(error)
-            self.edb_client.update_item(self.object_type,id, {global_settings.Easydb.IMPORT_RESULT_FIELD: 
-                                                              global_settings.Easydb.IMPORT_INITIATION_MESSAGE})
+            self.edb_client.update_item(self.object_type,id, {settings.Easydb.IMPORT_RESULT_FIELD: 
+                                                              settings.Easydb.IMPORT_INITIATION_MESSAGE})
 
         
         inner_object_data = wrapped_object_data[self.object_type]
         self.logger.debug(f'Retrieved from edb: {wrapped_object_data}')
-        import_result = inner_object_data[global_settings.Easydb.IMPORT_RESULT_FIELD]
-        if import_result != global_settings.Easydb.IMPORT_REGISTRATION_MESSAGE:
+        import_result = inner_object_data[settings.Easydb.IMPORT_RESULT_FIELD]
+        if import_result != settings.Easydb.IMPORT_REGISTRATION_MESSAGE:
             return
         try:
             import_file = EasydbClient.get_preferred_media(wrapped_object_data,
-                                                           global_settings.Easydb.FIELD_IMPORT_MEDIA_FIELD)
+                                                           settings.Easydb.FIELD_IMPORT_MEDIA_FIELD)
             
             file_url = dp.get(import_file, 'versions/original/download_url')
             self.logger.debug(file_url)
         except KeyError:
             self.logger.debug(f'No media associated with {self.object_type} {id}.')
-            self.edb_client.update_item(self.object_type, id, {global_settings.Easydb.IMPORT_RESULT_FIELD:
-                                                               global_settings.Easydb.IMPORT_FAILURE_MESSAGE})
+            self.edb_client.update_item(self.object_type, id, {settings.Easydb.IMPORT_RESULT_FIELD:
+                                                               settings.Easydb.IMPORT_FAILURE_MESSAGE})
             return self.full_data
         
         self.logger.debug(f'acquired url {file_url}')
         
-        self.edb_client.update_item(self.object_type,id, {global_settings.Easydb.IMPORT_RESULT_FIELD:
-                                                          global_settings.Easydb.IMPORT_INITIATION_MESSAGE})
+        self.edb_client.update_item(self.object_type,id, {settings.Easydb.IMPORT_RESULT_FIELD:
+                                                          settings.Easydb.IMPORT_INITIATION_MESSAGE})
                 
         # We should now pass the url to ingest_from_url@field_client
         return self.full_data

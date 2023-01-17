@@ -9,21 +9,20 @@ import time
 from flask import Flask, request as incoming_request
 from .utils.easydb_client import EasydbClient, EASLiberator
 from .utils.wfs_client import WFSClient
-from .edbHandlers import EdbHandler, DbCreatingHandler, FileImportingHandler, ImportInitiatingHandler
+from .utils.edbHandlers import EdbHandler, DbCreatingHandler, FileImportingHandler, ImportInitiatingHandler
 
 from dpath import util as dp
 
-from . import WFS_settings
-from . import global_settings
+from . import settings
 
 app = Flask(__name__)
 
-wfs = WFSClient(WFS_settings.GEO_SERVER_URL,
-                WFS_settings.TRANSACTION_ATTRIBUTES,
-                WFS_settings.OBJECT_TYPE,
-                WFS_settings.OBJECT_NAMESPACE,
-                WFS_settings.ATTRIBUTES,
-                WFS_settings.GEOMETRY,
+wfs = WFSClient(settings.WFS.GEO_SERVER_URL,
+                settings.WFS.TRANSACTION_ATTRIBUTES,
+                settings.WFS.OBJECT_TYPE,
+                settings.WFS.OBJECT_NAMESPACE,
+                settings.WFS.ATTRIBUTES,
+                settings.WFS.GEOMETRY,
                 app.logger)
 
 app.logger.debug('Started servicer')
@@ -129,7 +128,7 @@ def get_wfs_id(item_type, id, token):
     return dp.get(result, [item_type, "feature_id"])
 
 
-edb = EasydbClient(global_settings.Easydb.HOST_URL, app.logger)
+edb = EasydbClient(settings.Easydb.HOST_URL, app.logger)
 
 servicer = Servicer(app.logger, edb)
 servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_database', DbCreatingHandler)
