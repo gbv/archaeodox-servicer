@@ -127,6 +127,9 @@ def get_wfs_id(item_type, id, token):
     app.logger.debug("Got items: " + json.dumps(result, indent=2))
     return dp.get(result, [item_type, "feature_id"])
 
+#
+# The actual app works below here
+#
 
 edb = EasydbClient(settings.Easydb.HOST_URL, app.logger)
 
@@ -135,7 +138,7 @@ servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_databas
 servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value, 'field_project', ImportInitiatingHandler)
 servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
                           'field_project',
-                          FileImportingHandler,
-                          delayed=True)
+                          EdbHandler,
+                          delayed=False)
 
 app.logger.debug(f'Currently registered handlers: {servicer.handlers}')
