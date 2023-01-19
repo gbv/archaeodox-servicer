@@ -9,8 +9,11 @@ A more flexible plugin system can be built when someone finds a second use case 
 
 Tha said, it is kind of modular and comes with some useful parts.
 
-- [app/couch.py] is a client for couchdbs with some added functions for user and database creation, cloning of configuration and such.
-- [app/field_client.py] provides a specialised couchdb client to work with the databases on an iDAI.field hub.
-- [app/easydb_client.py] helps you with handling object in an easydb and provides session management. It also helps with downloading media files.
-- [app/wfs_client.py] lets you handle geometries on a WFS
+- [app/utils/couch.py] is a client for couchdbs with some added functions for user and database creation, cloning of configuration and such.
+- [app/utils/field_client.py] provides a specialised couchdb client to work with the databases on an iDAI.field hub.
+- [app/utils/easydb_client.py] helps you with handling object in an easydb and provides session management. It also helps with downloading media files.
+- [app/utils/wfs_client.py] lets you handle geometries on a WFS
 
+## Setup
+
+The servicer talks to several webservices and requires credentials for some of them. These are imported from the credentials.py module in app/. When cloning the repo you are suposed to copy the credentials.py.template to credentials.py **AND THEN** enter real values. This way the template stays clean and the module will be ignored by git.

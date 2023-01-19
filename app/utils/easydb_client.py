@@ -60,8 +60,8 @@ class EasydbClient:
             self.session_token = session_info['token']
 
             params = {"token": self.session_token,
-                      "login": credentials.USER_NAME,
-                      "password": credentials.PASSWORD}
+                      "login": credentials.EASYDB_USER_NAME,
+                      "password": credentials.EASYDB_PASSWORD}
             auth_response = requests.post(self.session_auth_url,
                                           params=params)
             self.logger.debug(f"Attempting auth.")
