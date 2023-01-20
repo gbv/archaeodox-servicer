@@ -10,6 +10,7 @@ from flask import Flask, request as incoming_request
 from .utils.easydb_client import EasydbClient, EASLiberator
 from .utils.wfs_client import WFSClient
 from .utils.edbHandlers import EdbHandler, DbCreatingHandler, FileImportingHandler, ImportInitiatingHandler
+from .utils.field_client import FieldHub
 
 from dpath import util as dp
 
@@ -117,6 +118,23 @@ def generic_edb_hook(hook, object_type):
     app.logger.debug(f"From edb: {hook}, {object_type}")
     try:
         return servicer.handle_edb_hook(hook, object_type, incoming_request)
+    except Exception as exception:
+        app.logger.exception(exception)
+        return str(exception), 500
+
+@app.route('/update-valuelists', methods=['POST'])
+def update_valuelists():
+    def actually_update(logger, *args, **kwargs):
+        field_hub = FieldHub(settings.Couch.HOST_URL,
+                    settings.FieldHub.TEMPLATE_PROJECT_NAME,
+                    auth_from_module=True,
+                    logger=logger)
+        field_hub.update_valuelists()
+    try:
+        task_label = 'Update_valuelists_' + str(time.time())
+        task = Task(task_label, servicer.logger, actually_update)
+        servicer.delayed_task_queue.append(task)
+        return task_label, 200
     except Exception as exception:
         app.logger.exception(exception)
         return str(exception), 500

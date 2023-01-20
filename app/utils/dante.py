@@ -1,14 +1,22 @@
 import requests
+import json
 from os.path import join
 
 DANTE_URL = 'https://api.dante.gbv.de'
+VOCABULARY_PUBLISHER = 'Archäologisches Museum Hamburg'
 
 
 class DanteTreeNode:
-    def __init__(self, uri="", prefLabel="", item_cache={}, level=0, dig=False, dig_deeper=False, *args, **kwargs):
+    def __init__(self, uri="", prefLabel="", parentLabel=None, created="", item_cache={}, level=0, dig=False, dig_deeper=False, *args, **kwargs):
+        print(uri)
         self.uri = uri
         self.depth = level
-        self.prefLabel = prefLabel 
+        if parentLabel:
+            self.prefLabel = { 'de': f"{parentLabel['de']} / {prefLabel['de']}" }
+        else:
+            self.prefLabel = prefLabel
+        self.parentLabel = parentLabel
+        self.created = created
         if item_cache:
             self.item_cache = item_cache
         else:
@@ -39,7 +47,7 @@ class DanteTreeNode:
                 if d['uri'] in self.item_cache.keys():
                     child = self.item_cache[d['uri']]
                 else: 
-                    child = DanteTreeNode(dig=dig_deeper, dig_deeper=dig_deeper, item_cache=self.item_cache, level=self.depth+1, **d)
+                    child = DanteTreeNode(parentLabel=self.prefLabel, dig=dig_deeper, dig_deeper=dig_deeper, item_cache=self.item_cache, level=self.depth+1, **d)
                     self.item_cache[child.uri] = child
                 self.children.append(child)
             self.checked_for_children = True
@@ -62,11 +70,11 @@ class DanteTreeNode:
             to_return['children'] = [child.json(True) for child in self.children]
         return to_return
 
-    def get_idai(self):
-        tag = f'{str(self.prefLabel)} - {self.id}'
-        return {tag: {'references': [self.uri],
-                      'label': self.prefLabel,
-                      'level': self.depth}}
+    def get_field_value(self):
+        return {
+            'references': [self.uri],
+            'label': self.prefLabel
+        }
 
     def flatten(self, max_depth=None):
         nodes = self.item_cache.values()
@@ -93,10 +101,21 @@ class DanteVocabulary(DanteTreeNode):
             self.item_cache[child.uri] = child
         self.checked_for_children = True
 
-    def get_idai_list(self, max_depth=None):
+    def get_field_list(self, max_depth=None):
+        return {
+            'description': self.prefLabel,
+            'createdBy': VOCABULARY_PUBLISHER,
+            'creationDate': self.created,
+            'values': self.get_values(max_depth)
+        }
+
+    def get_values(self, max_depth):
         items = list(self.flatten(max_depth=max_depth))
         items.remove(self)
-        return [item.get_idai() for item in items]
+        result = {}
+        for item in items:
+            result[item.id] = item.get_field_value()
+        return result
     
     def get_mermaid(self, direction='TD', file_name=None, max_depth=None):
         mermaid = ['graph ' + direction]
@@ -114,30 +133,8 @@ class DanteVocabulary(DanteTreeNode):
 
 
 if __name__ == '__main__':
-    casserolle = ['amh_causes_role']
-    real_unit = 'nld_areal_unit'
-
-    technology = DanteVocabulary.from_uri('http://uri.gbv.de/terminology/kuniweb_technik')
-    technology.get_mermaid(file_name='technology.mmd')
-    exit(0)
-    import pickle
+    vocabulary = DanteVocabulary.from_uri('http://uri.gbv.de/terminology/amh_objektbezeichnung')
+    field_list = vocabulary.get_field_list()
+    with open('vocabulary.json', 'w') as out_file:
+        json.dump(field_list, out_file, indent=2, ensure_ascii=False)
     
-    def pickle_tree(voc_name):
-        voc = DanteTreeNode.from_uri(f'http://uri.gbv.de/terminology/{voc_name}/')
-        voc.initialize_top()
-        with open(f'{voc_name}.pkl', 'wb') as out_file:
-            pickle.dump(voc, out_file)
-    # fieldified = fieldify_dante('http://api.dante.gbv.de', 'https://uri.gbv.de/terminology/kenom_material/')
-    
-    # fieldified = fieldify_dante('http://api.dante.gbv.de', "http://uri.gbv.de/terminology/amh_datierung/")
-    
-    vocs = ['prizepapers_journey_type',
-            'lido_eventtype',
-            'kuniweb_technik',
-            'gender',
-            'kenom_material',
-            'amh_datierung'
-            ]
-    for voc in vocs:
-        print(f"Pickling: {voc}")
-        pickle_tree(voc)

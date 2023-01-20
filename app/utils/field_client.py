@@ -7,8 +7,9 @@ from . import couch
 from .. import settings
 from dpath import util as dp
 from PIL import Image
-from geotiff import GeoTiff
+#from geotiff import GeoTiff
 from tifffile import TiffFile
+from .dante import DanteVocabulary
 
 
 def iso_utc():
@@ -40,13 +41,26 @@ class CSV:
 class FieldHub(couch.CouchDBServer):
     CONFIG_DOCUMENT = 'configuration'
     PROJECT_DOCUMENT_ID = 'project'
+    ARCHAEODOX_VOCABULARY_URI_BASE = 'http://uri.gbv.de/terminology'
+    ARCHAEODOX_VOCABULARY_NAMES = [
+        'amh_material',
+        'amh_datierung',
+        'amh_objektbezeichnung',
+        'amh_warenart'
+        #'amh_befunde' Not public yet
+    ]
+    ARCHAEODOX_VOCABULARY_PREFIX = 'amh-default'
     
-    def __init__(self, host, template_project_name, user_name=None, password=None, auth_from_module=False) -> None:
+    def __init__(self, host, template_project_name, user_name=None, password=None, auth_from_module=False, logger=None) -> None:
         super().__init__(host, user_name, password, auth_from_module)
         self.template = couch.CouchDatabase(self, template_project_name)
+        self.logger = logger
 
     def get_config(self):
         return self.template.get_doc(FieldHub.CONFIG_DOCUMENT).json()
+
+    def update_config(self, configuration_document):
+        self.template.update_doc(FieldHub.CONFIG_DOCUMENT, configuration_document)
 
     def create_project(self, project_id):
         creation_info = requests.post(f'{settings.FieldHub.PROJECT_URL}/{project_id}',
@@ -62,6 +76,16 @@ class FieldHub(couch.CouchDBServer):
         }}
         database.create_doc(FieldHub.PROJECT_DOCUMENT_ID, project)
         return creation_info['info']['password']
+
+    def update_valuelists(self):
+        configuration_document = self.get_config()
+        for vocabulary_name in FieldHub.ARCHAEODOX_VOCABULARY_NAMES:
+            if self.logger: self.logger.debug(f'Updating valuelist for vocabulary: {vocabulary_name}')
+            vocabulary = DanteVocabulary.from_uri(f'{FieldHub.ARCHAEODOX_VOCABULARY_URI_BASE}/{vocabulary_name}/')
+            field_list = vocabulary.get_field_list()
+            valuelist_name = f'{FieldHub.ARCHAEODOX_VOCABULARY_PREFIX}:{vocabulary_name}'
+            configuration_document['resource']['valuelists'][valuelist_name] = field_list
+        self.update_config(configuration_document)
 
 
 class FieldDatabase(couch.CouchDatabase):
@@ -130,8 +154,8 @@ class FieldDatabase(couch.CouchDatabase):
             format = 'PNG'
             mimetype = 'image/png'
             tiff = TiffFile(image_file_name)
-            if tiff.is_geotiff:
-                FieldDatabase.append_georeference(image_document, image_file_name)
+            #if tiff.is_geotiff:
+                #FieldDatabase.append_georeference(image_document, image_file_name)
 
         format = basename(mimetype)
         headers = { 'Content-type': mimetype }
@@ -177,23 +201,23 @@ class FieldDatabase(couch.CouchDatabase):
                                 data=thumbnail_bytes.getvalue())
             
 
-    @staticmethod
-    def append_georeference(image_document, image_file_name):
-        width = image_document['resource']['width']
-        height = image_document['resource']['height']
+    #@staticmethod
+    #def append_georeference(image_document, image_file_name):
+        #width = image_document['resource']['width']
+        #height = image_document['resource']['height']
 
-        geotiff = GeoTiff(image_file_name)
-        original_crs = geotiff.crs_code
-        geotiff = GeoTiff(image_file_name, as_crs=original_crs)
+        #geotiff = GeoTiff(image_file_name)
+        #original_crs = geotiff.crs_code
+        #geotiff = GeoTiff(image_file_name, as_crs=original_crs)
 
-        upper_left = (0, 0)
-        upper_right = (width, 0)
-        lower_left = (0, height)
+        #upper_left = (0, 0)
+        #upper_right = (width, 0)
+        #lower_left = (0, height)
         
-        image_document['resource']['georeference'] = {'topLeftCoordinates': geotiff.get_coords(*upper_left),
-                                                      'topRightCoordinates': geotiff.get_coords(*upper_right),
-                                                      'bottomLeftCoordinates': geotiff.get_coords(*lower_left)
-                                                      }
+        #image_document['resource']['georeference'] = {'topLeftCoordinates': geotiff.get_coords(*upper_left),
+        #                                              'topRightCoordinates': geotiff.get_coords(*upper_right),
+        #                                              'bottomLeftCoordinates': geotiff.get_coords(*lower_left)
+        #                                              }
 
 
     def populate_resource(self, resource_data, resource_type):
@@ -254,3 +278,4 @@ class FieldDatabase(couch.CouchDatabase):
                     feature_properties.pop(source)
             feature_properties['geometry'] = feature['geometry']
             print(self.populate_resource(CSV.inflate(feature_properties), resource_type).content)
+    
