@@ -3,13 +3,13 @@ from uuid import uuid4
 from os.path import basename
 from datetime import datetime, timezone
 
-from . import couch
-from .. import settings
+import couch
+import settings
 from dpath import util as dp
 from PIL import Image
-#from geotiff import GeoTiff
+from geotiff import GeoTiff
 from tifffile import TiffFile
-from .dante import DanteVocabulary
+from dante import DanteVocabulary
 
 
 def iso_utc():
@@ -62,20 +62,36 @@ class FieldHub(couch.CouchDBServer):
     def update_config(self, configuration_document):
         self.template.update_doc(FieldHub.CONFIG_DOCUMENT, configuration_document)
 
-    def create_project(self, project_id):
-        creation_info = requests.post(f'{settings.FieldHub.PROJECT_URL}/{project_id}',
+    def create_project(self, project_identifier):
+        creation_info = requests.post(f'{settings.FieldHub.PROJECT_URL}/{project_identifier}',
                                       auth=self.auth).json()
-        database = couch.CouchDatabase(self, project_id)
+        database = couch.CouchDatabase(self, project_identifier)
         
-        config = self.get_config()
-        database.create_doc(FieldHub.CONFIG_DOCUMENT, config)
-        project = {'resource': {
-            'identifier': project_id,
-            'id': FieldHub.PROJECT_DOCUMENT_ID,
-            'category': 'Project'
-        }}
+        database.create_doc(FieldHub.CONFIG_DOCUMENT, self.create_configuration_document())
+        project = self.create_project_document(project_identifier)
         database.create_doc(FieldHub.PROJECT_DOCUMENT_ID, project)
         return creation_info['info']['password']
+
+    def create_configuration_document(self):
+        return {
+            '_id': FieldHub.CONFIG_DOCUMENT,
+            'resource': self.get_config()['resource'],
+            'created': {'user': 'easydb', 'date': iso_utc()},
+            'modified': []
+        }
+
+    def create_project_document(self, project_identifier):
+        return {
+            '_id': FieldHub.PROJECT_DOCUMENT_ID,
+            'resource': {
+                'identifier': project_identifier,
+                'id': FieldHub.PROJECT_DOCUMENT_ID,
+                'category': 'Project',
+                'relations': {}
+            },
+            'created': {'user': 'easydb', 'date': iso_utc()},
+            'modified': []
+        }
 
     def update_valuelists(self):
         configuration_document = self.get_config()
@@ -116,8 +132,11 @@ class FieldDatabase(couch.CouchDatabase):
             else:
                 id = str(uuid4())
                 document = {'_id': id,
-                            'resource': {'identifier': identifier,
-                            'id': id},
+                            'resource': {
+                                'identifier': identifier,
+                                'id': id,
+                                'relations': {}
+                            },
                             'created':{'user':'easydb', 'date': iso_utc()},
                             'modified':[]}
                 response = self.create_doc(id, document)
@@ -145,17 +164,9 @@ class FieldDatabase(couch.CouchDatabase):
         if mimetype is None:
             return
         if mimetype == 'image/tiff':
-            # Tiffs are being converted to pngs on the fly. 
-            # The file name is not changed.
-            # This behaviour is creepy and will be changed once 
-            # the handling of tiffs by the desktop client
-            # has been defined.
-            #
-            format = 'PNG'
-            mimetype = 'image/png'
             tiff = TiffFile(image_file_name)
-            #if tiff.is_geotiff:
-                #FieldDatabase.append_georeference(image_document, image_file_name)
+            if tiff.is_geotiff:
+                FieldDatabase.append_georeference(image_document, image_file_name)
 
         format = basename(mimetype)
         headers = { 'Content-type': mimetype }
@@ -174,10 +185,15 @@ class FieldDatabase(couch.CouchDatabase):
     def initialize_image_document(image_document, image_file_name, image):
         width, height = image.size
         resource = image_document['resource']
+        if 'category' not in resource:
+            # TODO Set correct category or remove if CSV import is mandatory
+            resource['category'] = 'Image' 
         resource['width'] = width
         resource['height'] = height
         resource['originalFilename'] = image_file_name
-        
+        if 'relations' not in resource:
+            resource['relations'] = {}
+
         
     def upload_original_image(self, image, format, headers, target_url):
         params = { 'type': 'original_image' }
@@ -201,23 +217,23 @@ class FieldDatabase(couch.CouchDatabase):
                                 data=thumbnail_bytes.getvalue())
             
 
-    #@staticmethod
-    #def append_georeference(image_document, image_file_name):
-        #width = image_document['resource']['width']
-        #height = image_document['resource']['height']
+    @staticmethod
+    def append_georeference(image_document, image_file_name):
+        width = image_document['resource']['width']
+        height = image_document['resource']['height']
 
-        #geotiff = GeoTiff(image_file_name)
-        #original_crs = geotiff.crs_code
-        #geotiff = GeoTiff(image_file_name, as_crs=original_crs)
+        geotiff = GeoTiff(image_file_name)
+        original_crs = geotiff.crs_code
+        geotiff = GeoTiff(image_file_name, as_crs=original_crs)
 
-        #upper_left = (0, 0)
-        #upper_right = (width, 0)
-        #lower_left = (0, height)
+        upper_left = (0, 0)
+        upper_right = (width, 0)
+        lower_left = (0, height)
         
-        #image_document['resource']['georeference'] = {'topLeftCoordinates': geotiff.get_coords(*upper_left),
-        #                                              'topRightCoordinates': geotiff.get_coords(*upper_right),
-        #                                              'bottomLeftCoordinates': geotiff.get_coords(*lower_left)
-        #                                              }
+        image_document['resource']['georeference'] = {'topLeftCoordinates': geotiff.get_coords(*upper_left),
+                                                      'topRightCoordinates': geotiff.get_coords(*upper_right),
+                                                      'bottomLeftCoordinates': geotiff.get_coords(*lower_left)
+                                                      }
 
 
     def populate_resource(self, resource_data, resource_type):
@@ -278,4 +294,3 @@ class FieldDatabase(couch.CouchDatabase):
                     feature_properties.pop(source)
             feature_properties['geometry'] = feature['geometry']
             print(self.populate_resource(CSV.inflate(feature_properties), resource_type).content)
-    

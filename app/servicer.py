@@ -7,10 +7,10 @@ import traceback
 import time
 
 from flask import Flask, request as incoming_request
-from .utils.easydb_client import EasydbClient, EASLiberator
-from .utils.wfs_client import WFSClient
-from .utils.edbHandlers import EdbHandler, DbCreatingHandler, FileImportingHandler, ImportInitiatingHandler
-from .utils.field_client import FieldHub
+from .easydb_client import EasydbClient, EASLiberator
+from .wfs_client import WFSClient
+from .edbHandlers import EdbHandler, DbCreatingHandler, FileImportingHandler, ImportInitiatingHandler
+from .field_client import FieldHub
 
 from dpath import util as dp
 

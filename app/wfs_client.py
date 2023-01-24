@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import requests
 import json
-from ..settings import WFS as WFS_settings
+from .settings import WFS as WFS_settings
 
 
 class WFSClient:
