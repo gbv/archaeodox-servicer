@@ -20,7 +20,7 @@ class Couch:
 
 class FieldHub:
     MEDIA_URL = "http://esx-80.gbv.de:4001/files"
-    PROJECT_URL = "http://esx-80.gbv.de:4001/api/projects"
+    PROJECT_URL = "http://esx-80.gbv.de:4001/projects"
     THUMBNAIL_HEIGHT = 320
     TEMPLATE_PROJECT_NAME = 'hh9999_12345'
 
