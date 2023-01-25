@@ -158,4 +158,9 @@ servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
                           EdbHandler,
                           delayed=False)
 
+servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
+                          'dokumente_extern',
+                          EdbHandler,
+                          delayed=False)
+
 app.logger.debug(f'Currently registered handlers: {servicer.handlers}')
