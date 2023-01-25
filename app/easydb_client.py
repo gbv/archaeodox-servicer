@@ -2,7 +2,7 @@ import json, requests
 import zipfile, tempfile, shutil, glob
 from os.path import join
 from time import sleep
-import credentials
+from . import credentials
 from dpath import util as dp
 
 

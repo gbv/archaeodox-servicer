@@ -2,7 +2,7 @@ import os, json
 from .couch import CouchDBServer
 from .field_client import FieldDatabase, FieldHub
 from .easydb_client import EasydbClient
-import settings
+from . import settings
 from dotenv import load_dotenv
 from dpath import util as dp
 

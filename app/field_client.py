@@ -2,14 +2,16 @@ import csv, json, mimetypes, requests, io
 from uuid import uuid4
 from os.path import basename
 from datetime import datetime, timezone
+from zipfile import ZipFile
 
-import couch
-import settings
+from . import couch
+from . import settings
+from .dante import DanteVocabulary
+from . import shapefile_converter
 from dpath import util as dp
 from PIL import Image
 from geotiff import GeoTiff
 from tifffile import TiffFile
-from dante import DanteVocabulary
 
 
 def iso_utc():
@@ -273,24 +275,33 @@ class FieldDatabase(couch.CouchDatabase):
         else:
             raise ValueError(response.text)
 
-    def ingest_shp(self, zipped_shapes):
-        converter_response = requests.post(settings.GeometryParser.CONVERSION_URL,
-                                           files={zipped_shapes: open(zipped_shapes, 'rb')})
-        for feature in converter_response.json()['features']:
+    def ingest_shp_from_url(self, url):
+        response = requests.get(url)
+        if response.ok:
+            file_bytes = io.BytesIO(response.content)
+            zip_file = ZipFile(file_bytes, 'r')
+            self.ingest_shp(zip_file)
+        else:
+            raise ValueError(response.text)
+
+    def ingest_shp(self, shp_zip_file):
+        geojson = shapefile_converter.to_geojson(shp_zip_file)
+        for feature in geojson['features']:
             feature_properties = feature['properties']
             resource_type = 'Unknown'
             if 'Befunde' in feature_properties['source_file']:
                 feature_identifier = settings.GeometryParser.FIND_SECTION_ID_TEMPLATE.format(**feature_properties)
-                resource_type = 'Befundanschnitt'
+                resource_type = 'FeatureSegment'
             else:
                 feature_identifier = feature_properties['id']
 
-            feature_properties['identifier'] = feature_identifier
-
+            resource = {}
+            resource['identifier'] = feature_identifier
+            
             for source, target in settings.GeometryParser.PROPERTY_MAP.items():
                 copied_value = feature_properties.get(source, None)
+                
                 if not copied_value is None:
-                    feature_properties[target] = copied_value
-                    feature_properties.pop(source)
-            feature_properties['geometry'] = feature['geometry']
-            print(self.populate_resource(CSV.inflate(feature_properties), resource_type).content)
+                    resource[target] = copied_value
+            resource['geometry'] = feature['geometry']
+            print(self.populate_resource(CSV.inflate(resource), resource_type).content)
