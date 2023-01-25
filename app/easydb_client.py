@@ -70,27 +70,22 @@ class EasydbClient:
         else:
             raise ValueError(f"Failed to acquire session from {self.session_url}")
 
-    def get_item(self, item_type, id, id_field="_id", pretty=0, token=None):
-        search = [{"type": "in",
+    def get_item(self, item_type, field_value, field_name="_id", pretty=0, token=None):
+        search = {"type": "in",
                    "bool": "must",
-                   "fields": [".".join((item_type, id_field))],
-                   "in": [id]
-                   }]
+                   "fields": [".".join((item_type, field_name))],
+                   "in": [field_value]
+                   }
         token = token if token is not None else self.session_token
         params = {"token": token}
 
-        get_url = join(self.db_url,
-                       item_type,
-                       "_all_fields",
-                       str(id))
-
-        response = requests.get(get_url, params=params)
+        response = requests.post(self.search_url, params=params, json={ 'search': [search] })
 
         if response.status_code == 200:
-            result = json.loads(response.content)[0]
+            result = json.loads(response.content)['objects'][0]
         else:
             result = {}
-        return result, response.status_code
+        return result
 
     def get_tags(self, token=None):
         tags_url = join(self.url,
@@ -142,9 +137,11 @@ class EasydbClient:
             raise ConnectionError(response.text)
         return response.ok
 
-    def create_object(self, object_type, data, token=None):
+    def create_object(self, object_type, fields_data, token=None):
         params = {"token": token if token is not None else self.session_token}
-        data[object_type]['_version'] = 1
+        data = {}
+        fields_data['_version'] = 1
+        data[object_type] = fields_data
         insert_url = join(self.db_url,
                           object_type)
         response = requests.put(insert_url, params=params, json=[data])
