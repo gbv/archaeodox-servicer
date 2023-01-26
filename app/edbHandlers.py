@@ -59,41 +59,26 @@ class ImportInitiatingHandler(EdbHandler):
 
 class FileImportingHandler(EdbHandler):
     def process_request(self, *args, **kwargs):
-        # Check returns of every path
-        super().process_request()
-        self.edb_client.acquire_session()
-        id = self.object_data['_id']
-        try:
-            wrapped_object_data = self.edb_client.get_object_by_id(self.object_type, id)
-        except ValueError as error:
-            # DOES THIS MAKE SENSE??
-            self.logger.exception(error)
-            self.edb_client.update_item(self.object_type,id, {settings.Easydb.IMPORT_RESULT_FIELD: 
-                                                              settings.Easydb.IMPORT_INITIATION_MESSAGE})
+        hub = FieldHub(settings.Couch.HOST_URL,
+                       settings.FieldHub.TEMPLATE_PROJECT_NAME,
+                       auth_from_module=True)
+        password = self.object_data['password']
 
-        
-        inner_object_data = wrapped_object_data[self.object_type]
-        self.logger.debug(f'Retrieved from edb: {wrapped_object_data}')
-        import_result = inner_object_data[settings.Easydb.IMPORT_RESULT_FIELD]
-        if import_result != settings.Easydb.IMPORT_REGISTRATION_MESSAGE:
-            return
-        try:
-            import_file = EasydbClient.get_preferred_media(wrapped_object_data,
-                                                           settings.Easydb.FIELD_IMPORT_MEDIA_FIELD)
-            
-            file_url = dp.get(import_file, 'versions/original/download_url')
-            self.logger.debug(file_url)
-        except KeyError:
-            self.logger.debug(f'No media associated with {self.object_type} {id}.')
-            self.edb_client.update_item(self.object_type, id, {settings.Easydb.IMPORT_RESULT_FIELD:
-                                                               settings.Easydb.IMPORT_FAILURE_MESSAGE})
-            return self.full_data
-        
-        self.logger.debug(f'acquired url {file_url}')
-        
-        self.edb_client.update_item(self.object_type,id, {settings.Easydb.IMPORT_RESULT_FIELD:
-                                                          settings.Easydb.IMPORT_INITIATION_MESSAGE})
-                
-        # We should now pass the url to ingest_from_url@field_client
+        files = self.edb_client.get_files_from_object(self.object_data, self.object_type)
+        self.logger.debug(files)
+
+        for file in files:
+            # TODO Read db name from image file
+            db_name = ''
+            database = FieldDatabase(hub, db_name, password)
+
+            if file['mime_type'] in settings.EdbHandlers.IMAGE_IMPORT_MIME_TYPES:
+                self.logger.debug(f"Image import: {file['name']}")
+                database.ingest_image_from_url(file['url'], file['name'])
+            if file['mime_type'] in settings.EdbHandlers.CSV_IMPORT_MIME_TYPES:
+                self.logger.debug(f"CSV import: {file['name']}")
+            if file['mime_type'] in settings.EdbHandlers.SHAPEFILE_IMPORT_MIME_TYPES:
+                self.logger.debug(f"Shapefile import: {file['name']}")
+    
         return self.full_data
 

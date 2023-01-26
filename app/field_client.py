@@ -6,12 +6,12 @@ from zipfile import ZipFile
 
 from . import couch
 from . import settings
+from . import credentials
 from .dante import DanteVocabulary
 from . import shapefile_converter
 from dpath import util as dp
 from PIL import Image
 from geotiff import GeoTiff
-from tifffile import TiffFile
 
 
 def iso_utc():
@@ -55,7 +55,7 @@ class FieldHub(couch.CouchDBServer):
     
     def __init__(self, host, template_project_name, user_name=None, password=None, auth_from_module=False, logger=None) -> None:
         super().__init__(host, user_name, password, auth_from_module)
-        self.template = couch.CouchDatabase(self, template_project_name)
+        self.template = couch.CouchDatabase(self, template_project_name, credentials.COUCHDB_ADMIN_USER, credentials.COUCHDB_ADMIN_PASSWORD)
         self.logger = logger
 
     def get_config(self):
@@ -120,8 +120,8 @@ class FieldDatabase(couch.CouchDatabase):
                     'Photo',
                     'Profile']
 
-    def __init__(self, server, name):
-        super().__init__(server, name)
+    def __init__(self, server, name, password):
+        super().__init__(server, name, name, password)
         self.media_url = f'{settings.FieldHub.MEDIA_URL}/{self.name}/'
 
     def get_or_create_document(self, identifier):
@@ -156,19 +156,17 @@ class FieldDatabase(couch.CouchDatabase):
         return out_bytes
 
 
-    def upload_image(self, image_file_name):
-        image_document = self.get_or_create_document(image_file_name)
+    def upload_image(self, image_object, image_name):
+        image_document = self.get_or_create_document(image_name)
         id = image_document['_id']
-        image = Image.open(image_file_name)
-        FieldDatabase.initialize_image_document(image_document, image_file_name, image)
+        image = Image.open(io.BytesIO(image_object.getvalue()))
+        FieldDatabase.initialize_image_document(image_document, image_name, image)
 
-        mimetype, encoding = mimetypes.guess_type(image_file_name)
+        mimetype, encoding = mimetypes.guess_type(image_name)
         if mimetype is None:
             return
         if mimetype == 'image/tiff':
-            tiff = TiffFile(image_file_name)
-            if tiff.is_geotiff:
-                FieldDatabase.append_georeference(image_document, image_file_name)
+            FieldDatabase.append_georeference(image_document, image_object)
 
         format = basename(mimetype)
         headers = { 'Content-type': mimetype }
@@ -220,22 +218,26 @@ class FieldDatabase(couch.CouchDatabase):
             
 
     @staticmethod
-    def append_georeference(image_document, image_file_name):
+    def append_georeference(image_document, image_data):
         width = image_document['resource']['width']
         height = image_document['resource']['height']
 
-        geotiff = GeoTiff(image_file_name)
-        original_crs = geotiff.crs_code
-        geotiff = GeoTiff(image_file_name, as_crs=original_crs)
+        try:
+            geotiff = GeoTiff(io.BytesIO(image_data.getvalue()))
+            original_crs = geotiff.crs_code
+            geotiff = GeoTiff(io.BytesIO(image_data.getvalue()), as_crs=original_crs)
 
-        upper_left = (0, 0)
-        upper_right = (width, 0)
-        lower_left = (0, height)
+            upper_left = geotiff.get_coords(0, height)
+            upper_right = geotiff.get_coords(width, height)
+            lower_left = geotiff.get_coords(0, 0)
         
-        image_document['resource']['georeference'] = {'topLeftCoordinates': geotiff.get_coords(*upper_left),
-                                                      'topRightCoordinates': geotiff.get_coords(*upper_right),
-                                                      'bottomLeftCoordinates': geotiff.get_coords(*lower_left)
+            image_document['resource']['georeference'] = {'topLeftCoordinates': [upper_left[1], upper_left[0]],
+                                                      'topRightCoordinates': [upper_right[1], upper_right[0]],
+                                                      'bottomLeftCoordinates': [lower_left[1], lower_left[0]]
                                                       }
+        except Exception as error:
+            logger.error(error)
+            pass
 
 
     def populate_resource(self, resource_data, resource_type):
@@ -272,6 +274,14 @@ class FieldDatabase(couch.CouchDatabase):
             file_object = io.StringIO(response.content.decode('utf-8'))
             file_name = basename(url)
             self.ingest_csv(file_object, file_name)
+        else:
+            raise ValueError(response.text)
+
+    def ingest_image_from_url(self, url, name):
+        response = requests.get(url)
+        if response.ok:
+            file_object = io.BytesIO(response.content)
+            self.upload_image(file_object, name)
         else:
             raise ValueError(response.text)
 

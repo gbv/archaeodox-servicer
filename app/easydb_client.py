@@ -1,5 +1,5 @@
 import json, requests
-import zipfile, tempfile, shutil, glob
+import zipfile, tempfile, shutil, glob, mimetypes
 from os.path import join
 from time import sleep
 from . import credentials
@@ -104,7 +104,7 @@ class EasydbClient:
         if response.status_code == 200:
             result = json.loads(response.content)
         else:
-            raise ValueError(f'{response.status_code}: {response.status_code}')
+            raise ValueError(f'{response.status_code}: {response.text}')
         return result        
 
 
@@ -120,7 +120,7 @@ class EasydbClient:
         if response.status_code == 200:
             result = json.loads(response.content)[0]
         else:
-            raise ValueError(f'{response.status_code}: {response.status_code}')
+            raise ValueError(f'{response.status_code}: {response.text}')
         return result
 
     def update_item(self, item_type, id, token=None):
@@ -149,18 +149,30 @@ class EasydbClient:
             raise ConnectionError(response.text)
         return response.ok
 
-    @staticmethod
-    def get_preferred_media(object_data, media_field, object_type = None):
-        if object_type is None:
-            object_type = object_data['_objecttype']
+    def get_files_from_object(self, object_data, object_type):
+        self.acquire_session()
+        id = object_data['_id']
+
         try:
-            media_list = dp.get(object_data, f'**/{media_field}')
-        except KeyError:
-            media_list = []
-        preferred = list(filter(lambda m: m['preferred'], media_list))
-        if preferred:
-            return preferred[0]
-        return None
+            wrapped_object_data = self.get_object_by_id(object_type, id)
+        except ValueError as error:
+            self.logger.exception(error)
+
+        inner_object_data = wrapped_object_data[object_type]
+        nested_files = '_nested:' + object_type + '__dateien'
+        
+        files = []
+        for file in inner_object_data[nested_files]:
+            file_information = file['datei'][0]
+            file_name = file_information['original_filename']
+            mime_type = mimetypes.guess_type(file_name)[0]
+            files.append({
+                "name": file_name,
+                "url": dp.get(file_information, 'versions/original/download_url'),
+                "mime_type": mime_type
+            })
+        
+        return files
 
 
 class EdbObject:

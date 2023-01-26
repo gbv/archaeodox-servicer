@@ -1,3 +1,8 @@
+class EdbHandlers:
+    IMAGE_IMPORT_MIME_TYPES = ["image/tiff", "image/jpeg"]
+    CSV_IMPORT_MIME_TYPES = ["text/csv"]
+    SHAPEFILE_IMPORT_MIME_TYPES = ["application/zip"]
+
 class Easydb:
     HOST_URL = "http://easydb-webfrontend"
     FIELD_DB_NAME_PATH = ""

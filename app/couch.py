@@ -111,19 +111,22 @@ class CouchDBServer:
 class CouchDatabase:
     META_KEYS = ['_rev']
 
-    def __init__(self, server, name):
+    def __init__(self, server, name, user_name=None, password=None):
         self.server = server
         if not server.has_database(name):
             server.create_database(name)
-        self.session = server.session
+        self.session = requests.Session()
+        self.set_auth(user_name, password)
         self.name = name
-        self.auth = self.server.auth
         self.url = server.prepend_host(name)
         self.search_url = server.prepend_host(name, '_find')
 
     def set_auth(self, user_name, password):
-        self.auth = (user_name, password)
-        self.server.set_auth(user_name, password)
+        if user_name is None:
+            self.auth = self.server.auth
+        else:
+            self.auth = (user_name, password)
+        self.session.auth = self.auth
 
     def create_doc(self, doc_id, document):
         response = self.session.put(os.path.join(self.url, doc_id), data=json.dumps(document))
