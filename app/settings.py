@@ -19,6 +19,10 @@ class Easydb:
     IMPORT_SUCCESSFUL_TAG_ID = 7
     IMPORT_FAILED_TAG_ID = 9
     IMPORT_HANDLING_REQUIRED_TAG_ID = 8
+
+class Dante:
+    HOST_URL = 'https://api.dante.gbv.de'
+    VOCABULARY_PUBLISHER = 'Archäologisches Museum Hamburg'
     
 class Couch:
     HOST_URL = "http://esx-80.gbv.de:5984"

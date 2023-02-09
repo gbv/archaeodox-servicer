@@ -1,7 +1,7 @@
 import requests
 from os.path import join
 
-DANTE_URL = 'https://api.dante.gbv.de'
+from app import settings
 
 
 class DanteTreeNode:
@@ -40,7 +40,7 @@ class DanteTreeNode:
 
     def check_for_children(self, dig_deeper=False):
         if not self.checked_for_children:
-            descendants = requests.get(join(DANTE_URL, 'descendants'), params = {'uri': self.uri})
+            descendants = requests.get(join(settings.Dante.HOST_URL, 'descendants'), params = {'uri': self.uri})
             for d in descendants.json():
                 if d['uri'] in self.item_cache.keys():
                     child = self.item_cache[d['uri']]
