@@ -116,20 +116,6 @@ class DanteVocabulary(DanteTreeNode):
         for item in items:
             result[item.id] = item.get_field_value()
         return result
-    
-    def get_mermaid(self, direction='TD', file_name=None, max_depth=None):
-        mermaid = ['graph ' + direction]
-        items = self.flatten(max_depth=max_depth)
-        def get_text(item, mermaid):
-            for child in item.children:
-                mermaid.append(f'    {item.id}[{item.first_label()} {item.depth}] --> {child.id}[{child.first_label()} {child.depth}]')
-        for item in items:
-            get_text(item, mermaid)
-        mermaid = '\n'.join(mermaid)
-        if file_name:
-            with open(file_name, 'w') as out_file:
-                out_file.write(mermaid)
-        return mermaid
 
 
 if __name__ == '__main__':
