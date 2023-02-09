@@ -1,10 +1,10 @@
+import json
 from tempfile import mkdtemp
 from glob import glob
 from os.path import join, basename
 from shutil import rmtree
-import json
-
 from osgeo import gdal
+
 
 def to_geojson(zipped_shapes):
     try:

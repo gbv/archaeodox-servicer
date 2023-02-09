@@ -1,10 +1,11 @@
 import os, json
-from .couch import CouchDBServer
-from .field_client import FieldDatabase, FieldHub
-from .easydb_client import EasydbClient
-from . import settings
 from dotenv import load_dotenv
 from dpath import util as dp
+
+from app import settings
+from app.couchdb.server import CouchDBServer
+from app.field.database import FieldDatabase
+from app.field.hub import FieldHub
 
 
 load_dotenv()
@@ -14,7 +15,7 @@ COUCHDB_ADMIN_USER = os.getenv('COUCHDB_ADMIN_USER')
 COUCHDB_ADMIN_PASSWORD = os.getenv('COUCHDB_ADMIN_PASSWORD')
 
 
-class EdbHandler:
+class EasyDBHandler:
     def __init__(self, incoming_request, logger, edb_client):
         self.full_data = incoming_request.get_json()
         self.inner_data = self.full_data['data']
@@ -31,7 +32,7 @@ class EdbHandler:
         return self.full_data
 
 
-class DbCreatingHandler(EdbHandler):
+class DbCreatingHandler(EasyDBHandler):
     def process_request(self, *args, **kwargs):
         self.logger.debug(f'Handling {self.inner_data}')
         hub = FieldHub(settings.Couch.HOST_URL,
@@ -48,7 +49,7 @@ class DbCreatingHandler(EdbHandler):
             database['password'] = hub.create_project(database_name)
         return self.full_data
 
-class ImportInitiatingHandler(EdbHandler):
+class ImportInitiatingHandler(EasyDBHandler):
     def process_request(self, *args, **kwargs):
         result = self.object_data[settings.Easydb.IMPORT_RESULT_FIELD]
         self.logger.debug(self.object_data)
@@ -57,7 +58,7 @@ class ImportInitiatingHandler(EdbHandler):
         
         return self.full_data
 
-class FileImportingHandler(EdbHandler):
+class FileImportingHandler(EasyDBHandler):
     def process_request(self, *args, **kwargs):
         hub = FieldHub(settings.Couch.HOST_URL,
                        settings.FieldHub.TEMPLATE_PROJECT_NAME,
@@ -81,4 +82,3 @@ class FileImportingHandler(EdbHandler):
                 self.logger.debug(f"Shapefile import: {file['name']}")
     
         return self.full_data
-
