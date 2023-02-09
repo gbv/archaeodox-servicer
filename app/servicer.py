@@ -8,7 +8,6 @@ import time
 
 from flask import Flask, request as incoming_request
 from .easydb_client import EasydbClient, EASLiberator
-from .wfs_client import WFSClient
 from .edbHandlers import EdbHandler, DbCreatingHandler, FileImportingHandler, ImportInitiatingHandler
 from .field_client import FieldHub
 
@@ -17,14 +16,6 @@ from dpath import util as dp
 from . import settings
 
 app = Flask(__name__)
-
-wfs = WFSClient(settings.WFS.GEO_SERVER_URL,
-                settings.WFS.TRANSACTION_ATTRIBUTES,
-                settings.WFS.OBJECT_TYPE,
-                settings.WFS.OBJECT_NAMESPACE,
-                settings.WFS.ATTRIBUTES,
-                settings.WFS.GEOMETRY,
-                app.logger)
 
 app.logger.debug('Started servicer')
 
@@ -139,11 +130,6 @@ def update_valuelists():
         app.logger.exception(exception)
         return str(exception), 500
 
-
-def get_wfs_id(item_type, id, token):
-    result, code = edb.get_item(item_type, id, token=token)
-    app.logger.debug("Got items: " + json.dumps(result, indent=2))
-    return dp.get(result, [item_type, "feature_id"])
 
 #
 # The actual app works below here
