@@ -1,16 +1,6 @@
-*.json
 app/credentials.py
-app/dante_field/node_modules
-adox_credentials.json
-Geotiffs
+app/__pycache__
 
 *.pyc
-*.mmd
-*.png
-*.svg
-*.pkl
-*.txt
 *.ipynb
-*.JPG
-
-.python-version
+*.json
