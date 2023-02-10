@@ -5,7 +5,7 @@ from app import settings
 from app.servicer.servicer import Servicer
 from app.servicer.task import Task
 from app.easydb.database import EasyDB
-from app.easydb_handlers import EasyDBHandler
+from app.easydb_handlers import EasyDBHandler, VorgangHandler
 from app.field.hub import FieldHub
 
 
@@ -54,7 +54,7 @@ servicer = Servicer(app.logger, edb)
 
 servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
                           'vorgang',
-                          EasyDBHandler,
+                          VorgangHandler,
                           delayed=False)
 
 servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,

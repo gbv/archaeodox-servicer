@@ -58,10 +58,9 @@ class EasyDB:
         response = requests.post(self.search_url, params=params, json={ 'search': [search] })
 
         if response.status_code == 200:
-            result = json.loads(response.content)['objects'][0]
+            return json.loads(response.content)['objects'][0]
         else:
-            result = {}
-        return result
+            return None
 
     def get_tags(self, token=None):
         tags_url = join(self.url,
@@ -78,10 +77,9 @@ class EasyDB:
         response = requests.get(get_url, params=params)
 
         if response.status_code == 200:
-            result = json.loads(response.content)
+            return json.loads(response.content)
         else:
             raise ValueError(f'{response.status_code}: {response.text}')
-        return result
 
     def get_object_by_id(self, item_type, id, token=None):
         get_url = join(self.db_url,
@@ -114,7 +112,7 @@ class EasyDB:
 
     def create_object(self, object_type, fields_data, token=None):
         params = {"token": token if token is not None else self.session_token}
-        data = {}
+        data = { '_mask': 'anlage' }
         fields_data['_version'] = 1
         data[object_type] = fields_data
         insert_url = join(self.db_url,

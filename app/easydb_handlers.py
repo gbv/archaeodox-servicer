@@ -16,14 +16,14 @@ COUCHDB_ADMIN_PASSWORD = os.getenv('COUCHDB_ADMIN_PASSWORD')
 
 
 class EasyDBHandler:
-    def __init__(self, incoming_request, logger, edb_client):
+    def __init__(self, incoming_request, logger, easydb):
         self.full_data = incoming_request.get_json()
         self.inner_data = self.full_data['data']
         self.object_type = self.inner_data['_objecttype']
         self.object_data = self.inner_data[self.object_type]
         self.logger = logger
         self.logger.debug(f"Created handler for object: \n\n{json.dumps(self.full_data, indent=2)}")
-        self.edb_client = edb_client
+        self.easydb = easydb
     
     def process_request(self, *args, **kwargs):
         self.logger.debug(f"Handler: {self.__class__.__name__}")
@@ -32,22 +32,45 @@ class EasyDBHandler:
         return self.full_data
 
 
-class DbCreatingHandler(EasyDBHandler):
+class VorgangHandler(EasyDBHandler):
     def process_request(self, *args, **kwargs):
-        self.logger.debug(f'Handling {self.inner_data}')
+        if self.__is_field_project_required():
+            identifier = self.__create_field_project_identifier()
+            self.logger.debug(f'Creating new Field project "{identifier}"')
+            self.__validate_project_identifier(identifier)
+            password = self.__create_field_project(identifier)
+            self.__create_easydb_object(identifier, password)
+        return self.full_data
+
+    def __is_field_project_required(self):
+        ancestors = self.object_data['lk_vorgang_kategorie']['conceptAncestors']
+        # TODO Move to settings
+        return '76f1f241-6425-4fd3-a93c-ee88a47affc1' in ancestors
+
+    def __create_field_project_identifier(self):
+        return self.object_data['vorgang'].lower().strip()
+
+    def __validate_project_identifier(self, identifier):
+        if self.easydb.get_item('field_database', 'db_name', identifier) != None:
+            raise ValueError(f'Field database "{identifier}" already exists.')
+        CouchDBServer.check_db_name(identifier, True)
+
+    def __create_field_project(self, identifier):
         hub = FieldHub(settings.Couch.HOST_URL,
                        settings.FieldHub.TEMPLATE_PROJECT_NAME,
                        auth_from_module=True)
-        database = self.object_data
-        database_name = database['db_name'].lower().strip()
-        CouchDBServer.check_db_name(database_name, True)
-        
-        database['db_name'] = database_name
+        password = hub.create_project(identifier)
+        return password
 
-        if not database['password']:
-            self.logger.info(f"No credentials for {database_name} found, rectifying this.")
-            database['password'] = hub.create_project(database_name)
-        return self.full_data
+    def __create_easydb_object(self, identifier, password):
+        fields_data = {
+            'db_name': identifier,
+            'password': password,
+            'lk_vorgang': self.inner_data
+        }
+
+        self.easydb.create_object('field_database', fields_data)
+
 
 class ImportInitiatingHandler(EasyDBHandler):
     def process_request(self, *args, **kwargs):
@@ -65,7 +88,7 @@ class FileImportingHandler(EasyDBHandler):
                        auth_from_module=True)
         password = self.object_data['password']
 
-        files = self.edb_client.get_files_from_object(self.object_data, self.object_type)
+        files = self.easydb.get_files_from_object(self.object_data, self.object_type)
         self.logger.debug(files)
 
         for file in files:
