@@ -55,7 +55,7 @@ servicer = Servicer(app.logger, edb)
 servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
                           'vorgang',
                           VorgangHandler,
-                          delayed=False)
+                          delayed=True)
 
 servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
                           'dokumente_extern',

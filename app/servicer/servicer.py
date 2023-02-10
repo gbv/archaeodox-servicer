@@ -30,7 +30,7 @@ class Servicer:
             task = Task(task_label, self.logger, handler.process_request)
             self.delayed_task_queue.append(task)
             self.logger.debug(self.delayed_task_queue.tasks)
-            return f'Enqueued {task_label}', 200
+            return incoming_request.get_json()
         else:
             return handler.process_request()
 
