@@ -8,7 +8,7 @@ COPY * ./
 
 RUN pipenv install --system
 
-ENV FLASK_APP=servicer
+ENV FLASK_APP=app
 ENV FLASK_ENV=development
 
 WORKDIR /opt/app
