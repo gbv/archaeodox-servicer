@@ -37,6 +37,7 @@ class VorgangHandler(EasyDBHandler):
         if self.__is_field_project_required():
             identifier = self.__create_field_project_identifier()
             self.logger.debug(f'Creating new Field project "{identifier}"')
+            self.easydb.acquire_session()
             self.__validate_project_identifier(identifier)
             password = self.__create_field_project(identifier)
             self.__create_easydb_object(identifier, password)
@@ -88,6 +89,7 @@ class FileImportingHandler(EasyDBHandler):
                        auth_from_module=True)
         password = self.object_data['password']
 
+        self.easydb.acquire_session()
         files = self.easydb.get_files_from_object(self.object_data, self.object_type)
         self.logger.debug(files)
 

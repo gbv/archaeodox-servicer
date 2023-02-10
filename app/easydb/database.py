@@ -27,7 +27,6 @@ class EasyDB:
                                 EasyDB.API_PATH,
                                 "objects")
         self.logger = logger
-        #self.acquire_session()
 
     def acquire_session(self):
         session_response = requests.get(self.session_url)
@@ -123,7 +122,6 @@ class EasyDB:
         return response.ok
 
     def get_files_from_object(self, object_data, object_type):
-        self.acquire_session()
         id = object_data['_id']
 
         try:
