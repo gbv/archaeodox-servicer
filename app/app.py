@@ -5,7 +5,8 @@ from app import settings
 from app.servicer.servicer import Servicer
 from app.servicer.task import Task
 from app.easydb.database import EasyDB
-from app.easydb_handlers import EasyDBHandler, VorgangHandler
+from app.handlers.easydb_handler import EasyDBHandler
+from app.handlers.vorgang_handler import VorgangHandler
 from app.field.hub import FieldHub
 
 
