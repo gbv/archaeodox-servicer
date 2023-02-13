@@ -111,7 +111,7 @@ class EasyDB:
 
     def create_object(self, object_type, fields_data, token=None):
         params = {"token": token if token is not None else self.session_token}
-        data = { '_mask': 'anlage' }
+        data = { '_mask': 'field_datenbank_anlage' }
         fields_data['_version'] = 1
         data[object_type] = fields_data
         insert_url = join(self.db_url,

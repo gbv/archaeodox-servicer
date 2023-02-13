@@ -24,7 +24,7 @@ class VorgangHandler(EasyDBHandler):
         return self.object_data['vorgang'].lower().strip()
 
     def __validate_project_identifier(self, identifier):
-        if self.easydb.get_item('field_database', 'db_name', identifier) != None:
+        if self.easydb.get_item('field_datenbank', 'db_name', identifier) != None:
             raise ValueError(f'Field database "{identifier}" already exists.')
         CouchDBServer.check_db_name(identifier, True)
 
@@ -38,8 +38,8 @@ class VorgangHandler(EasyDBHandler):
     def __create_easydb_object(self, identifier, password):
         fields_data = {
             'db_name': identifier,
-            'password': password,
+            'passwort': password,
             'lk_vorgang': self.inner_data
         }
 
-        self.easydb.create_object('field_database', fields_data)
+        self.easydb.create_object('field_datenbank', fields_data)

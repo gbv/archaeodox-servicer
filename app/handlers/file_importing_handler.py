@@ -9,7 +9,7 @@ class FileImportingHandler(EasyDBHandler):
         hub = FieldHub(settings.Couch.HOST_URL,
                        settings.FieldHub.TEMPLATE_PROJECT_NAME,
                        auth_from_module=True)
-        password = self.object_data['password']
+        password = self.object_data['passwort']
 
         self.easydb.acquire_session()
         files = self.easydb.get_files_from_object(self.object_data, self.object_type)
