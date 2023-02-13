@@ -1,6 +1,8 @@
 import zipfile, tempfile, shutil, glob
 from os.path import join
 
+from app.easydb.dummy_logger import DummyLogger
+
 
 class EASLiberator:
     def __init__(self, base_path='', base_url = '', logger=None):

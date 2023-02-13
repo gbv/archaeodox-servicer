@@ -2,6 +2,7 @@ import json, os, requests, string, random, re
 from dpath import util as dp
 
 from app import credentials
+from app.couchdb.database import CouchDatabase
 
 
 class CouchDBServer:
