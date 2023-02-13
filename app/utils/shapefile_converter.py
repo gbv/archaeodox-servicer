@@ -13,7 +13,7 @@ def to_geojson(zipped_shapes):
         shape_files = glob(join(extract_here, '**', '*.shp'))
         features = []
         json_path = join(extract_here, 'result.geojson')
-        options = gdal.VectorTranslateOptions(format="GeoJSON")
+        options = gdal.VectorTranslateOptions(format='GeoJSON')
 
         for shape_file in shape_files:
             shape_file_name = basename(shape_file)

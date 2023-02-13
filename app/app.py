@@ -24,7 +24,7 @@ def run_delayed():
 
 @app.route('/<string:hook>/<string:object_type>', methods=['POST'])
 def generic_edb_hook(hook, object_type):
-    app.logger.debug(f"From edb: {hook}, {object_type}")
+    app.logger.debug(f'From edb: {hook}, {object_type}')
     try:
         return servicer.handle_edb_hook(hook, object_type, incoming_request)
     except Exception as exception:

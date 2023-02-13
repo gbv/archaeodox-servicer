@@ -21,11 +21,11 @@ class FileImportingHandler(EasyDBHandler):
             database = FieldDatabase(hub, db_name, password)
 
             if file['mime_type'] in settings.EdbHandlers.IMAGE_IMPORT_MIME_TYPES:
-                self.logger.debug(f"Image import: {file['name']}")
+                self.logger.debug(f'Image import: {file["name"]}')
                 database.ingest_image_from_url(file['url'], file['name'])
             if file['mime_type'] in settings.EdbHandlers.CSV_IMPORT_MIME_TYPES:
-                self.logger.debug(f"CSV import: {file['name']}")
+                self.logger.debug(f'CSV import: {file["name"]}')
             if file['mime_type'] in settings.EdbHandlers.SHAPEFILE_IMPORT_MIME_TYPES:
-                self.logger.debug(f"Shapefile import: {file['name']}")
+                self.logger.debug(f'Shapefile import: {file["name"]}')
     
         return self.full_data

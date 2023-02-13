@@ -1,12 +1,12 @@
 class EdbHandlers:
-    IMAGE_IMPORT_MIME_TYPES = ["image/tiff", "image/jpeg"]
-    CSV_IMPORT_MIME_TYPES = ["text/csv"]
-    SHAPEFILE_IMPORT_MIME_TYPES = ["application/zip"]
+    IMAGE_IMPORT_MIME_TYPES = ['image/tiff', 'image/jpeg']
+    CSV_IMPORT_MIME_TYPES = ['text/csv']
+    SHAPEFILE_IMPORT_MIME_TYPES = ['application/zip']
 
 class Easydb:
-    HOST_URL = "http://easydb-webfrontend"
-    FIELD_DB_NAME_PATH = ""
-    FIELD_DB_PASSWORD_PATH = ""
+    HOST_URL = 'http://easydb-webfrontend'
+    FIELD_DB_NAME_PATH = ''
+    FIELD_DB_PASSWORD_PATH = ''
     FIELD_IMPORT_FILE_OBJECT_NAME = 'field_project'
     FIELD_IMPORT_MEDIA_FIELD = 'project_dump'
     IMPORT_REGISTRATION_MESSAGE = 'Import eingereicht'
@@ -25,16 +25,16 @@ class Dante:
     VOCABULARY_PUBLISHER = 'Archäologisches Museum Hamburg'
     
 class Couch:
-    HOST_URL = "http://esx-80.gbv.de:5984"
+    HOST_URL = 'http://esx-80.gbv.de:5984'
 
 class FieldHub:
-    MEDIA_URL = "http://esx-80.gbv.de:4001/files"
-    PROJECT_URL = "http://esx-80.gbv.de:4001/projects"
+    MEDIA_URL = 'http://esx-80.gbv.de:4001/files'
+    PROJECT_URL = 'http://esx-80.gbv.de:4001/projects'
     THUMBNAIL_HEIGHT = 320
     TEMPLATE_PROJECT_NAME = 'hh9999_12345'
 
 class GeometryParser:
-    FIND_SECTION_ID_TEMPLATE = "BA {strat_unit}.{exca_int}"
-    CONVERSION_URL = "http://127.0.0.1:5000/geojson"
+    FIND_SECTION_ID_TEMPLATE = 'BA {strat_unit}.{exca_int}'
+    CONVERSION_URL = 'http://127.0.0.1:5000/geojson'
     PROPERTY_MAP = {'info': 'shortDescription',
                     'strat_unit': 'relations.isChildOf'}
