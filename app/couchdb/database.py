@@ -6,8 +6,6 @@ class CouchDatabase:
 
     def __init__(self, server, name, user_name=None, password=None):
         self.server = server
-        if not server.has_database(name):
-            server.create_database(name)
         self.session = requests.Session()
         self.set_auth(user_name, password)
         self.name = name
