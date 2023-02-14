@@ -1,10 +1,11 @@
-import mimetypes
+import mimetypes, requests
 from dpath import util as dp
 
 from app import settings, messages
 from app.field.database import FieldDatabase
 from app.field.hub import FieldHub
 from app.handlers.easydb_handler import EasyDBHandler
+from app.importers import image_importer, csv_importer, shapefile_importer
 
 
 class FileImportingHandler(EasyDBHandler):
@@ -51,18 +52,31 @@ class FileImportingHandler(EasyDBHandler):
             if database is None:
                 raise ValueError(messages.FileImportingHandler.ERROR_MISSING_CREDENTIALS)
 
-            if file['mime_type'] in settings.FileImportingHandler.IMAGE_IMPORT_MIME_TYPES:
-                self.logger.debug(f'Image import: {file["name"]}')
-                database.ingest_image_from_url(file['url'], file['name'])
-            if file['mime_type'] in settings.FileImportingHandler.CSV_IMPORT_MIME_TYPES:
-                self.logger.debug(f'CSV import: {file["name"]}')
-            if file['mime_type'] in settings.FileImportingHandler.SHAPEFILE_IMPORT_MIME_TYPES:
-                self.logger.debug(f'Shapefile import: {file["name"]}')
+            file_data = self.__get_file_data(file['url'])
+            self.__run_importer(file, file_data, database)
             result['fehlermeldung'] = messages.FileImportingHandler.SUCCESS
         except Exception as error:
             result['fehlermeldung'] = str(error)
         
         return result
+
+    def __get_file_data(self, url):
+        response = requests.get(url)
+        if response.ok:
+            return response.content
+        else:
+            raise ValueError(response.text)
+
+    def __run_importer(self, file, file_data, database):
+        if file['mime_type'] in settings.FileImportingHandler.IMAGE_IMPORT_MIME_TYPES:
+            self.logger.debug(f'Image import: {file["name"]}')
+            image_importer.run(file_data, file['name'], database)
+        if file['mime_type'] in settings.FileImportingHandler.CSV_IMPORT_MIME_TYPES:
+            self.logger.debug(f'CSV import: {file["name"]}')
+            csv_importer.run(file_data, file['name'], database)
+        if file['mime_type'] in settings.FileImportingHandler.SHAPEFILE_IMPORT_MIME_TYPES:
+            self.logger.debug(f'Shapefile import: {file["name"]}')
+            shapefile_importer.run(file_data, database)
 
     def __create_field_database(self):
         field_hub = FieldHub(
