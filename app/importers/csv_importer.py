@@ -1,22 +1,32 @@
 import csv, io
 
+from app import settings
 from app.utils import resource_utility
 from app.field.database import FieldDatabase
 
 
 def run(file_data, file_name, field_database):
+    category = __get_category(file_name)
     file_object = io.StringIO(file_data.decode('utf-8'))
 
     with file_object:
-        feature_reader = csv.DictReader(file_object, delimiter=',', quotechar='"')
-        items = [resource_utility.process(item) for item in feature_reader]
-    
-    # TODO Improve
-    possible_type = list(filter(lambda t: t.lower() in file_name, FieldDatabase.OBJECT_TYPES))
+        csv_reader = csv.DictReader(file_object, delimiter=',', quotechar='"')
+        resources = [resource_utility.process(resource) for resource in csv_reader]
 
-    if possible_type:
-        resource_type = possible_type[0]
-        for item in items:
-            field_database.populate_resource(item, resource_type)
+    for resource in resources:
+        resource['category'] = category
+        field_database.populate_resource(resource)
+
+def __get_category(file_name):
+    extracted_category = __extract_category_from_file_name(file_name)
+    for category in settings.CSVImporter.ALLOWED_CATEGORIES:
+        if extracted_category.lower() == category.lower():
+            return category
+    raise ValueError(f'Failed to import file: {file_name}. Category {extracted_category} is not a valid category.')
+
+def __extract_category_from_file_name(file_name):
+    segments = file_name.split('.')
+    if len(segments) < 3:
+        raise ValueError(f'No category found in file name: {file_name}')
     else:
-        raise ValueError(f'No valid type in {file_name}!')
+        return segments[-2]

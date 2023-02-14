@@ -7,19 +7,6 @@ from app.utils.get_date import get_date
 
 
 class FieldDatabase(CouchDatabase):
-    OBJECT_TYPES = ['Feature',
-                    'Befundanschnitt',
-                    'Befundkomplex',
-                    'Find',
-                    'Planum',
-                    'Place',
-                    'Project',
-                    'Sample',
-                    'Trench',
-                    'Drawing',
-                    'Photo',
-                    'Profile']
-
     def __init__(self, server, name, password):
         super().__init__(server, name, name, password)
         self.media_url = f'{settings.FieldHub.MEDIA_URL}/{self.name}/'
@@ -60,17 +47,16 @@ class FieldDatabase(CouchDatabase):
                 data=image_data.getvalue()
             )
 
-    def populate_resource(self, resource_data, resource_type):
+    def populate_resource(self, resource_data):
         identifier = resource_data['identifier']
         document = self.get_or_create_document(identifier)
         id = document['_id']
-        
         resource_data['id'] = id
-        resource_data['type'] = resource_type
         relations = resource_data.get('relations', {})
+
         for relation, target in relations.items():
             target_identifiers = target.split(';')
-            target_ids = [self.get_or_create_document(identifier)['_id'] for identifier in target_identifiers]
+            target_ids = [self.get_or_create_document(target_identifier)['_id'] for target_identifier in target_identifiers]
             resource_data['relations'][relation] = target_ids
             
         document['resource'] = resource_data

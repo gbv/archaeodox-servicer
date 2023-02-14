@@ -24,6 +24,10 @@ class ImageImporter:
     THUMBNAIL_HEIGHT = 320
     THUMBNAIL_JPEG_QUALITY = 60
 
+class CSVImporter:
+    ALLOWED_CATEGORIES = ['Feature', 'Befundanschnitt', 'Befundkomplex', 'Find', 'Planum', 'Place', 'Project',
+        'Sample', 'Trench', 'Drawing', 'Photo', 'Profile']
+
 class ShapefileImporter:
     FIND_SECTION_ID_TEMPLATE = 'BA {strat_unit}.{exca_int}'
     PROPERTY_MAP = {'info': 'shortDescription',
