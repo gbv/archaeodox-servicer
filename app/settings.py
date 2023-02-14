@@ -4,8 +4,6 @@ class FileImportingHandler:
     SHAPEFILE_IMPORT_MIME_TYPES = ['application/zip']
     SUCCESS_TAG_ID = 8
     FAILURE_TAG_ID = 10
-    SUCCESS_MESSAGE = 'OK'
-    ERROR_MISSING_CREDENTIALS_MESSAGE = 'Die Verbindung zur Field-Datenbank konnte nicht hergestellt werden. Bitte geben Sie einen Datenbanknamen und das korrekte Passwort an.'
 
 class EasyDB:
     HOST_URL = 'http://easydb-webfrontend'

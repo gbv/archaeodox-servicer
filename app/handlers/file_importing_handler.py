@@ -1,7 +1,7 @@
 import mimetypes
 from dpath import util as dp
 
-from app import settings
+from app import settings, messages
 from app.field.database import FieldDatabase
 from app.field.hub import FieldHub
 from app.handlers.easydb_handler import EasyDBHandler
@@ -49,7 +49,7 @@ class FileImportingHandler(EasyDBHandler):
 
         try:
             if database is None:
-                raise ValueError(settings.FileImportingHandler.ERROR_MISSING_CREDENTIALS_MESSAGE)
+                raise ValueError(messages.FileImportingHandler.ERROR_MISSING_CREDENTIALS)
 
             if file['mime_type'] in settings.FileImportingHandler.IMAGE_IMPORT_MIME_TYPES:
                 self.logger.debug(f'Image import: {file["name"]}')
@@ -58,7 +58,7 @@ class FileImportingHandler(EasyDBHandler):
                 self.logger.debug(f'CSV import: {file["name"]}')
             if file['mime_type'] in settings.FileImportingHandler.SHAPEFILE_IMPORT_MIME_TYPES:
                 self.logger.debug(f'Shapefile import: {file["name"]}')
-            result['fehlermeldung'] = settings.FileImportingHandler.SUCCESS_MESSAGE
+            result['fehlermeldung'] = messages.FileImportingHandler.SUCCESS
         except Exception as error:
             result['fehlermeldung'] = str(error)
         
@@ -85,7 +85,7 @@ class FileImportingHandler(EasyDBHandler):
 
     def __is_failed(self, file_import_results):
         for result in file_import_results:
-            if result['fehlermeldung'] != settings.FileImportingHandler.SUCCESS_MESSAGE:
+            if result['fehlermeldung'] != messages.FileImportingHandler.SUCCESS:
                 return True
         return False
 
