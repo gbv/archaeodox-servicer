@@ -1,3 +1,6 @@
+import mimetypes
+from dpath import util as dp
+
 from app import settings
 from app.field.database import FieldDatabase
 from app.field.hub import FieldHub
@@ -9,11 +12,11 @@ class FileImportingHandler(EasyDBHandler):
         hub = FieldHub(settings.Couch.HOST_URL,
                        settings.FieldHub.TEMPLATE_PROJECT_NAME,
                        auth_from_module=True)
+        self.easydb.acquire_session()
         db_name = self.object_data['db_name']
         password = self.object_data['passwort']
 
-        self.easydb.acquire_session()
-        files = self.easydb.get_files_from_object(self.object_data, self.object_type)
+        files = self.__get_files(self.object_data, self.object_type)
 
         results = []
         failed = False
@@ -40,13 +43,31 @@ class FileImportingHandler(EasyDBHandler):
     
         return self.full_data
 
+    def __get_files(self, object_data, object_type):
+        id = object_data['_id']
+        wrapped_object_data = self.easydb.get_object_by_id(object_type, id)
+        inner_object_data = wrapped_object_data[object_type]
+        nested_files = '_nested:' + object_type + '__dateien'
+        
+        files = []
+        for file in inner_object_data[nested_files]:
+            file_information = file['datei'][0]
+            file_name = file_information['original_filename']
+            mime_type = mimetypes.guess_type(file_name)[0]
+            files.append({
+                'name': file_name,
+                'url': dp.get(file_information, 'versions/original/download_url'),
+                'mime_type': mime_type,
+                'easydb_object': file['datei']
+            })
+        return files
+
     def __create_result_object(self, file_import_results, failed):
         fields_data = {
             '_nested:import_ergebnis__dokument': file_import_results
         }
         tags = self.__get_tags(failed)
         self.easydb.create_object('import_ergebnis', fields_data, pool=self.object_data['_pool'], tags=tags)
-
 
     def __get_tags(self, failed):
         if failed:

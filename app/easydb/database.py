@@ -113,24 +113,3 @@ class EasyDB:
         if not response.ok:
             raise ConnectionError(response.text)
         return response.ok
-
-    def get_files_from_object(self, object_data, object_type):
-        id = object_data['_id']
-
-        wrapped_object_data = self.get_object_by_id(object_type, id)
-        inner_object_data = wrapped_object_data[object_type]
-        nested_files = '_nested:' + object_type + '__dateien'
-        
-        files = []
-        for file in inner_object_data[nested_files]:
-            file_information = file['datei'][0]
-            file_name = file_information['original_filename']
-            mime_type = mimetypes.guess_type(file_name)[0]
-            files.append({
-                'name': file_name,
-                'url': dp.get(file_information, 'versions/original/download_url'),
-                'mime_type': mime_type,
-                'easydb_object': file['datei']
-            })
-        
-        return files
