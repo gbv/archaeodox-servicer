@@ -43,17 +43,18 @@ class FieldDatabase(CouchDatabase):
     def populate_resource(self, resource_data):
         identifier = resource_data['identifier']
         document = self.get_or_create_document(identifier)
-        id = document['_id']
-        resource_data['id'] = id
-        relations = resource_data.get('relations', {})
 
+        for key in resource_data:
+            if key not in ['relations', 'id']:
+                document['resource'][key] = resource_data[key]
+
+        relations = resource_data.get('relations', {})
         for relation, target in relations.items():
             target_identifiers = target.split(';')
             target_ids = [self.get_or_create_document(target_identifier)['_id'] for target_identifier in target_identifiers]
-            resource_data['relations'][relation] = target_ids
-            
-        document['resource'] = resource_data
-        return self.update_doc(id, document=document)
+            document['resource'][relation] = target_ids
+    
+        return self.update_doc(document['_id'], document=document)
 
 
     def __get_empty_document(self, id, identifier):
