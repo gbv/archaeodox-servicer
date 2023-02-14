@@ -49,16 +49,16 @@ class FileImportingHandler(EasyDBHandler):
 
         try:
             if database is None:
-                raise ValueError(settings.EdbHandlers.IMPORT_ERROR_MISSING_CREDENTIALS)
+                raise ValueError(settings.FileImportingHandler.ERROR_MISSING_CREDENTIALS_MESSAGE)
 
-            if file['mime_type'] in settings.EdbHandlers.IMAGE_IMPORT_MIME_TYPES:
+            if file['mime_type'] in settings.FileImportingHandler.IMAGE_IMPORT_MIME_TYPES:
                 self.logger.debug(f'Image import: {file["name"]}')
                 database.ingest_image_from_url(file['url'], file['name'])
-            if file['mime_type'] in settings.EdbHandlers.CSV_IMPORT_MIME_TYPES:
+            if file['mime_type'] in settings.FileImportingHandler.CSV_IMPORT_MIME_TYPES:
                 self.logger.debug(f'CSV import: {file["name"]}')
-            if file['mime_type'] in settings.EdbHandlers.SHAPEFILE_IMPORT_MIME_TYPES:
+            if file['mime_type'] in settings.FileImportingHandler.SHAPEFILE_IMPORT_MIME_TYPES:
                 self.logger.debug(f'Shapefile import: {file["name"]}')
-            result['fehlermeldung'] = settings.EdbHandlers.IMPORT_SUCCESS_MESSAGE
+            result['fehlermeldung'] = settings.FileImportingHandler.SUCCESS_MESSAGE
         except Exception as error:
             result['fehlermeldung'] = str(error)
         
@@ -85,12 +85,12 @@ class FileImportingHandler(EasyDBHandler):
 
     def __is_failed(self, file_import_results):
         for result in file_import_results:
-            if result['fehlermeldung'] != settings.EdbHandlers.IMPORT_SUCCESS_MESSAGE:
+            if result['fehlermeldung'] != settings.FileImportingHandler.SUCCESS_MESSAGE:
                 return True
         return False
 
     def __get_tags(self, failed):
         if failed:
-            return [{ '_id': settings.EdbHandlers.IMPORT_FAILURE_TAG_ID }]
+            return [{ '_id': settings.FileImportingHandler.FAILURE_TAG_ID }]
         else:
-            return [{ '_id': settings.EdbHandlers.IMPORT_SUCCESS_TAG_ID }]
+            return [{ '_id': settings.FileImportingHandler.SUCCESS_TAG_ID }]

@@ -49,7 +49,7 @@ def update_valuelists():
         return str(exception), 500
 
 
-edb = EasyDB(settings.Easydb.HOST_URL, app.logger)
+edb = EasyDB(settings.EasyDB.HOST_URL, app.logger)
 
 servicer = Servicer(app.logger, edb)
 
