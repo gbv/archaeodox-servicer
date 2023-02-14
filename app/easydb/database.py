@@ -10,22 +10,11 @@ class EasyDB:
 
     def __init__(self, url, logger):
         self.url = url
-        self.session_url = join(url,
-                                EasyDB.API_PATH,
-                                'session')
-        self.search_url = join(url,
-                               EasyDB.API_PATH,
-                               'search')
-        self.session_auth_url = join(url,
-                                     EasyDB.API_PATH,
-                                     'session',
-                                     'authenticate')
-        self.db_url = join(url,
-                           EasyDB.API_PATH,
-                           'db')
-        self.objects_url = join(url,
-                                EasyDB.API_PATH,
-                                'objects')
+        self.session_url = join(url, EasyDB.API_PATH, 'session')
+        self.search_url = join(url, EasyDB.API_PATH, 'search')
+        self.session_auth_url = join(url, EasyDB.API_PATH, 'session', 'authenticate')
+        self.db_url = join(url, EasyDB.API_PATH, 'db')
+        self.objects_url = join(url, EasyDB.API_PATH, 'objects')
         self.logger = logger
 
     def acquire_session(self):
@@ -109,9 +98,11 @@ class EasyDB:
             raise ConnectionError(response.text)
         return response.ok
 
-    def create_object(self, object_type, fields_data, token=None):
-        params = {'token': token if token is not None else self.session_token}
-        data = { '_mask': 'field_datenbank_anlage' }
+    def create_object(self, object_type, fields_data, pool=None, token=None):
+        params = { 'token': token if token is not None else self.session_token }
+        data = { '_mask': object_type + '_anlage' }
+        if pool is not None:
+            fields_data['_pool'] = pool
         fields_data['_version'] = 1
         data[object_type] = fields_data
         insert_url = join(self.db_url,
@@ -124,11 +115,7 @@ class EasyDB:
     def get_files_from_object(self, object_data, object_type):
         id = object_data['_id']
 
-        try:
-            wrapped_object_data = self.get_object_by_id(object_type, id)
-        except ValueError as error:
-            self.logger.exception(error)
-
+        wrapped_object_data = self.get_object_by_id(object_type, id)
         inner_object_data = wrapped_object_data[object_type]
         nested_files = '_nested:' + object_type + '__dateien'
         
@@ -140,7 +127,8 @@ class EasyDB:
             files.append({
                 'name': file_name,
                 'url': dp.get(file_information, 'versions/original/download_url'),
-                'mime_type': mime_type
+                'mime_type': mime_type,
+                'easydb_object': file['datei']
             })
         
         return files
