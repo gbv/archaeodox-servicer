@@ -25,8 +25,8 @@ class ImageImporter:
     THUMBNAIL_JPEG_QUALITY = 60
 
 class CSVImporter:
-    ALLOWED_CATEGORIES = ['Feature', 'Befundanschnitt', 'Befundkomplex', 'Find', 'Planum', 'Place', 'Project',
-        'Sample', 'Trench', 'Drawing', 'Photo', 'Profile']
+    ALLOWED_CATEGORIES = ['Project', 'Place', 'Trench', 'FeatureGroup', 'Feature', 'FeatureSegment', 'Find', 'Sample',
+        'Image', 'Photo', 'Amh-default:PlanDrawing', 'Amh-default:FindDrawing', 'Planum', 'Profile']
 
 class ShapefileImporter:
     FIND_SECTION_ID_TEMPLATE = 'BA {strat_unit}.{exca_int}'
