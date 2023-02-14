@@ -2,7 +2,6 @@ import csv, io
 
 from app import settings
 from app.utils import resource_utility
-from app.field.database import FieldDatabase
 
 
 def run(file_data, file_name, field_database):
