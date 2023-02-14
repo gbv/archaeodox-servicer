@@ -59,9 +59,9 @@ servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
                           delayed=True)
 
 servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
-                          'dokumente_extern',
+                          'import',
                           EasyDBHandler,
-                          delayed=False)
+                          delayed=True)
 
 app.logger.debug('Started servicer')
 app.logger.debug(f'Currently registered handlers: {servicer.handlers}')
