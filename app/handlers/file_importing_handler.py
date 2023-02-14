@@ -9,39 +9,20 @@ from app.handlers.easydb_handler import EasyDBHandler
 
 class FileImportingHandler(EasyDBHandler):
     def process_request(self, *args, **kwargs):
-        hub = FieldHub(settings.Couch.HOST_URL,
-                       settings.FieldHub.TEMPLATE_PROJECT_NAME,
-                       auth_from_module=True)
+        database = self.__create_field_database()
         self.easydb.acquire_session()
-        db_name = self.object_data['db_name']
-        password = self.object_data['passwort']
-
         files = self.__get_files(self.object_data, self.object_type)
-
-        results = []
-        failed = False
-
-        for file in files:
-            result = { 'dokument': file['easydb_object'] }
-            database = FieldDatabase(hub, db_name, password)
-
-            try:
-                if file['mime_type'] in settings.EdbHandlers.IMAGE_IMPORT_MIME_TYPES:
-                    self.logger.debug(f'Image import: {file["name"]}')
-                    database.ingest_image_from_url(file['url'], file['name'])
-                if file['mime_type'] in settings.EdbHandlers.CSV_IMPORT_MIME_TYPES:
-                    self.logger.debug(f'CSV import: {file["name"]}')
-                if file['mime_type'] in settings.EdbHandlers.SHAPEFILE_IMPORT_MIME_TYPES:
-                    self.logger.debug(f'Shapefile import: {file["name"]}')
-                result['fehlermeldung'] = 'OK'
-            except Exception as error:
-                result['fehlermeldung'] = str(error)
-                failed = True
-            results.append(result)
-
-        self.__create_result_object(results, failed)
+        self.__import_files(files, database)
     
         return self.full_data
+
+    def __create_field_database(self):
+        field_hub = FieldHub(settings.Couch.HOST_URL,
+                       settings.FieldHub.TEMPLATE_PROJECT_NAME,
+                       auth_from_module=True)
+        db_name = self.object_data['db_name']
+        password = self.object_data['passwort']
+        return FieldDatabase(field_hub, db_name, password)
 
     def __get_files(self, object_data, object_type):
         id = object_data['_id']
@@ -62,12 +43,44 @@ class FileImportingHandler(EasyDBHandler):
             })
         return files
 
-    def __create_result_object(self, file_import_results, failed):
+    def __import_files(self, files, database):
+        results = []
+
+        for file in files:
+            result = self.__import_file(file, database)
+            results.append(result)
+
+        self.__create_result_object(results)
+
+    def __import_file(self, file, database):
+        result = { 'dokument': file['easydb_object'] }
+
+        try:
+            if file['mime_type'] in settings.EdbHandlers.IMAGE_IMPORT_MIME_TYPES:
+                self.logger.debug(f'Image import: {file["name"]}')
+                database.ingest_image_from_url(file['url'], file['name'])
+            if file['mime_type'] in settings.EdbHandlers.CSV_IMPORT_MIME_TYPES:
+                self.logger.debug(f'CSV import: {file["name"]}')
+            if file['mime_type'] in settings.EdbHandlers.SHAPEFILE_IMPORT_MIME_TYPES:
+                self.logger.debug(f'Shapefile import: {file["name"]}')
+            result['fehlermeldung'] = 'OK'
+        except Exception as error:
+            result['fehlermeldung'] = str(error)
+        
+        return result
+
+    def __create_result_object(self, file_import_results):
         fields_data = {
             '_nested:import_ergebnis__dokument': file_import_results
         }
-        tags = self.__get_tags(failed)
+        tags = self.__get_tags(self.__is_failed(file_import_results))
         self.easydb.create_object('import_ergebnis', fields_data, pool=self.object_data['_pool'], tags=tags)
+
+    def __is_failed(self, file_import_results):
+        for result in file_import_results:
+            if result['fehlermeldung'] != 'OK':
+                return True
+        return False
 
     def __get_tags(self, failed):
         if failed:
