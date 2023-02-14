@@ -18,7 +18,7 @@ def run(file_data, field_database):
         feature_properties = feature['properties']
         resource_type = 'Unknown'
         if 'Befunde' in feature_properties['source_file']:
-            feature_identifier = settings.GeometryParser.FIND_SECTION_ID_TEMPLATE.format(**feature_properties)
+            feature_identifier = settings.ShapefileImporter.FIND_SECTION_ID_TEMPLATE.format(**feature_properties)
             resource_type = 'FeatureSegment'
         else:
             feature_identifier = feature_properties['id']
@@ -26,7 +26,7 @@ def run(file_data, field_database):
         resource = {}
         resource['identifier'] = feature_identifier
         
-        for source, target in settings.GeometryParser.PROPERTY_MAP.items():
+        for source, target in settings.ShapefileImporter.PROPERTY_MAP.items():
             copied_value = feature_properties.get(source, None)
             
             if not copied_value is None:

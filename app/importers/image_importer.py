@@ -50,8 +50,8 @@ def __get_image_bytes(pil_image_object, format, quality=None):
 
 def __generate_thumbnail(pil_image_object):
     converted_image = pil_image_object.convert('RGB')
-    converted_image.thumbnail((10 * settings.FieldHub.THUMBNAIL_HEIGHT, settings.FieldHub.THUMBNAIL_HEIGHT))
-    return __get_image_bytes(converted_image, 'jpeg', quality=settings.FieldHub.THUMBNAIL_JPEG_QUALITY)
+    converted_image.thumbnail((10 * settings.ImageImporter.THUMBNAIL_HEIGHT, settings.ImageImporter.THUMBNAIL_HEIGHT))
+    return __get_image_bytes(converted_image, 'jpeg', quality=settings.ImageImporter.THUMBNAIL_JPEG_QUALITY)
 
 def __append_georeference(image_document, image_data):
     width = image_document['resource']['width']
