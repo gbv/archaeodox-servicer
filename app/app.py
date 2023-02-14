@@ -5,8 +5,8 @@ from app import settings
 from app.servicer.servicer import Servicer
 from app.servicer.task import Task
 from app.easydb.database import EasyDB
-from app.handlers.easydb_handler import EasyDBHandler
 from app.handlers.vorgang_handler import VorgangHandler
+from app.handlers.file_importing_handler import FileImportingHandler
 from app.field.hub import FieldHub
 
 
@@ -60,7 +60,7 @@ servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
 
 servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
                           'import',
-                          EasyDBHandler,
+                          FileImportingHandler,
                           delayed=True)
 
 app.logger.debug('Started servicer')
