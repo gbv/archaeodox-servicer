@@ -9,7 +9,7 @@ from app import settings
 def run(image_data, image_name, field_database):
     image_document = field_database.get_or_create_document(image_name)
     id = image_document['_id']
-    
+
     image_object = io.BytesIO(image_data)
     image = Image.open(io.BytesIO(image_object.getvalue()))
     __initialize_image_document(image_document, image_name, image)
@@ -23,7 +23,7 @@ def run(image_data, image_name, field_database):
     
     response = field_database.upload_image(id, __get_image_bytes(image, format), mimetype, 'original_image')
     if response.ok:
-        field_database.upload_image(id, __generate_thumbnail(image, format), mimetype, 'thumbnail_image')
+        field_database.upload_image(id, __generate_thumbnail(image), mimetype, 'thumbnail_image')
     else:
         raise ConnectionError(response.content)
     field_database.update_doc(id, image_document)
@@ -40,16 +40,18 @@ def __initialize_image_document(image_document, image_file_name, image):
     if 'relations' not in resource:
         resource['relations'] = {}
 
-def __get_image_bytes(pil_image_object, format):
+def __get_image_bytes(pil_image_object, format, quality=None):
     out_bytes = io.BytesIO()
-    pil_image_object.save(out_bytes, format)
+    if quality is not None:
+        pil_image_object.save(out_bytes, format, quality=quality)
+    else:
+        pil_image_object.save(out_bytes, format)
     return out_bytes
 
-def __generate_thumbnail(pil_image_object, format):
-    cloned_image = pil_image_object.copy()
-    cloned_image.thumbnail((10 * settings.FieldHub.THUMBNAIL_HEIGHT, settings.FieldHub.THUMBNAIL_HEIGHT))
-    # TODO Convert to JPEG
-    return __get_image_bytes(cloned_image, format)
+def __generate_thumbnail(pil_image_object):
+    converted_image = pil_image_object.convert('RGB')
+    converted_image.thumbnail((10 * settings.FieldHub.THUMBNAIL_HEIGHT, settings.FieldHub.THUMBNAIL_HEIGHT))
+    return __get_image_bytes(converted_image, 'jpeg', quality=settings.FieldHub.THUMBNAIL_JPEG_QUALITY)
 
 def __append_georeference(image_document, image_data):
     width = image_document['resource']['width']
