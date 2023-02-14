@@ -7,7 +7,7 @@ from osgeo import gdal
 from zipfile import ZipFile
 
 from app import settings
-from app.utils.csv import CSV
+from app.utils import resource_utility
 
 
 def run(file_data, field_database):
@@ -32,7 +32,7 @@ def run(file_data, field_database):
             if not copied_value is None:
                 resource[target] = copied_value
         resource['geometry'] = feature['geometry']
-        print(field_database.populate_resource(CSV.inflate(resource), resource_type).content)
+        print(field_database.populate_resource(resource_utility.inflate(resource), resource_type).content)
 
 def __convert_to_geojson(zipped_shapes):
     try:

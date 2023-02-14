@@ -1,6 +1,6 @@
 import csv, io
 
-from app.utils.csv import CSV
+from app.utils import resource_utility
 from app.field.database import FieldDatabase
 
 
@@ -9,7 +9,7 @@ def run(file_data, file_name, field_database):
 
     with file_object:
         feature_reader = csv.DictReader(file_object, delimiter=',', quotechar='"')
-        items = [CSV.process(item) for item in feature_reader]
+        items = [resource_utility.process(item) for item in feature_reader]
     
     # TODO Improve
     possible_type = list(filter(lambda t: t.lower() in file_name, FieldDatabase.OBJECT_TYPES))
