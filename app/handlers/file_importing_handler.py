@@ -9,20 +9,11 @@ from app.handlers.easydb_handler import EasyDBHandler
 
 class FileImportingHandler(EasyDBHandler):
     def process_request(self, *args, **kwargs):
-        database = self.__create_field_database()
         self.easydb.acquire_session()
         files = self.__get_files(self.object_data, self.object_type)
-        self.__import_files(files, database)
+        self.__import_files(files)
     
         return self.full_data
-
-    def __create_field_database(self):
-        field_hub = FieldHub(settings.Couch.HOST_URL,
-                       settings.FieldHub.TEMPLATE_PROJECT_NAME,
-                       auth_from_module=True)
-        db_name = self.object_data['db_name']
-        password = self.object_data['passwort']
-        return FieldDatabase(field_hub, db_name, password)
 
     def __get_files(self, object_data, object_type):
         id = object_data['_id']
@@ -43,7 +34,8 @@ class FileImportingHandler(EasyDBHandler):
             })
         return files
 
-    def __import_files(self, files, database):
+    def __import_files(self, files):
+        database = self.__create_field_database()
         results = []
 
         for file in files:
@@ -56,6 +48,9 @@ class FileImportingHandler(EasyDBHandler):
         result = { 'dokument': file['easydb_object'] }
 
         try:
+            if database is None:
+                raise ValueError(settings.EdbHandlers.IMPORT_ERROR_MISSING_CREDENTIALS)
+
             if file['mime_type'] in settings.EdbHandlers.IMAGE_IMPORT_MIME_TYPES:
                 self.logger.debug(f'Image import: {file["name"]}')
                 database.ingest_image_from_url(file['url'], file['name'])
@@ -63,11 +58,23 @@ class FileImportingHandler(EasyDBHandler):
                 self.logger.debug(f'CSV import: {file["name"]}')
             if file['mime_type'] in settings.EdbHandlers.SHAPEFILE_IMPORT_MIME_TYPES:
                 self.logger.debug(f'Shapefile import: {file["name"]}')
-            result['fehlermeldung'] = 'OK'
+            result['fehlermeldung'] = settings.EdbHandlers.IMPORT_SUCCESS_MESSAGE
         except Exception as error:
             result['fehlermeldung'] = str(error)
         
         return result
+
+    def __create_field_database(self):
+        field_hub = FieldHub(
+            settings.Couch.HOST_URL,
+            settings.FieldHub.TEMPLATE_PROJECT_NAME,
+            auth_from_module=True
+        )
+        if 'db_name' not in self.object_data or 'passwort' not in self.object_data:
+            return None
+        db_name = self.object_data['db_name']
+        password = self.object_data['passwort']
+        return FieldDatabase(field_hub, db_name, password)
 
     def __create_result_object(self, file_import_results):
         fields_data = {
@@ -78,7 +85,7 @@ class FileImportingHandler(EasyDBHandler):
 
     def __is_failed(self, file_import_results):
         for result in file_import_results:
-            if result['fehlermeldung'] != 'OK':
+            if result['fehlermeldung'] != settings.EdbHandlers.IMPORT_SUCCESS_MESSAGE:
                 return True
         return False
 

@@ -4,6 +4,8 @@ class EdbHandlers:
     SHAPEFILE_IMPORT_MIME_TYPES = ['application/zip']
     IMPORT_SUCCESS_TAG_ID = 8
     IMPORT_FAILURE_TAG_ID = 10
+    IMPORT_SUCCESS_MESSAGE = 'OK'
+    IMPORT_ERROR_MISSING_CREDENTIALS = 'Die Verbindung zur Field-Datenbank konnte nicht hergestellt werden. Bitte geben Sie einen Datenbanknamen und das korrekte Passwort an.'
 
 class Easydb:
     HOST_URL = 'http://easydb-webfrontend'
