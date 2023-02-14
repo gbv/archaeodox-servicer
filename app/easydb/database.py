@@ -98,11 +98,13 @@ class EasyDB:
             raise ConnectionError(response.text)
         return response.ok
 
-    def create_object(self, object_type, fields_data, pool=None, token=None):
+    def create_object(self, object_type, fields_data, pool=None, tags=None, token=None):
         params = { 'token': token if token is not None else self.session_token }
         data = { '_mask': object_type + '_anlage' }
         if pool is not None:
             fields_data['_pool'] = pool
+        if tags is not None:
+            data['_tags'] = tags
         fields_data['_version'] = 1
         data[object_type] = fields_data
         insert_url = join(self.db_url,

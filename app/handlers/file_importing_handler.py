@@ -16,6 +16,7 @@ class FileImportingHandler(EasyDBHandler):
         files = self.easydb.get_files_from_object(self.object_data, self.object_type)
 
         results = []
+        failed = False
 
         for file in files:
             result = { 'dokument': file['easydb_object'] }
@@ -32,14 +33,23 @@ class FileImportingHandler(EasyDBHandler):
                 result['fehlermeldung'] = 'OK'
             except Exception as error:
                 result['fehlermeldung'] = str(error)
+                failed = True
             results.append(result)
 
-        self.__create_result_object(results)
+        self.__create_result_object(results, failed)
     
         return self.full_data
 
-    def __create_result_object(self, file_import_results):
+    def __create_result_object(self, file_import_results, failed):
         fields_data = {
             '_nested:import_ergebnis__dokument': file_import_results
         }
-        self.easydb.create_object('import_ergebnis', fields_data, self.object_data['_pool'])
+        tags = self.__get_tags(failed)
+        self.easydb.create_object('import_ergebnis', fields_data, pool=self.object_data['_pool'], tags=tags)
+
+
+    def __get_tags(self, failed):
+        if failed:
+            return [{ '_id': settings.EdbHandlers.IMPORT_FAILURE_TAG_ID }]
+        else:
+            return [{ '_id': settings.EdbHandlers.IMPORT_SUCCESS_TAG_ID }]

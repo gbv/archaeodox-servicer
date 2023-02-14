@@ -2,6 +2,8 @@ class EdbHandlers:
     IMAGE_IMPORT_MIME_TYPES = ['image/tiff', 'image/jpeg']
     CSV_IMPORT_MIME_TYPES = ['text/csv']
     SHAPEFILE_IMPORT_MIME_TYPES = ['application/zip']
+    IMPORT_SUCCESS_TAG_ID = 8
+    IMPORT_FAILURE_TAG_ID = 10
 
 class Easydb:
     HOST_URL = 'http://easydb-webfrontend'
