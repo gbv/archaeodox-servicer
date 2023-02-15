@@ -13,6 +13,11 @@ class FieldHub:
     PROJECT_URL = 'http://esx-80.gbv.de:4001/projects'
     TEMPLATE_PROJECT_NAME = 'amh-default'
 
+class VorgangHandler:
+    # If a child concept of this concept is selected in field 'lk_vorgang_kategorie' of the Vorgang object,
+    # a new Field database is created.
+    DANTE_PARENT_CONCEPT_ID = '76f1f241-6425-4fd3-a93c-ee88a47affc1'
+
 class FileImportingHandler:
     IMAGE_IMPORT_MIME_TYPES = ['image/tiff', 'image/jpeg']
     CSV_IMPORT_MIME_TYPES = ['text/csv']

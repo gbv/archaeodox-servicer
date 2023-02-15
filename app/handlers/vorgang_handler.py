@@ -17,8 +17,7 @@ class VorgangHandler(EasyDBHandler):
 
     def __is_field_project_required(self):
         ancestors = self.object_data['lk_vorgang_kategorie']['conceptAncestors']
-        # TODO Move to settings
-        return '76f1f241-6425-4fd3-a93c-ee88a47affc1' in ancestors
+        return settings.VorgangHandler.DANTE_PARENT_CONCEPT_ID in ancestors
 
     def __create_field_project_identifier(self):
         return self.object_data['vorgang'].lower().strip()
