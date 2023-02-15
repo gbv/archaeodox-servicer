@@ -17,7 +17,7 @@ class FieldHub(CouchDBServer):
         'amh_datierung',
         'amh_objektbezeichnung',
         'amh_warenart'
-        #'amh_befunde' Not public yet
+        'amh_befunde'
     ]
     ARCHAEODOX_VOCABULARY_PREFIX = 'amh-default'
     
