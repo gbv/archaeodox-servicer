@@ -30,8 +30,7 @@ class FileImportingHandler(EasyDBHandler):
             files.append({
                 'name': file_name,
                 'url': dp.get(file_information, 'versions/original/download_url'),
-                'mime_type': mime_type,
-                'easydb_object': file['datei']
+                'mime_type': mime_type
             })
         return files
 
@@ -46,7 +45,7 @@ class FileImportingHandler(EasyDBHandler):
         self.__create_result_object(results)
 
     def __import_file(self, file, database):
-        result = { 'dokument': file['easydb_object'] }
+        result = { 'dokument': self.__get_cloned_asset(file) }
 
         try:
             if database is None:
@@ -59,6 +58,11 @@ class FileImportingHandler(EasyDBHandler):
             result['fehlermeldung'] = str(error)
         
         return result
+
+    def __get_cloned_asset(self, file):
+        cloned_asset = self.easydb.create_asset_from_url(file['name'], file['url'])
+        cloned_asset[0]['preferred'] = True
+        return cloned_asset
 
     def __get_file_data(self, url):
         response = requests.get(url)
