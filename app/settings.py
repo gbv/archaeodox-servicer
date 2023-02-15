@@ -9,7 +9,7 @@ class Dante:
         'amh_material',
         'amh_datierung',
         'amh_objektbezeichnung',
-        'amh_warenart'
+        'amh_warenart',
         'amh_befunde'
     ]
     VOCABULARY_PREFIX = 'amh-default'
