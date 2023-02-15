@@ -25,7 +25,7 @@ class CouchDatabase:
 
     def update_doc(self, doc_id, document):
         if not 'created' in document.keys():
-            raise ValueError(f"Document has never been created: {document}")
+            raise ValueError(f'Document has never been created: {document}')
         existing = self.get_doc(doc_id).json()
         try:
             current_revision = existing['_rev']
@@ -41,7 +41,7 @@ class CouchDatabase:
         return self.session.get(f'{self.url}/{doc_id}')
 
     def get_all_ids(self):
-        response = self.session.get(f"{self.url}/_all_docs", auth=self.auth)
+        response = self.session.get(f'{self.url}/_all_docs', auth=self.auth)
         if response.ok:
             rows = response.json()['rows']
             ids = [row['id'] for row in rows]
