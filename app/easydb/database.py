@@ -1,6 +1,5 @@
-import json, requests, mimetypes
+import json, requests
 from os.path import join
-from dpath import util as dp
 
 from app import credentials
     
