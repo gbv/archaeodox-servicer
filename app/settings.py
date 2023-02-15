@@ -4,6 +4,15 @@ class EasyDB:
 class Dante:
     HOST_URL = 'https://api.dante.gbv.de'
     VOCABULARY_PUBLISHER = 'Archäologisches Museum Hamburg'
+    VOCABULARY_URI_BASE = 'http://uri.gbv.de/terminology'
+    VOCABULARY_NAMES = [
+        'amh_material',
+        'amh_datierung',
+        'amh_objektbezeichnung',
+        'amh_warenart'
+        'amh_befunde'
+    ]
+    VOCABULARY_PREFIX = 'amh-default'
     
 class Couch:
     HOST_URL = 'http://esx-80.gbv.de:5984'

@@ -11,15 +11,6 @@ from app.utils.get_date import get_date
 class FieldHub(CouchDBServer):
     CONFIG_DOCUMENT = 'configuration'
     PROJECT_DOCUMENT_ID = 'project'
-    ARCHAEODOX_VOCABULARY_URI_BASE = 'http://uri.gbv.de/terminology'
-    ARCHAEODOX_VOCABULARY_NAMES = [
-        'amh_material',
-        'amh_datierung',
-        'amh_objektbezeichnung',
-        'amh_warenart'
-        'amh_befunde'
-    ]
-    ARCHAEODOX_VOCABULARY_PREFIX = 'amh-default'
     
     def __init__(self, host, template_project_name, user_name=None, password=None, auth_from_module=False, logger=None) -> None:
         super().__init__(host, user_name, password, auth_from_module)
@@ -65,10 +56,10 @@ class FieldHub(CouchDBServer):
 
     def update_valuelists(self):
         configuration_document = self.get_config()
-        for vocabulary_name in FieldHub.ARCHAEODOX_VOCABULARY_NAMES:
+        for vocabulary_name in settings.Dante.VOCABULARY_NAMES:
             if self.logger: self.logger.debug(f'Updating valuelist for vocabulary: {vocabulary_name}')
-            vocabulary = DanteVocabulary.from_uri(f'{FieldHub.ARCHAEODOX_VOCABULARY_URI_BASE}/{vocabulary_name}/')
+            vocabulary = DanteVocabulary.from_uri(f'{settings.Dante.VOCABULARY_URI_BASE}/{vocabulary_name}/')
             field_list = vocabulary.get_field_list()
-            valuelist_name = f'{FieldHub.ARCHAEODOX_VOCABULARY_PREFIX}:{vocabulary_name}'
+            valuelist_name = f'{settings.Dante.VOCABULARY_PREFIX}:{vocabulary_name}'
             configuration_document['resource']['valuelists'][valuelist_name] = field_list
         self.update_config(configuration_document)
