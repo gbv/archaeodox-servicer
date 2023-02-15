@@ -14,6 +14,7 @@ class EasyDB:
         self.session_auth_url = join(url, EasyDB.API_PATH, 'session', 'authenticate')
         self.db_url = join(url, EasyDB.API_PATH, 'db')
         self.objects_url = join(url, EasyDB.API_PATH, 'objects')
+        self.create_asset_url = join(url, EasyDB.API_PATH, 'eas', 'rput')
         self.logger = logger
 
     def acquire_session(self):
@@ -112,3 +113,14 @@ class EasyDB:
         if not response.ok:
             raise ConnectionError(response.text)
         return response.ok
+
+    def create_asset_from_url(self, filename, url):
+        params = {
+            'token': self.session_token,
+            'filename': filename,
+            'url': url
+        }
+        response = requests.post(self.create_asset_url, params=params)
+        if not response.ok:
+            raise ConnectionError(response.text)
+        return response.json()
