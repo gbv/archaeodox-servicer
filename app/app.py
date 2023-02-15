@@ -53,10 +53,10 @@ edb = EasyDB(settings.EasyDB.HOST_URL, app.logger)
 
 servicer = Servicer(app.logger, edb)
 
-servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
+servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value,
                           'vorgang',
                           VorgangHandler,
-                          delayed=True)
+                          delayed=False)
 
 servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
                           'import',

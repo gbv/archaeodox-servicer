@@ -41,7 +41,13 @@ class VorgangHandler(EasyDBHandler):
         fields_data = {
             'db_name': identifier,
             'passwort': password,
-            'lk_vorgang': self.inner_data
+            'lk_vorgang': {
+                'vorgang': {
+                    'lookup:_id': {
+                        'vorgang': self.object_data['vorgang']
+                    }
+                }
+            }
         }
 
         self.easydb.create_object('field_datenbank', fields_data)
