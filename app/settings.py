@@ -14,6 +14,7 @@ class FieldHub:
     TEMPLATE_PROJECT_NAME = 'amh-default'
 
 class VorgangHandler:
+    PROJECT_IDENTIFIER_PREFIX = 'hh'
     # If a child concept of this concept is selected in field 'lk_vorgang_kategorie' of the Vorgang object,
     # a new Field database is created.
     DANTE_PARENT_CONCEPT_ID = '76f1f241-6425-4fd3-a93c-ee88a47affc1'

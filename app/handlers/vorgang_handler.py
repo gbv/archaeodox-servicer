@@ -20,7 +20,10 @@ class VorgangHandler(EasyDBHandler):
         return settings.VorgangHandler.DANTE_PARENT_CONCEPT_ID in ancestors
 
     def __create_field_project_identifier(self):
-        return self.object_data['vorgang'].lower().strip()
+        identifier = self.object_data['vorgang'].lower().strip()
+        if not identifier[0].isalpha():
+            identifier = settings.VorgangHandler.PROJECT_IDENTIFIER_PREFIX + identifier
+        return identifier
 
     def __validate_project_identifier(self, identifier):
         if self.easydb.get_item('field_datenbank', 'db_name', identifier) != None:
