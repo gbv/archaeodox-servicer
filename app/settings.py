@@ -29,9 +29,14 @@ class VorgangHandler:
     DANTE_PARENT_CONCEPT_ID = '76f1f241-6425-4fd3-a93c-ee88a47affc1'
 
 class FileImportingHandler:
-    IMAGE_IMPORT_MIME_TYPES = ['image/tiff', 'image/jpeg']
-    CSV_IMPORT_MIME_TYPES = ['text/csv']
-    SHAPEFILE_IMPORT_MIME_TYPES = ['application/zip']
+    FORMATS = {
+        'csv': { 'file_type': 'csv', 'expected_format': 'csv', 'importer': 'csv' },
+        'jpg': { 'file_type': 'jpeg', 'expected_format': 'jpg', 'importer': 'image' },
+        'jpeg': { 'file_type': 'jpeg', 'expected_format': 'jpg', 'importer': 'image' },
+        'tif': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
+        'tiff': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
+        'zip': { 'file_type': 'zip', 'expected_format': 'zip', 'importer': 'shapefile' }
+    }
     SUCCESS_TAG_ID = 8
     FAILURE_TAG_ID = 10
 

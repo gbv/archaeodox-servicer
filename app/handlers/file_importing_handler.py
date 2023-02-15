@@ -26,12 +26,14 @@ class FileImportingHandler(EasyDBHandler):
         for file in inner_object_data[nested_files]:
             file_information = file['datei'][0]
             file_name = file_information['original_filename']
-            mime_type = mimetypes.guess_type(file_name)[0]
+            file_extension = file_name.split('.')[-1]
             files.append({
                 'name': file_name,
                 'url': dp.get(file_information, 'versions/original/download_url'),
-                'mime_type': mime_type
+                'format_settings': settings.FileImportingHandler.FORMATS[file_extension],
+                'detected_format': file_information['extension']
             })
+        self.logger.debug(files)
         return files
 
     def __import_files(self, files):
@@ -48,9 +50,7 @@ class FileImportingHandler(EasyDBHandler):
         result = { 'dokument': self.__get_cloned_asset(file) }
 
         try:
-            if database is None:
-                raise ValueError(messages.FileImportingHandler.ERROR_MISSING_CREDENTIALS)
-
+            self.__validate(file, database)
             file_data = self.__get_file_data(file['url'])
             self.__run_importer(file, file_data, database)
             result['fehlermeldung'] = messages.FileImportingHandler.SUCCESS
@@ -64,6 +64,12 @@ class FileImportingHandler(EasyDBHandler):
         cloned_asset[0]['preferred'] = True
         return cloned_asset
 
+    def __validate(self, file, database):
+        if database is None:
+            raise ValueError(messages.FileImportingHandler.ERROR_MISSING_CREDENTIALS)
+        if file['format_settings']['expected_format'] != file['detected_format']:
+            raise ValueError(messages.FileImportingHandler.ERROR_INVALID_FILE_FORMAT)
+
     def __get_file_data(self, url):
         response = requests.get(url)
         if response.ok:
@@ -72,13 +78,13 @@ class FileImportingHandler(EasyDBHandler):
             raise ValueError(response.text)
 
     def __run_importer(self, file, file_data, database):
-        if file['mime_type'] in settings.FileImportingHandler.IMAGE_IMPORT_MIME_TYPES:
+        if file['format_settings']['importer'] == 'image':
             self.logger.debug(f'Image import: {file["name"]}')
             image_importer.run(file_data, file['name'], database)
-        if file['mime_type'] in settings.FileImportingHandler.CSV_IMPORT_MIME_TYPES:
+        if file['format_settings']['importer'] == 'csv':
             self.logger.debug(f'CSV import: {file["name"]}')
             csv_importer.run(file_data, file['name'], database)
-        if file['mime_type'] in settings.FileImportingHandler.SHAPEFILE_IMPORT_MIME_TYPES:
+        if file['format_settings']['importer'] == 'shapefile':
             self.logger.debug(f'Shapefile import: {file["name"]}')
             shapefile_importer.run(file_data, database)
 
