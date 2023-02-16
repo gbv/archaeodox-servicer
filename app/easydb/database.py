@@ -34,19 +34,27 @@ class EasyDB:
         else:
             raise ValueError(f'Failed to acquire session from {self.session_url}')
 
-    def get_item(self, item_type, field_value, field_name='_id', pretty=0, token=None):
-        search = {'type': 'in',
-                   'bool': 'must',
-                   'fields': ['.'.join((item_type, field_name))],
-                   'in': [field_value]
-                   }
-        token = token if token is not None else self.session_token
-        params = {'token': token}
+    def get_object_by_field_value(self, object_type, field_name, field_value):
+        search_result = self.search(object_type, field_name, field_value)
+        self.logger.debug('Search result:')
+        self.logger.debug(search_result)
+        if search_result is not None and len(search_result) == 1:
+            return search_result[0]
+        else:
+            return None
 
-        response = requests.post(self.search_url, params=params, json={ 'search': [search] })
+    def search(self, item_type, field_name, field_value):
+        query = {
+            'type': 'in',
+            'bool': 'must',
+            'fields': ['.'.join((item_type, field_name))],
+            'in': [field_value]
+        }
+        params = { 'token': self.session_token }
+        response = requests.post(self.search_url, params=params, json={ 'search': [query] })
 
         if response.status_code == 200:
-            return json.loads(response.content)['objects'][0]
+            return json.loads(response.content)['objects']
         else:
             return None
 

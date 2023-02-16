@@ -71,7 +71,7 @@ class FileImportingHandler(EasyDBHandler):
         if file['format_settings'] is None:
             return None
         else:
-            return self.easydb.get_item('metadatendateityp', file['format_settings']['file_type'], 'name')
+            return self.easydb.get_object_by_field_value('metadatendateityp', 'name', file['format_settings']['file_type'])
 
     def __validate(self, file, file_type_object, database):
         if database is None:
