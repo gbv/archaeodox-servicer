@@ -4,6 +4,7 @@ from dpath import util as dp
 from app import settings, messages
 from app.field.database import FieldDatabase
 from app.field.hub import FieldHub
+from app.field import error_messages as field_error_messages
 from app.handlers.easydb_handler import EasyDBHandler
 from app.importers import image_importer, csv_importer, shapefile_importer
 
@@ -58,7 +59,7 @@ class FileImportingHandler(EasyDBHandler):
             self.__run_importer(file, file_data, database)
             result['fehlermeldung'] = messages.FileImportingHandler.SUCCESS
         except Exception as error:
-            result['fehlermeldung'] = str(error)
+            result['fehlermeldung'] = self.__get_error_message(str(error))
         
         return result
 
@@ -129,3 +130,9 @@ class FileImportingHandler(EasyDBHandler):
             return [{ '_id': settings.FileImportingHandler.FAILURE_TAG_ID }]
         else:
             return [{ '_id': settings.FileImportingHandler.SUCCESS_TAG_ID }]
+
+    def __get_error_message(self, error):
+        if error == field_error_messages.FIELD_HUB_INVALID_CREDENTIALS:
+            return messages.FileImportingHandler.ERROR_INVALID_CREDENTIALS
+        else:
+            return messages.FileImportingHandler.GENERIC_ERROR + ' ' + error
