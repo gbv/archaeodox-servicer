@@ -72,7 +72,7 @@ class FileImportingHandler(EasyDBHandler):
         if file['format_settings'] is None:
             return None
         else:
-            return self.easydb.get_object_by_field_value('metadatendateityp', 'name', file['format_settings']['file_type'])
+            return self.easydb.get_object_by_field_value('dateityp', 'name', file['format_settings']['file_type'])
 
     def __validate(self, file, file_type_object, database):
         if database is None:
@@ -101,14 +101,14 @@ class FileImportingHandler(EasyDBHandler):
             shapefile_importer.run(file_data, database)
 
     def __create_field_database(self):
-        if 'db_name' not in self.object_data or 'passwort' not in self.object_data:
+        if 'vorgangsname' not in self.object_data or 'passwort' not in self.object_data:
             return None
         field_hub = FieldHub(
             settings.Couch.HOST_URL,
             settings.FieldHub.TEMPLATE_PROJECT_NAME,
             auth_from_module=True
         )
-        db_name = self.object_data['db_name']
+        db_name = self.object_data['vorgangsname']
         password = self.object_data['passwort']
         return FieldDatabase(field_hub, db_name, password)
 
