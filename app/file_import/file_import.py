@@ -27,7 +27,7 @@ def __get_files(import_object, easydb):
         files.append({
             'name': file_name,
             'url': dp.get(file_information, 'versions/original/download_url'),
-            'format_settings': settings.FileImportingHandler.FORMATS.get(file_extension, None),
+            'format_settings': settings.FileImport.FORMATS.get(file_extension, None),
             'detected_format': file_information['extension']
         })
     return files
@@ -52,7 +52,7 @@ def __import_file(file, database, easydb):
         __validate(file, result['dokumententyp'], database)
         file_data = __get_file_data(file['url'])
         __run_importer(file, file_data, database)
-        result['fehlermeldung'] = messages.FileImportingHandler.SUCCESS
+        result['fehlermeldung'] = messages.FileImport.SUCCESS
     except Exception as error:
         result['fehlermeldung'] = __get_error_message(str(error))
     
@@ -71,11 +71,11 @@ def __get_file_type_object(file, easydb):
 
 def __validate(file, file_type_object, database):
     if database is None:
-        raise ValueError(messages.FileImportingHandler.ERROR_MISSING_CREDENTIALS)
+        raise ValueError(messages.FileImport.ERROR_MISSING_CREDENTIALS)
     if file_type_object is None:
-        raise ValueError(messages.FileImportingHandler.ERROR_UNSUPPORTED_FILE_FORMAT)
+        raise ValueError(messages.FileImport.ERROR_UNSUPPORTED_FILE_FORMAT)
     if file['format_settings']['expected_format'] != file['detected_format']:
-        raise ValueError(messages.FileImportingHandler.ERROR_INVALID_FILE_FORMAT)
+        raise ValueError(messages.FileImport.ERROR_INVALID_FILE_FORMAT)
 
 def __get_file_data(url):
     response = requests.get(url)
@@ -113,18 +113,18 @@ def __create_result_object(file_import_results, import_object, easydb):
 
 def __is_failed(file_import_results):
     for result in file_import_results:
-        if result['fehlermeldung'] != messages.FileImportingHandler.SUCCESS:
+        if result['fehlermeldung'] != messages.FileImport.SUCCESS:
             return True
     return False
 
 def __get_tags(failed):
     if failed:
-        return [{ '_id': settings.FileImportingHandler.FAILURE_TAG_ID }]
+        return [{ '_id': settings.FileImport.FAILURE_TAG_ID }]
     else:
-        return [{ '_id': settings.FileImportingHandler.SUCCESS_TAG_ID }]
+        return [{ '_id': settings.FileImport.SUCCESS_TAG_ID }]
 
 def __get_error_message(error):
     if error == field_error_messages.FIELD_HUB_INVALID_CREDENTIALS:
-        error = messages.FileImportingHandler.ERROR_INVALID_CREDENTIALS
+        error = messages.FileImport.ERROR_INVALID_CREDENTIALS
     
-    return messages.FileImportingHandler.ERROR_PREFIX + ' ' + error
+    return messages.FileImport.ERROR_PREFIX + ' ' + error

@@ -1,4 +1,4 @@
-class FileImportingHandler:
+class FileImport:
     SUCCESS = 'OK'
     ERROR_PREFIX = 'Die Datei konnte nicht importiert werden:'
     ERROR_MISSING_CREDENTIALS = 'Die Verbindung zur Field-Datenbank konnte nicht hergestellt werden. Bitte geben Sie einen Vorgangsnamen und das dazugehörige Passwort an.'

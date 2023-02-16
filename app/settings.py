@@ -28,7 +28,7 @@ class VorgangHandler:
     # a new Field database is created.
     DANTE_PARENT_CONCEPT_ID = '76f1f241-6425-4fd3-a93c-ee88a47affc1'
 
-class FileImportingHandler:
+class FileImport:
     FORMATS = {
         'csv': { 'file_type': 'csv', 'expected_format': 'csv', 'importer': 'csv' },
         'jpg': { 'file_type': 'jpeg', 'expected_format': 'jpg', 'importer': 'image' },
