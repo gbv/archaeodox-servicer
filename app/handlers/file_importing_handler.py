@@ -1,4 +1,4 @@
-import mimetypes, requests
+import requests
 from dpath import util as dp
 
 from app import settings, messages
@@ -30,7 +30,7 @@ class FileImportingHandler(EasyDBHandler):
             files.append({
                 'name': file_name,
                 'url': dp.get(file_information, 'versions/original/download_url'),
-                'format_settings': settings.FileImportingHandler.FORMATS[file_extension],
+                'format_settings': settings.FileImportingHandler.FORMATS.get(file_extension, None),
                 'detected_format': file_information['extension']
             })
         self.logger.debug(files)
@@ -47,10 +47,13 @@ class FileImportingHandler(EasyDBHandler):
         self.__create_result_object(results)
 
     def __import_file(self, file, database):
-        result = { 'dokument': self.__get_cloned_asset(file) }
+        result = {
+            'dokument': self.__get_cloned_asset(file),
+            'dokumententyp': self.__get_file_type_object(file)
+        }
 
         try:
-            self.__validate(file, database)
+            self.__validate(file, result['dokumententyp'], database)
             file_data = self.__get_file_data(file['url'])
             self.__run_importer(file, file_data, database)
             result['fehlermeldung'] = messages.FileImportingHandler.SUCCESS
@@ -64,9 +67,17 @@ class FileImportingHandler(EasyDBHandler):
         cloned_asset[0]['preferred'] = True
         return cloned_asset
 
-    def __validate(self, file, database):
+    def __get_file_type_object(self, file):
+        if file['format_settings'] is None:
+            return None
+        else:
+            return self.easydb.get_item('metadatendateityp', file['format_settings']['file_type'], 'name')
+
+    def __validate(self, file, file_type_object, database):
         if database is None:
             raise ValueError(messages.FileImportingHandler.ERROR_MISSING_CREDENTIALS)
+        if file_type_object is None:
+            raise ValueError(messages.FileImportingHandler.ERROR_UNSUPPORTED_FILE_FORMAT)
         if file['format_settings']['expected_format'] != file['detected_format']:
             raise ValueError(messages.FileImportingHandler.ERROR_INVALID_FILE_FORMAT)
 
@@ -89,13 +100,13 @@ class FileImportingHandler(EasyDBHandler):
             shapefile_importer.run(file_data, database)
 
     def __create_field_database(self):
+        if 'db_name' not in self.object_data or 'passwort' not in self.object_data:
+            return None
         field_hub = FieldHub(
             settings.Couch.HOST_URL,
             settings.FieldHub.TEMPLATE_PROJECT_NAME,
             auth_from_module=True
         )
-        if 'db_name' not in self.object_data or 'passwort' not in self.object_data:
-            return None
         db_name = self.object_data['db_name']
         password = self.object_data['passwort']
         return FieldDatabase(field_hub, db_name, password)
