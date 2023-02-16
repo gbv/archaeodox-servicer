@@ -125,6 +125,6 @@ def __get_tags(failed):
 
 def __get_error_message(error):
     if error == field_error_messages.FIELD_HUB_INVALID_CREDENTIALS:
-        return messages.FileImportingHandler.ERROR_INVALID_CREDENTIALS
-    else:
-        return messages.FileImportingHandler.GENERIC_ERROR + ' ' + error
+        error = messages.FileImportingHandler.ERROR_INVALID_CREDENTIALS
+    
+    return messages.FileImportingHandler.ERROR_PREFIX + ' ' + error
