@@ -16,3 +16,8 @@ class EasyDBHandler:
         self.logger.debug(f'Full data: {self.full_data}')
         self.logger.debug(f'Object data {self.object_data}')
         return self.full_data
+
+class FileImportingHandler(EasyDBHandler):
+    def process_request(self, *args, **kwargs):
+        perform_import(self.object_data, self.easydb)
+        return self.full_data
