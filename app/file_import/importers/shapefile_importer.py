@@ -13,10 +13,8 @@ def run(file_data, field_database):
     file_bytes = io.BytesIO(file_data)
     zip_file = ZipFile(file_bytes, 'r')
     geojson = __convert_to_geojson(zip_file)
-    segment_count = 0
     for feature in geojson['features']:
-        segment_count += 1
-        __import_geometry(feature['geometry'], feature['properties'], field_database, segment_count)
+        __import_geometry(feature['geometry'], feature['properties'], field_database)
 
 def __convert_to_geojson(zip_file):
     try:
@@ -44,14 +42,13 @@ def __convert_to_geojson(zip_file):
     finally:
         rmtree(temp_directory)
 
-def __import_geometry(geometry, properties, field_database, segment_count):
+def __import_geometry(geometry, properties, field_database):
     planum_or_profile_category = __get_planum_or_profile_category(properties)
     planum_or_profile_identifier = __get_identifier(properties.get('exca_int'), planum_or_profile_category)
     planum_or_profile_short_description = __get_planum_or_profile_short_description(properties)
     feature_group_identifier = __get_identifier(properties.get('group'), 'FeatureGroup')
     feature_group_short_description = properties.get('group_info')
     feature_identifier = __get_identifier(properties.get('strat_unit'), 'Feature')
-    feature_segment_identifier = __get_feature_segment_identifier(feature_identifier, segment_count)
     feature_segment_short_description = properties.get('info')
 
     __validate(planum_or_profile_identifier, planum_or_profile_category)
@@ -68,8 +65,7 @@ def __import_geometry(geometry, properties, field_database, segment_count):
         )
         feature = __update_feature(field_database, trench, planum_or_profile, feature_group, feature_identifier)
         __update_feature_segment(
-            field_database, trench, planum_or_profile, feature, feature_segment_identifier,
-            feature_segment_short_description, geometry
+            field_database, trench, planum_or_profile, feature, feature_segment_short_description, geometry
         )
     
 def __get_planum_or_profile_short_description(properties):
@@ -98,14 +94,6 @@ def __get_identifier(base_identifier, category):
         return None
 
     return settings.FileImport.CATEGORY_PREFIXES[category] + str(base_identifier)
-
-def __get_feature_segment_identifier(feature_identifier, count):
-    if feature_identifier is None:
-        return None
-
-    base_feature_identifier = feature_identifier.replace(settings.FileImport.CATEGORY_PREFIXES['Feature'], '')
-    
-    return __get_identifier(f'{base_feature_identifier}-{count}', 'FeatureSegment')
 
 def __validate(planum_or_profile_identifier, planum_or_profile_category):
     if planum_or_profile_category is None:
@@ -167,13 +155,10 @@ def __update_feature(field_database, trench, planum_or_profile, feature_group, i
 
     return field_database.populate_resource(resource_data)
 
-def __update_feature_segment(field_database, trench, planum_or_profile, feature, identifier, short_description,
-                             geometry):
-    if identifier is None:
-        return None
+def __update_feature_segment(field_database, trench, planum_or_profile, feature, short_description, geometry):
 
     resource_data = {
-        'identifier': identifier,
+        'identifier': __get_feature_segment_identifier(feature, field_database),
         'category': 'FeatureSegment',
         'geometry': geometry,
         'relations': {
@@ -187,3 +172,41 @@ def __update_feature_segment(field_database, trench, planum_or_profile, feature,
         resource_data['amh-default:shortDescriptionFreetext'] = short_description
 
     return field_database.populate_resource(resource_data)
+
+def __get_feature_segment_identifier(feature, field_database):
+    base_feature_identifier = __get_base_identifier(feature)
+    number = __get_feature_segment_identifier_number(feature['resource']['id'], field_database)
+
+    return __get_identifier(f'{base_feature_identifier}-{str(number)}', 'FeatureSegment')
+
+def __get_feature_segment_identifier_number(feature_id, field_database):
+    
+    feature_segments = __get_existing_feature_segments(feature_id, field_database)
+    numbers = sorted(map(__get_number_from_feature_segment, feature_segments))
+    if len(numbers) == 0:
+        return 1
+    else:
+        return numbers[-1] + 1
+
+def __get_existing_feature_segments(feature_id, field_database):
+    query = {
+        'selector': {
+            'resource.relations.liesWithin': {
+                '$elemMatch': {
+                    "$eq": feature_id
+                }
+            }
+        } 
+    }
+    return field_database.search(query)
+
+def __get_number_from_feature_segment(document):
+    segments = document['resource']['identifier'].split('-')
+    if len(segments) < 2:
+        return 0
+    else:
+        return int(segments[1])
+
+def __get_base_identifier(document):
+    category = document['resource']['category']
+    return document['resource']['identifier'].replace(settings.FileImport.CATEGORY_PREFIXES[category], '')
