@@ -46,3 +46,10 @@ class CouchDatabase:
             rows = response.json()['rows']
             ids = [row['id'] for row in rows]
             return ids
+
+    def search(self, query):
+        response = self.session.post(self.search_url, json=query)
+        if response.ok:
+            return response.json()['docs']
+        else:
+            raise ValueError(response.json()['reason'])

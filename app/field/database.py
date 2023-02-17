@@ -12,20 +12,15 @@ class FieldDatabase(CouchDatabase):
         self.media_url = f'{settings.FieldHub.MEDIA_URL}/{self.name}/'
 
     def get_or_create_document(self, identifier, category=None):
-        mango_query = { 'selector': { 'resource.identifier': identifier } }
-        search_results = self.session.post(self.search_url, json=mango_query)
-        if search_results.ok:
-            documents = search_results.json()['docs']
-            if documents:
-                return documents[0]
-            else:
-                id = str(uuid4())
-                document = self.__get_empty_document(id, identifier, category)
-                response = self.create_doc(id, document)
-                document['_rev'] = response.json()['rev']
-                return document
+        documents = self.search({ 'selector': { 'resource.identifier': identifier } })
+        if documents and len(documents) > 0:
+            return documents[0]
         else:
-            raise ValueError(search_results.json()['reason'])
+            id = str(uuid4())
+            document = self.__get_empty_document(id, identifier, category)
+            response = self.create_doc(id, document)
+            document['_rev'] = response.json()['rev']
+            return document
 
     def upload_image(self, id, image_data, mimetype, image_type):
         target_url = self.media_url + id
