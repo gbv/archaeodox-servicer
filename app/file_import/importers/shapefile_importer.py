@@ -71,8 +71,8 @@ def __import_geometry(geometry, properties, field_database):
 def __get_planum_or_profile_short_description(properties):
     part1 = __read_value('part1_info', properties) + ' ' + __read_value('part1', properties)
     part2 = __read_value('part2_info', properties) + ' ' + __read_value('part2', properties)
-    result = part1 + ', ' + part2
-    return result.strip()
+    result = part1.strip() + ', ' + part2.strip()
+    return result
 
 def __read_value(attribute_name, properties):
     value = properties.get(attribute_name)
