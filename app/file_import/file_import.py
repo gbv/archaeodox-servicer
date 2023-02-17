@@ -37,19 +37,19 @@ def __import_files(files, import_object, easydb):
     results = []
 
     for file in files:
-        result = __import_file(file, database, easydb)
+        result = __import_file(file, import_object, database, easydb)
         results.append(result)
 
     __create_result_object(results, import_object, easydb)
 
-def __import_file(file, database, easydb):
+def __import_file(file, import_object, database, easydb):
     result = {
         'dokument': __get_cloned_asset(file, easydb),
         'dokumententyp': __get_file_type_object(file, easydb)
     }
 
     try:
-        __validate(file, result['dokumententyp'], database)
+        __validate(file, result['dokumententyp'], import_object, database)
         file_data = __get_file_data(file['url'])
         __run_importer(file, file_data, database)
         result['fehlermeldung'] = messages.FileImport.SUCCESS
@@ -69,9 +69,11 @@ def __get_file_type_object(file, easydb):
     else:
         return easydb.get_object_by_field_value('dateityp', 'name', file['format_settings']['file_type'])
 
-def __validate(file, file_type_object, database):
+def __validate(file, file_type_object, import_object, database):
     if database is None:
         raise ValueError(messages.FileImport.ERROR_MISSING_CREDENTIALS)
+    if not file['name'].startswith(import_object['vorgangsname']):
+        raise ValueError(messages.FileImport.ERROR_VORGANG_NOT_IN_FILENAME)
     if file_type_object is None:
         raise ValueError(messages.FileImport.ERROR_UNSUPPORTED_FILE_FORMAT)
     if file['format_settings']['expected_format'] != file['detected_format']:
