@@ -108,7 +108,7 @@ def __update_planum_or_profile(field_database, trench, identifier, short_descrip
     resource_data = {
         'identifier': identifier,
         'category': category,
-        'shortDescription': short_description,
+        'shortDescription': { 'de': short_description },
         'relations': {
             'isRecordedIn': [trench['resource']['id']]
         }
@@ -133,7 +133,7 @@ def __update_feature_group(field_database, trench, planum_or_profile, identifier
     }
 
     if short_description is not None:
-        resource_data['amh-default:shortDescriptionFreetext'] = short_description
+        resource_data['amh-default:shortDescriptionFreetext'] = { 'de': short_description }
     
     return field_database.populate_resource(resource_data)
 
@@ -169,7 +169,7 @@ def __update_feature_segment(field_database, trench, planum_or_profile, feature,
     }
 
     if short_description is not None:
-        resource_data['amh-default:shortDescriptionFreetext'] = short_description
+        resource_data['amh-default:shortDescriptionFreetext'] = { 'de': short_description }
 
     return field_database.populate_resource(resource_data)
 
