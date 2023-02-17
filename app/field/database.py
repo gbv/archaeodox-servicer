@@ -11,7 +11,7 @@ class FieldDatabase(CouchDatabase):
         super().__init__(server, name, name, password)
         self.media_url = f'{settings.FieldHub.MEDIA_URL}/{self.name}/'
 
-    def get_or_create_document(self, identifier):
+    def get_or_create_document(self, identifier, category=None):
         mango_query = { 'selector': { 'resource.identifier': identifier } }
         search_results = self.session.post(self.search_url, json=mango_query)
         if search_results.ok:
@@ -20,7 +20,7 @@ class FieldDatabase(CouchDatabase):
                 return documents[0]
             else:
                 id = str(uuid4())
-                document = self.__get_empty_document(id, identifier)
+                document = self.__get_empty_document(id, identifier, category)
                 response = self.create_doc(id, document)
                 document['_rev'] = response.json()['rev']
                 return document
@@ -49,16 +49,16 @@ class FieldDatabase(CouchDatabase):
                 document['resource'][key] = resource_data[key]
 
         relations = resource_data.get('relations', {})
-        for relation, target in relations.items():
-            target_identifiers = target.split(';')
-            target_ids = [self.get_or_create_document(target_identifier)['_id'] for target_identifier in target_identifiers]
-            document['resource'][relation] = target_ids
+        for relation_name, target_ids in relations.items():
+            document['resource']['relations'][relation_name] = target_ids
     
-        return self.update_doc(document['_id'], document=document)
+        response = self.update_doc(document['_id'], document=document)
+        document['_rev'] = response.json()['rev']
+        return document
 
 
-    def __get_empty_document(self, id, identifier):
-        return {
+    def __get_empty_document(self, id, identifier, category):
+        document = {
             '_id': id,
             'resource': {
                 'identifier': identifier,
@@ -71,3 +71,7 @@ class FieldDatabase(CouchDatabase):
             },
             'modified': []
         }
+        if category is not None:
+            document['resource']['category'] = category
+        
+        return document
