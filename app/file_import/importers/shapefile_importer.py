@@ -6,7 +6,7 @@ from shutil import rmtree
 from osgeo import gdal
 from zipfile import ZipFile
 
-from app import messages
+from app import settings, messages
 
 
 def run(file_data, field_database):
@@ -45,12 +45,12 @@ def __convert_to_geojson(zip_file):
         rmtree(temp_directory)
 
 def __import_geometry(geometry, properties, field_database, segment_count):
-    planum_or_profile_identifier = properties.get('exca_int')
-    planum_or_profile_short_description = __get_planum_or_profile_short_description(properties)
     planum_or_profile_category = __get_planum_or_profile_category(properties)
-    feature_complex_identifier = properties.get('group')
-    feature_complex_short_description = properties.get('group_info')
-    feature_identifier = properties.get('strat_unit')
+    planum_or_profile_identifier = __get_identifier(properties.get('exca_int'), planum_or_profile_category)
+    planum_or_profile_short_description = __get_planum_or_profile_short_description(properties)
+    feature_group_identifier = __get_identifier(properties.get('group'), 'FeatureGroup')
+    feature_group_short_description = properties.get('group_info')
+    feature_identifier = __get_identifier(properties.get('strat_unit'), 'Feature')
     feature_segment_identifier = __get_feature_segment_identifier(feature_identifier, segment_count)
     feature_segment_short_description = properties.get('info')
 
@@ -63,10 +63,10 @@ def __import_geometry(geometry, properties, field_database, segment_count):
     )
     
     if feature_identifier is not None:
-        feature_complex = __update_feature_complex(
-            field_database, trench, planum_or_profile, feature_complex_identifier, feature_complex_short_description
+        feature_group = __update_feature_group(
+            field_database, trench, planum_or_profile, feature_group_identifier, feature_group_short_description
         )
-        feature = __update_feature(field_database, trench, planum_or_profile, feature_complex, feature_identifier)
+        feature = __update_feature(field_database, trench, planum_or_profile, feature_group, feature_identifier)
         __update_feature_segment(
             field_database, trench, planum_or_profile, feature, feature_segment_identifier,
             feature_segment_short_description, geometry
@@ -86,18 +86,26 @@ def __read_value(attribute_name, properties):
         return value
 
 def __get_planum_or_profile_category(properties):
-    if 'FLZ' in properties['file_name']:
+    if settings.FileImport.CATEGORY_PREFIXES['Planum'] in properties['file_name']:
         return 'Planum'
-    elif 'PRZ' in properties['file_name']:
+    elif settings.FileImport.CATEGORY_PREFIXES['Profile'] in properties['file_name']:
         return 'Profile'
     else:
         return None
 
+def __get_identifier(base_identifier, category):
+    if base_identifier is None:
+        return None
+
+    return settings.FileImport.CATEGORY_PREFIXES[category] + str(base_identifier)
+
 def __get_feature_segment_identifier(feature_identifier, count):
     if feature_identifier is None:
         return None
+
+    base_feature_identifier = feature_identifier.replace(settings.FileImport.CATEGORY_PREFIXES['Feature'], '')
     
-    return f'BA{feature_identifier}-{count}'
+    return __get_identifier(f'{base_feature_identifier}-{count}', 'FeatureSegment')
 
 def __validate(planum_or_profile_identifier, planum_or_profile_category):
     if planum_or_profile_category is None:
@@ -110,7 +118,7 @@ def __update_trench(field_database):
 
 def __update_planum_or_profile(field_database, trench, identifier, short_description, category, geometry=None):
     resource_data = {
-        'identifier': str(identifier),
+        'identifier': identifier,
         'category': category,
         'shortDescription': short_description,
         'relations': {
@@ -123,12 +131,12 @@ def __update_planum_or_profile(field_database, trench, identifier, short_descrip
 
     return field_database.populate_resource(resource_data)
 
-def __update_feature_complex(field_database, trench, planum_or_profile, identifier, short_description):    
+def __update_feature_group(field_database, trench, planum_or_profile, identifier, short_description):    
     if identifier is None:
         return None
 
     resource_data = {
-        'identifier': str(identifier),
+        'identifier': identifier,
         'category': 'FeatureGroup',
         'relations': {
             'isRecordedIn': [trench['resource']['id']],
@@ -141,12 +149,12 @@ def __update_feature_complex(field_database, trench, planum_or_profile, identifi
     
     return field_database.populate_resource(resource_data)
 
-def __update_feature(field_database, trench, planum_or_profile, feature_complex, identifier):
+def __update_feature(field_database, trench, planum_or_profile, feature_group, identifier):
     if identifier is None:
         return None
 
     resource_data = {
-        'identifier': str(identifier),
+        'identifier': identifier,
         'category': 'Feature',
         'relations': {
             'isRecordedIn': [trench['resource']['id']],
@@ -154,8 +162,8 @@ def __update_feature(field_database, trench, planum_or_profile, feature_complex,
         }
     }
 
-    if feature_complex is not None:
-        resource_data['relations']['liesWithin'] = [feature_complex['resource']['id']]
+    if feature_group is not None:
+        resource_data['relations']['liesWithin'] = [feature_group['resource']['id']]
 
     return field_database.populate_resource(resource_data)
 
@@ -165,7 +173,7 @@ def __update_feature_segment(field_database, trench, planum_or_profile, feature,
         return None
 
     resource_data = {
-        'identifier': str(identifier),
+        'identifier': identifier,
         'category': 'FeatureSegment',
         'geometry': geometry,
         'relations': {

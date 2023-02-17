@@ -39,6 +39,15 @@ class FileImport:
     }
     SUCCESS_TAG_ID = 8
     FAILURE_TAG_ID = 10
+    CATEGORY_PREFIXES = {
+        'FeatureGroup': 'BK',
+        'Feature': 'B',
+        'FeatureSegment': 'BA',
+        'Find': 'F',
+        'Sample': 'P',
+        'Planum': 'FLZ',
+        'Profile': 'PRZ'
+    }
 
 class ImageImporter:
     THUMBNAIL_HEIGHT = 320
