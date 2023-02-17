@@ -47,8 +47,3 @@ class ImageImporter:
 class CSVImporter:
     ALLOWED_CATEGORIES = ['Project', 'Place', 'Trench', 'FeatureGroup', 'Feature', 'FeatureSegment', 'Find', 'Sample',
         'Image', 'Photo', 'Amh-default:PlanDrawing', 'Amh-default:FindDrawing', 'Planum', 'Profile']
-
-class ShapefileImporter:
-    FIND_SECTION_ID_TEMPLATE = 'BA {strat_unit}.{exca_int}'
-    PROPERTY_MAP = {'info': 'shortDescription',
-                    'strat_unit': 'relations.isChildOf'}
