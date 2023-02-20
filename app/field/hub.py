@@ -5,7 +5,7 @@ from app import credentials
 from app.couchdb.server import CouchDBServer
 from app.couchdb.database import CouchDatabase
 from app.dante.vocabulary import DanteVocabulary
-from app.utils.get_date import get_date
+from app.field import document_utility
 
 
 class FieldHub(CouchDBServer):
@@ -34,25 +34,19 @@ class FieldHub(CouchDBServer):
         return creation_info['info']['password']
 
     def create_configuration_document(self):
-        return {
-            '_id': FieldHub.CONFIG_DOCUMENT,
-            'resource': self.get_config()['resource'],
-            'created': {'user': 'easydb', 'date': get_date()},
-            'modified': []
-        }
+        return document_utility.get_document(
+            FieldHub.CONFIG_DOCUMENT,
+            self.get_config()['resource']
+        )
 
     def create_project_document(self, project_identifier):
-        return {
-            '_id': FieldHub.PROJECT_DOCUMENT_ID,
-            'resource': {
-                'identifier': project_identifier,
-                'id': FieldHub.PROJECT_DOCUMENT_ID,
-                'category': 'Project',
-                'relations': {}
-            },
-            'created': {'user': 'easydb', 'date': get_date()},
-            'modified': []
+        resource = {
+            'identifier': project_identifier,
+            'id': FieldHub.PROJECT_DOCUMENT_ID,
+            'category': 'Project',
+            'relations': {}
         }
+        return document_utility.get_document(FieldHub.PROJECT_DOCUMENT_ID, resource)
 
     def update_valuelists(self):
         configuration_document = self.get_config()

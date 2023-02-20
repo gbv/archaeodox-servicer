@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from app import settings
 from app.couchdb.database import CouchDatabase
-from app.utils.get_date import get_date
+from app.field import document_utility
 
 
 class FieldDatabase(CouchDatabase):
@@ -53,20 +53,12 @@ class FieldDatabase(CouchDatabase):
 
 
     def __get_empty_document(self, id, identifier, category):
-        document = {
-            '_id': id,
-            'resource': {
-                'identifier': identifier,
-                'id': id,
-                'relations': {}
-            },
-            'created': {
-                'user': 'easydb',
-                'date': get_date()
-            },
-            'modified': []
+        resource = {
+            'identifier': identifier,
+            'id': id,
+            'relations': {}
         }
         if category is not None:
-            document['resource']['category'] = category
+            resource['category'] = category
         
-        return document
+        return document_utility.get_document(id, resource)
