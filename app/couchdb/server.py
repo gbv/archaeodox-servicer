@@ -45,15 +45,15 @@ class CouchDBServer:
         return os.path.join(self.host, *args)
 
     @classmethod
-    def check_db_name(cls, db_name, raise_error=False):
+    def check_db_name(cls, db_name):
         valid = re.match(r'^[a-z][a-z0-9_()-]*$', db_name)
-        if raise_error and not valid:
+        if not valid:
             raise ValueError('The project name may only contain lower case letters and characters _, (, ), - and must start with a letter.')
         return valid
 
     def create_database(self, db_name):
         db_name = db_name.lower()
-        CouchDBServer.check_db_name(db_name, True)
+        CouchDBServer.check_db_name(db_name)
             
         response = requests.put(url=self.prepend_host(db_name), auth=self.auth)
         if not response.ok:
