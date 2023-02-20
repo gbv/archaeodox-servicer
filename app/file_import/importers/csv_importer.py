@@ -10,7 +10,7 @@ def run(file_data, file_name, field_database):
 
     with file_object:
         csv_reader = csv.DictReader(file_object, delimiter=',', quotechar='"')
-        resources = [__get_resource(row) for row in csv_reader]
+        resources = [__get_resource(row, field_database) for row in csv_reader]
 
     for resource in resources:
         resource['category'] = category
@@ -30,10 +30,10 @@ def __extract_category_from_file_name(file_name):
     else:
         return segments[-2]
 
-def __get_resource(row):
+def __get_resource(row, field_database):
     resource = __get_filled_in_fields(row)
     __inflate(resource)
-    __split_relation_targets(resource)
+    __split_relation_targets(resource, field_database)
     return resource
 
 def __get_filled_in_fields(row):
