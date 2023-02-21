@@ -21,6 +21,7 @@ class FieldHub(CouchDBServer):
         return self.template.get_doc(FieldHub.CONFIG_DOCUMENT).json()
 
     def update_config(self, configuration_document):
+        document_utility.add_modified_entry(configuration_document)
         self.template.update_doc(FieldHub.CONFIG_DOCUMENT, configuration_document)
 
     def create_project(self, project_identifier):
