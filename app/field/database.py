@@ -13,7 +13,7 @@ class FieldDatabase(CouchDatabase):
 
     def get_or_create_document(self, identifier, category=None):
         documents = self.search({ 'selector': { 'resource.identifier': identifier } })
-        if documents and len(documents) > 0:
+        if documents is not None and len(documents) > 0:
             return documents[0]
         else:
             id = str(uuid4())
@@ -35,8 +35,9 @@ class FieldDatabase(CouchDatabase):
                 data=image_data.getvalue()
             )
 
-    def populate_resource(self, resource_data):
-        identifier = resource_data['identifier']
+    def populate_resource(self, resource_data, identifier=None):
+        if identifier is None:
+            identifier = resource_data['identifier']
         document = self.get_or_create_document(identifier)
 
         for key in resource_data:
