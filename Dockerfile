@@ -8,7 +8,5 @@ COPY * ./
 
 RUN pipenv install --system
 
-ENV FLASK_ENV=production
-
 WORKDIR /opt/servicer
 CMD waitress-serve --port=5000 app.main:app
