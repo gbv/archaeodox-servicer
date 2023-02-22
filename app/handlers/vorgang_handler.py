@@ -36,7 +36,16 @@ class VorgangHandler(EasyDBHandler):
     def __create_easydb_object(self, identifier, password):
         fields_data = {
             'db_name': identifier,
-            'passwort': password
+            'passwort': password,
+            'lk_vorgang': {
+                'vorgang': {
+                    'lookup:_id': {
+                        'vorgang': self.object_data['vorgang']
+                    },
+                    '_objecttype': 'vorgang',
+                    '_mask': 'vorgang__all_fields'
+                }
+            }
         }
 
         self.easydb.create_object('field_datenbank', fields_data)
