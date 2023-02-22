@@ -1,5 +1,7 @@
 class EasyDB:
     HOST_URL = ''
+    USER_NAME = ''
+    PASSWORD = ''
 
 class Dante:
     HOST_URL = ''
@@ -10,6 +12,8 @@ class Dante:
     
 class Couch:
     HOST_URL = ''
+    ADMIN_USER_NAME = ''
+    ADMIN_PASSWORD = ''
 
 class FieldHub:
     MEDIA_URL = ''

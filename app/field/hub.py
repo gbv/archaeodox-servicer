@@ -1,7 +1,6 @@
 import requests
 
 from app import settings
-from app import credentials
 from app.couchdb.server import CouchDBServer
 from app.couchdb.database import CouchDatabase
 from app.dante.vocabulary import DanteVocabulary
@@ -14,7 +13,7 @@ class FieldHub(CouchDBServer):
     
     def __init__(self, host, template_project_name, user_name=None, password=None, auth_from_module=False, logger=None) -> None:
         super().__init__(host, user_name, password, auth_from_module)
-        self.template = CouchDatabase(self, template_project_name, credentials.COUCHDB_ADMIN_USER, credentials.COUCHDB_ADMIN_PASSWORD)
+        self.template = CouchDatabase(self, template_project_name, settings.Couch.ADMIN_USER, settings.Couch.ADMIN_PASSWORD)
         self.logger = logger
 
     def get_config(self):

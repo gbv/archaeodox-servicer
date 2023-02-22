@@ -1,7 +1,7 @@
 import json, os, requests, string, random, re
 from dpath import util as dp
 
-from app import credentials
+from app import settings
 from app.couchdb.database import CouchDatabase
 
 
@@ -9,8 +9,8 @@ class CouchDBServer:
     def __init__(self, host, user_name=None, password=None, auth_from_module=False) -> None:
         self.session = requests.Session()
         if auth_from_module:
-            user_name = credentials.COUCHDB_ADMIN_USER
-            password = credentials.COUCHDB_ADMIN_PASSWORD
+            user_name = settings.Couch.ADMIN_USER
+            password = settings.Couch.ADMIN_PASSWORD
         self.set_auth(user_name, password)
         self.host = host
         

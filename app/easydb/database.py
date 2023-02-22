@@ -1,7 +1,7 @@
 import json, requests
 from os.path import join
 
-from app import credentials
+from app import settings
     
 
 class EasyDB:
@@ -25,8 +25,8 @@ class EasyDB:
 
             params = {
                 'token': self.session_token,
-                'login': credentials.EASYDB_USER_NAME,
-                'password': credentials.EASYDB_PASSWORD
+                'login': settings.EasyDB.USER_NAME,
+                'password': settings.EasyDB.PASSWORD
             }
             auth_response = requests.post(self.session_auth_url, params=params)
             self.logger.debug(f'Attempting auth.')
