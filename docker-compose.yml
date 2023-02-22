@@ -11,7 +11,7 @@ services:
     networks:
       hostnet: {}
     volumes:
-    - ./app:/opt/app
+    - .:/opt/servicer
   
   async_servicer_trigger:
     container_name: async_servicer_trigger

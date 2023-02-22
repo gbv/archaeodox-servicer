@@ -10,6 +10,7 @@ flask = "*"
 python-dotenv = "*"
 pillow = "*"
 geotiff = "*"
+waitress="*"
 
 [dev-packages]
 ipykernel = "*"

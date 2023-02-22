@@ -8,8 +8,7 @@ COPY * ./
 
 RUN pipenv install --system
 
-ENV FLASK_APP=app
-ENV FLASK_ENV=development
+ENV FLASK_ENV=production
 
-WORKDIR /opt/app
-CMD flask run --host=0.0.0.0
+WORKDIR /opt/servicer
+CMD waitress-serve --port=5000 app.main:app
