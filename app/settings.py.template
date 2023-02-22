@@ -1,0 +1,44 @@
+class EasyDB:
+    HOST_URL = ''
+
+class Dante:
+    HOST_URL = ''
+    VOCABULARY_PUBLISHER = ''
+    VOCABULARY_URI_BASE = ''
+    VOCABULARY_NAMES = []
+    VOCABULARY_PREFIX = ''
+    
+class Couch:
+    HOST_URL = ''
+
+class FieldHub:
+    MEDIA_URL = ''
+    PROJECT_URL = ''
+    TEMPLATE_PROJECT_NAME = ''
+
+class VorgangHandler:
+    # If a child concept of this concept is selected in field 'lk_vorgang_kategorie' of the Vorgang object,
+    # a new Field database is created.
+    DANTE_PARENT_CONCEPT_ID = ''
+
+class FileImport:
+    FORMATS = {
+        'csv': { 'file_type': 'csv', 'expected_format': 'csv', 'importer': 'csv' },
+        'jpg': { 'file_type': 'jpeg', 'expected_format': 'jpg', 'importer': 'image' },
+        'jpeg': { 'file_type': 'jpeg', 'expected_format': 'jpg', 'importer': 'image' },
+        'tif': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
+        'tiff': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
+        'zip': { 'file_type': 'zip', 'expected_format': 'zip', 'importer': 'shapefile' }
+    }
+    SUCCESS_TAG_ID = 1
+    FAILURE_TAG_ID = 2
+    CATEGORY_PREFIXES = {
+        'CategoryName': 'C',
+    }
+
+class ImageImporter:
+    THUMBNAIL_HEIGHT = 320
+    THUMBNAIL_JPEG_QUALITY = 60
+
+class CSVImporter:
+    ALLOWED_CATEGORIES = []
