@@ -8,7 +8,7 @@ from app.dante.tree_node import DanteTreeNode
 class DanteVocabulary(DanteTreeNode):
     @classmethod
     def from_uri(cls, uri):
-        data = requests.get(join(settings.Dante.HOST_URL, 'data'), params={'uri': uri}).json()[0]
+        data = requests.get(join(settings.Dante.HOST_URL, 'data'), params={ 'uri': uri, 'cache': 0 }).json()[0]
         self = cls(**data)
         self.initialize_top()
         return self
@@ -16,7 +16,7 @@ class DanteVocabulary(DanteTreeNode):
     def initialize_top(self):
         top_url = join(settings.Dante.HOST_URL, 'voc', self.id, 'top')
         self.depth = 0
-        top_nodes = requests.get(top_url).json()
+        top_nodes = requests.get(top_url, params={ 'cache': 0 }).json()
         self.children = [DanteTreeNode(dig=True, dig_deeper=True, item_cache=self.item_cache, level=1, **top_node) for top_node in top_nodes]
         for child in self.children:
             self.item_cache[child.uri] = child

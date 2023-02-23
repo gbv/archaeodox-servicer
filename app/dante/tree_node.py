@@ -40,7 +40,7 @@ class DanteTreeNode:
 
     def check_for_children(self, dig_deeper=False):
         if not self.checked_for_children:
-            descendants = requests.get(join(settings.Dante.HOST_URL, 'descendants'), params = {'uri': self.uri})
+            descendants = requests.get(join(settings.Dante.HOST_URL, 'descendants'), params = { 'uri': self.uri, 'cache': 0 })
             for d in descendants.json():
                 if d['uri'] in self.item_cache.keys():
                     child = self.item_cache[d['uri']]
