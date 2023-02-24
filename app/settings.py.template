@@ -46,3 +46,7 @@ class ImageImporter:
 
 class CSVImporter:
     ALLOWED_CATEGORIES = []
+
+class ShapefileImporter:
+    FEATURE_SEGMENT_NAME = ''
+    PROFILE_PLANUM_NAME = ''

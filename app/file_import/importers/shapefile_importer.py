@@ -54,12 +54,14 @@ def __import_geometry(geometry, properties, field_database):
     __validate(planum_or_profile_identifier, planum_or_profile_category)
 
     trench = __update_trench(field_database)
-    planum_or_profile = __update_planum_or_profile(
-        field_database, trench, planum_or_profile_identifier, planum_or_profile_short_description,
-        planum_or_profile_category, geometry=geometry if feature_identifier is None else None
-    )
+
+    if __is_planum_or_profile_import_allowed(properties):
+        planum_or_profile = __update_planum_or_profile(
+            field_database, trench, planum_or_profile_identifier, planum_or_profile_short_description,
+            planum_or_profile_category, geometry=geometry if feature_identifier is None else None
+        )
     
-    if feature_identifier is not None:
+    if __is_feature_import_allowed(properties) and feature_identifier is not None:
         feature_group = __update_feature_group(
             field_database, trench, planum_or_profile, feature_group_identifier, feature_group_short_description
         )
@@ -67,7 +69,14 @@ def __import_geometry(geometry, properties, field_database):
         __update_feature_segment(
             field_database, trench, planum_or_profile, feature, feature_segment_short_description, geometry
         )
-    
+
+def __is_planum_or_profile_import_allowed(properties):
+    return (settings.ShapefileImporter.PROFILE_PLANUM_NAME in properties['file_name']
+        or settings.ShapefileImporter.FEATURE_SEGMENT_NAME in properties['file_name'])
+
+def __is_feature_import_allowed(properties):
+    return settings.ShapefileImporter.FEATURE_SEGMENT_NAME in properties['file_name']
+
 def __get_planum_or_profile_short_description(properties):
     part1 = __read_value('part1_info', properties) + ' ' + __read_value('part1', properties)
     part2 = __read_value('part2_info', properties) + ' ' + __read_value('part2', properties)
@@ -156,7 +165,6 @@ def __update_feature(field_database, trench, planum_or_profile, feature_group, i
     return field_database.populate_resource(resource_data)
 
 def __update_feature_segment(field_database, trench, planum_or_profile, feature, short_description, geometry):
-
     resource_data = {
         'identifier': __get_feature_segment_identifier(feature, field_database),
         'category': 'FeatureSegment',
