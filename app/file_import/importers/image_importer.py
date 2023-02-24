@@ -31,9 +31,6 @@ def run(image_data, image_name, field_database):
 def __initialize_image_document(image_document, image_file_name, image):
     width, height = image.size
     resource = image_document['resource']
-    if 'category' not in resource:
-        # TODO Set correct category or remove if CSV import is mandatory
-        resource['category'] = 'Image' 
     resource['width'] = width
     resource['height'] = height
     resource['originalFilename'] = image_file_name
