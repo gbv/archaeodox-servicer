@@ -11,7 +11,7 @@ class CouchDatabase:
         self.search_url = '/'.join((self.url, '_find'))
 
     def create_document(self, id, document):
-        response = self.session.put('/'.join(self.url, id), data=json.dumps(document))
+        response = self.session.put('/'.join((self.url, id)), data=json.dumps(document))
         return response
 
     def update_document(self, id, document):
