@@ -3,7 +3,7 @@ from os.path import basename
 from PIL import Image
 from geotiff import GeoTiff
 
-from app import settings
+from app import settings, messages
 
 
 def run(image_data, image_name, field_database):
@@ -69,5 +69,4 @@ def __append_georeference(image_document, image_data):
             'bottomLeftCoordinates': [lower_left[1], lower_left[0]]
         }
     except Exception:
-        # TODO Error handling
-        pass
+        raise ValueError(messages.FileImport.ERROR_GEOTIFF_GEOREFERENCE)
