@@ -17,20 +17,20 @@ class FieldHub(CouchDBServer):
         self.logger = logger
 
     def get_config(self):
-        return self.template.get_doc(FieldHub.CONFIG_DOCUMENT).json()
+        return self.template.get_document(FieldHub.CONFIG_DOCUMENT).json()
 
     def update_config(self, configuration_document):
         document_utility.add_modified_entry(configuration_document)
-        self.template.update_doc(FieldHub.CONFIG_DOCUMENT, configuration_document)
+        self.template.update_document(FieldHub.CONFIG_DOCUMENT, configuration_document)
 
     def create_project(self, project_identifier):
         creation_info = requests.post(f'{settings.FieldHub.PROJECT_URL}/{project_identifier}',
                                       auth=self.auth).json()
         database = CouchDatabase(self, project_identifier)
         
-        database.create_doc(FieldHub.CONFIG_DOCUMENT, self.create_configuration_document())
+        database.create_document(FieldHub.CONFIG_DOCUMENT, self.create_configuration_document())
         project = self.create_project_document(project_identifier)
-        database.create_doc(FieldHub.PROJECT_DOCUMENT_ID, project)
+        database.create_document(FieldHub.PROJECT_DOCUMENT_ID, project)
         return creation_info['info']['password']
 
     def create_configuration_document(self):

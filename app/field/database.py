@@ -18,7 +18,7 @@ class FieldDatabase(CouchDatabase):
         else:
             id = str(uuid4())
             document = self.__get_empty_document(id, identifier, category)
-            response = self.create_doc(id, document)
+            response = self.create_document(id, document)
             document['_rev'] = response.json()['rev']
             return document
 
@@ -48,7 +48,7 @@ class FieldDatabase(CouchDatabase):
         for relation_name, target_ids in relations.items():
             document['resource']['relations'][relation_name] = target_ids
     
-        response = self.update_doc(document['_id'], document=document)
+        response = self.update_document(document['_id'], document=document)
         document['_rev'] = response.json()['rev']
         return document
 
