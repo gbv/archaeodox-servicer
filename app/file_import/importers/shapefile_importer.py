@@ -43,6 +43,10 @@ def __convert_to_geojson(zip_file):
         rmtree(temp_directory)
 
 def __import_geometry(geometry, properties, field_database):
+    import_type = __get_import_type(properties)
+    if import_type is None:
+        return
+
     planum_or_profile_category = __get_planum_or_profile_category(properties)
     planum_or_profile_identifier = __get_identifier(properties.get('exca_int'), planum_or_profile_category)
     planum_or_profile_short_description = __get_planum_or_profile_short_description(properties)
@@ -55,13 +59,12 @@ def __import_geometry(geometry, properties, field_database):
 
     trench = __update_trench(field_database)
 
-    if __is_planum_or_profile_import_allowed(properties):
-        planum_or_profile = __update_planum_or_profile(
-            field_database, trench, planum_or_profile_identifier, planum_or_profile_short_description,
-            planum_or_profile_category, geometry=geometry if feature_identifier is None else None
-        )
+    planum_or_profile = __update_planum_or_profile(
+        field_database, trench, planum_or_profile_identifier, planum_or_profile_short_description,
+        planum_or_profile_category, geometry=geometry if feature_identifier is None else None
+    )
     
-    if __is_feature_import_allowed(properties) and feature_identifier is not None:
+    if import_type == 'featureSegment' and feature_identifier is not None:
         feature_group = __update_feature_group(
             field_database, trench, planum_or_profile, feature_group_identifier, feature_group_short_description
         )
@@ -70,12 +73,13 @@ def __import_geometry(geometry, properties, field_database):
             field_database, trench, planum_or_profile, feature, feature_segment_short_description, geometry
         )
 
-def __is_planum_or_profile_import_allowed(properties):
-    return (settings.ShapefileImporter.PROFILE_PLANUM_NAME in properties['file_name']
-        or settings.ShapefileImporter.FEATURE_SEGMENT_NAME in properties['file_name'])
-
-def __is_feature_import_allowed(properties):
-    return settings.ShapefileImporter.FEATURE_SEGMENT_NAME in properties['file_name']
+def __get_import_type(properties):
+    if settings.ShapefileImporter.PROFILE_PLANUM_NAME in properties['file_name']:
+        return 'planumOrProfile'
+    elif settings.ShapefileImporter.FEATURE_SEGMENT_NAME in properties['file_name']:
+        return 'featureSegment'
+    else:
+        return None
 
 def __get_planum_or_profile_short_description(properties):
     part1 = __read_value('part1_info', properties) + ' ' + __read_value('part1', properties)
