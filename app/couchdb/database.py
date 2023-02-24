@@ -7,8 +7,8 @@ class CouchDatabase:
         self.session = requests.Session()
         self.__set_auth(user_name, password)
         self.name = name
-        self.url = '/'.join(server.url, name)
-        self.search_url = '/'.join(self.url, '_find')
+        self.url = '/'.join((server.url, name))
+        self.search_url = '/'.join((self.url, '_find'))
 
     def create_document(self, id, document):
         response = self.session.put('/'.join(self.url, id), data=json.dumps(document))
