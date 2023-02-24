@@ -11,47 +11,38 @@ class CouchDBServer:
         if auth_from_module:
             user_name = settings.Couch.ADMIN_USER
             password = settings.Couch.ADMIN_PASSWORD
-        self.set_auth(user_name, password)
+        self.__set_auth(user_name, password)
         self.host = host
-        
-    def set_auth(self, user_name, password):
-        self.auth = (user_name, password)
-        self.session.auth = self.auth
-  
-    def get_config(self, database):
-        url = os.path.join(self.host, database, CouchDBServer.CONFIG_DOCUMENT)
-        response = requests.get(url=url, auth=self.auth)
-        if response.ok:
-            return response.json()
+    
+    def prepend_host(self, *args):
+        return os.path.join(self.host, *args)
 
-    def inject_config(self, database, path, patch):
-        config = self.get_config(database)
-        dp.new(config, path, patch)
-        url = self.prepend_host(database, CouchDBServer.CONFIG_DOCUMENT)
-        response = requests.put(url=url, data=json.dumps(config), auth=self.auth)
-        return response.content
+    def create_db_and_user(self, db_name, user_name=None):
+        if user_name is None:
+            user_name = db_name
+
+        database = self.__create_database(db_name)
+        user = self.__create_db_user(db_name, user_name)
+        self.__add_user_to_db(user_name, db_name)
+        return database, user
 
     @staticmethod
     def generate_password(length=32):
         pool = string.ascii_letters + string.digits
         return ''.join([random.choice(pool) for i in range(length)])
 
-    def has_database(self, database_name):
-        database_url = self.prepend_host(database_name)
-        reply = requests.get(database_url, auth=self.auth)
-        return reply.ok
-    
-    def prepend_host(self, *args):
-        return os.path.join(self.host, *args)
-
-    @classmethod
-    def check_db_name(cls, db_name):
+    @staticmethod
+    def check_db_name(db_name):
         valid = re.match(r'^[a-z][a-z0-9_()-]*$', db_name)
         if not valid:
             raise ValueError('The project name may only contain lower case letters and characters _, (, ), - and must start with a letter.')
         return valid
 
-    def create_database(self, db_name):
+    def __set_auth(self, user_name, password):
+        self.auth = (user_name, password)
+        self.session.auth = self.auth
+
+    def __create_database(self, db_name):
         db_name = db_name.lower()
         CouchDBServer.check_db_name(db_name)
             
@@ -60,12 +51,8 @@ class CouchDBServer:
             raise ConnectionError(response.content)
         database = CouchDatabase(self, db_name)
         return database
-        
-    def drop_db(self, db_name):
-        response = requests.delete(self.prepend_host(db_name), auth=self.auth)
-        return response.ok
     
-    def create_db_user(self, db_name, user_name):
+    def __create_db_user(self, db_name, user_name):
         user_id = f'org.couchdb.user:{user_name}'
         user = {
             'name': user_name,
@@ -79,8 +66,8 @@ class CouchDBServer:
         if not response.ok:
             raise ConnectionError('Failed to create user ' + db_name + '\n' + str(response.content))
         return user
-        
-    def add_user_to_db(self, user_name, db_name):
+
+    def __add_user_to_db(self, user_name, db_name):
         security = {'admins': 
                       {'names': [],
                        'roles': []
@@ -96,12 +83,3 @@ class CouchDBServer:
         if not response.ok:
             raise ConnectionError(str(response.content))
         return response.ok
-    
-    def create_db_and_user(self, db_name, user_name=None):
-        if user_name is None:
-            user_name = db_name
-        
-        database = self.create_database(db_name)
-        user = self.create_db_user(db_name, user_name)
-        self.add_user_to_db(user_name, db_name)
-        return database, user
