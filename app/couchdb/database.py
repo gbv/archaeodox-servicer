@@ -18,14 +18,9 @@ class CouchDatabase:
         if not 'created' in document.keys():
             raise ValueError(f'Document has never been created: {document}')
         existing = self.get_document(id).json()
-        try:
-            current_revision = existing['_rev']
-        except:
-            print(id)
-            print(document)
-            raise
+        current_revision = existing['_rev']
         return self.session.put(f'{self.url}/{id}',
-                                params={'rev': current_revision},
+                                params={ 'rev': current_revision },
                                 data=json.dumps(document))
 
     def get_document(self, doc_id):
