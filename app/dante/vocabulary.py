@@ -10,10 +10,18 @@ class DanteVocabulary(DanteTreeNode):
     def from_uri(cls, uri):
         data = requests.get(join(settings.Dante.HOST_URL, 'data'), params={ 'uri': uri, 'cache': 0 }).json()[0]
         self = cls(**data)
-        self.initialize_top()
+        self.__initialize_top()
         return self
 
-    def initialize_top(self):
+    def get_field_list(self, max_depth=None):
+        return {
+            'description': self.prefLabel,
+            'createdBy': settings.Dante.VOCABULARY_PUBLISHER,
+            'creationDate': self.created,
+            'values': self.__get_values(max_depth)
+        }
+
+    def __initialize_top(self):
         top_url = join(settings.Dante.HOST_URL, 'voc', self.id, 'top')
         self.depth = 0
         top_nodes = requests.get(top_url, params={ 'cache': 0 }).json()
@@ -22,15 +30,7 @@ class DanteVocabulary(DanteTreeNode):
             self.item_cache[child.uri] = child
         self.checked_for_children = True
 
-    def get_field_list(self, max_depth=None):
-        return {
-            'description': self.prefLabel,
-            'createdBy': settings.Dante.VOCABULARY_PUBLISHER,
-            'creationDate': self.created,
-            'values': self.get_values(max_depth)
-        }
-
-    def get_values(self, max_depth):
+    def __get_values(self, max_depth):
         items = list(self.flatten(max_depth=max_depth))
         items.remove(self)
         result = {}
