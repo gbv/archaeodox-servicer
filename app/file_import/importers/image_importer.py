@@ -26,7 +26,7 @@ def run(image_data, image_name, field_database):
         field_database.upload_image(id, __generate_thumbnail(image), mimetype, 'thumbnail_image')
     else:
         raise ConnectionError(response.content)
-    field_database.update_doc(id, image_document)
+    field_database.update_document(id, image_document)
 
 def __initialize_image_document(image_document, image_file_name, image):
     width, height = image.size
