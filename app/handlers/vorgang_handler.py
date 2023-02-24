@@ -1,6 +1,6 @@
 from app import settings
-from app.couchdb.server import CouchDBServer
 from app.field.hub import FieldHub
+from app.field.database import FieldDatabase
 from app.handlers.easydb_handler import EasyDBHandler
 
 
@@ -24,7 +24,7 @@ class VorgangHandler(EasyDBHandler):
             raise ValueError('Field "vorgang" has to be filled out')
         if self.easydb.get_object_by_field_value('field_datenbank', 'db_name', identifier) != None:
             raise ValueError(f'Field database "{identifier}" already exists.')
-        CouchDBServer.check_db_name(identifier)
+        FieldDatabase.check_database_name(identifier)
 
     def __create_field_project(self, identifier):
         hub = FieldHub(settings.Couch.HOST_URL,

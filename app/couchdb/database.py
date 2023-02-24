@@ -1,4 +1,4 @@
-import json, os, requests
+import json, requests
 
 
 class CouchDatabase:
@@ -7,11 +7,11 @@ class CouchDatabase:
         self.session = requests.Session()
         self.__set_auth(user_name, password)
         self.name = name
-        self.url = server.prepend_host(name)
-        self.search_url = server.prepend_host(name, '_find')
+        self.url = '/'.join(server.url, name)
+        self.search_url = '/'.join(self.url, '_find')
 
     def create_doc(self, doc_id, document):
-        response = self.session.put(os.path.join(self.url, doc_id), data=json.dumps(document))
+        response = self.session.put('/'.join(self.url, doc_id), data=json.dumps(document))
         return response
 
     def update_doc(self, doc_id, document):

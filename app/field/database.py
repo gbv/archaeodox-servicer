@@ -1,4 +1,4 @@
-import requests
+import requests, re
 from uuid import uuid4
 
 from app import settings
@@ -52,6 +52,12 @@ class FieldDatabase(CouchDatabase):
         document['_rev'] = response.json()['rev']
         return document
 
+    @staticmethod
+    def check_database_name(name):
+        valid = re.match(r'^[a-z][a-z0-9_()-]*$', name)
+        if not valid:
+            raise ValueError('The project name may only contain lower case letters and characters _, (, ), - and must start with a letter.')
+        return valid
 
     def __get_empty_document(self, id, identifier, category):
         resource = {

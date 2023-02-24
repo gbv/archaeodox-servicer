@@ -11,7 +11,7 @@ class FieldHub(CouchDBServer):
     CONFIG_DOCUMENT = 'configuration'
     PROJECT_DOCUMENT_ID = 'project'
     
-    def __init__(self, host, template_project_name, user_name=None, password=None, auth_from_module=False, logger=None) -> None:
+    def __init__(self, host, template_project_name, user_name=None, password=None, auth_from_module=False, logger=None):
         super().__init__(host, user_name, password, auth_from_module)
         self.template = CouchDatabase(self, template_project_name, settings.Couch.ADMIN_USER, settings.Couch.ADMIN_PASSWORD)
         self.logger = logger
