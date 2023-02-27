@@ -18,7 +18,8 @@ class DanteVocabulary(DanteTreeNode):
             'description': self.prefLabel,
             'createdBy': settings.Dante.VOCABULARY_PUBLISHER,
             'creationDate': self.created,
-            'values': self.__get_values(max_depth)
+            'values': self.__get_values(max_depth),
+            'references': [self.uri]
         }
 
     def __initialize_top(self):
