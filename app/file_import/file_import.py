@@ -15,9 +15,9 @@ def perform_import(import_object, easydb):
 
 def __get_files(import_object, easydb):
     id = import_object['_id']
-    wrapped_object_data = easydb.get_object_by_id('import', id)
-    inner_object_data = wrapped_object_data['import']
-    nested_files = '_nested:import__dateien'
+    wrapped_object_data = easydb.get_object_by_id('dokumente_extern', id)
+    inner_object_data = wrapped_object_data['dokumente_extern']
+    nested_files = '_nested:dokumente_extern__dateien'
     
     files = []
     for file in inner_object_data[nested_files]:

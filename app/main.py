@@ -59,7 +59,7 @@ servicer.register_handler(Servicer.Hooks.DB_PRE_UPDATE_ONE.value,
                           delayed=False)
 
 servicer.register_handler(Servicer.Hooks.DB_POST_UPDATE_ONE.value,
-                          'import',
+                          'dokumente_extern',
                           ImportHandler,
                           delayed=True)
 
