@@ -84,9 +84,24 @@ class EasyDB:
             data['_tags'] = tags
         fields_data['_version'] = 1
         data[object_type] = fields_data
-        insert_url = join(self.db_url, object_type)
 
+        insert_url = join(self.db_url, object_type)
         response = requests.put(insert_url, params=params, json=[data])
+        if not response.ok:
+            raise ConnectionError(response.text)
+        return response.ok
+
+    def update_object(self, object_type, id, fields_data, tags=None):
+        params = { 'token': self.session_token }
+        current_object = self.get_object_by_id(object_type, id)
+        current_version = current_object[object_type]['_version']
+        current_object[object_type] = fields_data
+        current_object[object_type]['_version'] = current_version + 1
+        if tags is not None:
+            current_object['_tags'] = tags
+
+        update_url = join(self.db_url, object_type)  
+        response = requests.post(update_url, params=params, json=[current_object])
         if not response.ok:
             raise ConnectionError(response.text)
         return response.ok

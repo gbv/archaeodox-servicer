@@ -30,6 +30,7 @@ class VorgangHandler:
     # If a child concept of this concept is selected in field 'lk_vorgang_kategorie' of the Vorgang object,
     # a new Field database is created.
     DANTE_PARENT_CONCEPT_ID = ''
+    DELETED_TAG_ID = 1
 
 class FileImport:
     FORMATS = {
@@ -40,8 +41,8 @@ class FileImport:
         'tiff': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
         'zip': { 'file_type': 'zip', 'expected_format': 'zip', 'importer': 'shapefile' }
     }
-    SUCCESS_TAG_ID = 1
-    FAILURE_TAG_ID = 2
+    SUCCESS_TAG_ID = 2
+    FAILURE_TAG_ID = 3
     CATEGORY_PREFIXES = {
         'CategoryName': 'C',
     }
