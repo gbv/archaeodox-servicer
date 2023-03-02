@@ -10,6 +10,7 @@ class VorgangHandler(EasyDBHandler):
     DELETED_SUFFIX = '#deleted_'
 
     def process_request(self, *args, **kwargs):
+        self.easydb.acquire_session()
         if self.__is_field_project_required():
             try:
                 self.__add_field_project()
@@ -21,7 +22,6 @@ class VorgangHandler(EasyDBHandler):
     def __add_field_project(self):
         identifier = self.object_data['vorgang']
         self.logger.debug(f'Creating new Field project "{identifier}"')
-        self.easydb.acquire_session()
         FieldDatabase.check_database_name(identifier)
         password = self.__create_field_project(identifier)
         self.__create_easydb_object(identifier, password)
