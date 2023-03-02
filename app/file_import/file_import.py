@@ -54,7 +54,7 @@ def __import_file(file, import_object, database, easydb, logger):
         __run_importer(file, file_data, database)
         result['fehlermeldung'] = messages.FileImport.SUCCESS
     except Exception as error:
-        logger.debug(error)
+        logger.debug(f'Import failed for file {file["name"]}', exc_info=True)
         result['fehlermeldung'] = __get_error_message(str(error))
     
     return result
