@@ -54,7 +54,7 @@ class FieldDatabase(CouchDatabase):
 
     @staticmethod
     def check_database_name(name):
-        valid = re.match(r'^[a-z][a-z0-9_()-]*$', name)
+        valid = re.match(r'^[a-z][a-z0-9_-]{0,27}$', name)
         if not valid:
             raise ValueError('The project name may only contain lower case letters and characters _, (, ), - and must start with a letter.')
         return valid
