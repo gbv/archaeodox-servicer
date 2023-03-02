@@ -11,6 +11,7 @@ from app.field.hub import FieldHub
 
 
 app = Flask(__name__)
+app.logger.setLevel(settings.Main.LOGGING_LEVEL)
 
 
 @app.route('/run-delayed', methods=['GET'])
