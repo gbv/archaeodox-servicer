@@ -8,10 +8,10 @@ from app.field import error_messages as field_error_messages
 from app.file_import.importers import image_importer, csv_importer, shapefile_importer
 
 
-def perform_import(import_object, easydb):
+def perform_import(import_object, easydb, logger):
     easydb.acquire_session()
     files = __get_files(import_object, easydb)
-    __import_files(files, import_object, easydb)
+    __import_files(files, import_object, easydb, logger)
 
 def __get_files(import_object, easydb):
     id = import_object['_id']
@@ -32,17 +32,17 @@ def __get_files(import_object, easydb):
         })
     return files
 
-def __import_files(files, import_object, easydb):
+def __import_files(files, import_object, easydb, logger):
     database = __create_field_database(import_object)
     results = []
 
     for file in files:
-        result = __import_file(file, import_object, database, easydb)
+        result = __import_file(file, import_object, database, easydb, logger)
         results.append(result)
 
     __create_result_object(results, import_object, easydb)
 
-def __import_file(file, import_object, database, easydb):
+def __import_file(file, import_object, database, easydb, logger):
     result = {
         'dokument': __get_cloned_asset(file, easydb),
         'dokumententyp': __get_file_type_object(file, easydb)
@@ -54,6 +54,7 @@ def __import_file(file, import_object, database, easydb):
         __run_importer(file, file_data, database)
         result['fehlermeldung'] = messages.FileImport.SUCCESS
     except Exception as error:
+        logger.debug(error)
         result['fehlermeldung'] = __get_error_message(str(error))
     
     return result
