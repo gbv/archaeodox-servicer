@@ -22,17 +22,23 @@ class VorgangHandler(EasyDBHandler):
     def __add_field_project(self):
         identifier = self.object_data['vorgang']
         self.logger.debug(f'Creating new Field project "{identifier}"')
-        FieldDatabase.check_database_name(identifier)
+        self.easydb.acquire_session()
+        self.__validate_project_identifier(identifier)
         password = self.__create_field_project(identifier)
         self.__create_easydb_object(identifier, password)
 
     def __is_field_project_required(self):
         if VorgangHandler.DELETED_SUFFIX in self.object_data['vorgang']:
             return False
-        if self.easydb.get_object_by_field_value('field_datenbank', 'db_name', self.object_data['vorgang']) != None:
-            return False
         ancestors = self.object_data['lk_vorgang_kategorie']['conceptAncestors']
         return settings.VorgangHandler.DANTE_PARENT_CONCEPT_ID in ancestors
+
+    def __validate_project_identifier(self, identifier):
+        if identifier is None or len(identifier) == 0:
+            raise ValueError('Field "vorgang" has to be filled out')
+        if self.easydb.get_object_by_field_value('field_datenbank', 'db_name', identifier) != None:
+            raise ValueError(f'Field database "{identifier}" already exists.')
+        FieldDatabase.check_database_name(identifier)
 
     def __create_field_project(self, identifier):
         hub = FieldHub(settings.Couch.HOST_URL,
