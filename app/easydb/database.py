@@ -77,7 +77,7 @@ class EasyDB:
 
     def create_object(self, object_type, fields_data, pool=None, tags=None):
         params = { 'token': self.session_token }
-        data = { '_mask': object_type + '_anlage' }
+        data = { '_mask': object_type + '__all_fields' }
         if pool is not None:
             fields_data['_pool'] = pool
         if tags is not None:
