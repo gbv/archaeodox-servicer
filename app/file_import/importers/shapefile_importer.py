@@ -73,7 +73,7 @@ def __import_geometry(geometry, properties, field_database):
             field_database, trench, planum_or_profile, feature, feature_segment_short_description, geometry
         )
     elif import_type == 'find' and find_identifier is not None:
-        feature = __update_feature(field_database, trench, planum_or_profile, feature_group, feature_identifier)
+        feature = __update_feature(field_database, trench, planum_or_profile, None, feature_identifier)
         __update_find(field_database, trench, feature, find_identifier)
 
 def __get_import_type(properties):
