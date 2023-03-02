@@ -97,7 +97,7 @@ def __read_value(attribute_name, properties):
     if value is None:
         return ''
     else:
-        return value
+        return str(value)
 
 def __get_planum_or_profile_category(properties):
     if settings.FileImport.CATEGORY_PREFIXES['Planum'] in properties['file_name']:
