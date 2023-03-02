@@ -74,7 +74,7 @@ def __import_geometry(geometry, properties, field_database):
         )
     elif import_type == 'find' and find_identifier is not None:
         feature = __update_feature(field_database, trench, planum_or_profile, None, feature_identifier)
-        __update_find(field_database, trench, feature, find_identifier)
+        __update_find(field_database, trench, feature, find_identifier, geometry)
 
 def __get_import_type(properties):
     if settings.ShapefileImporter.PROFILE_PLANUM_NAME in properties['file_name']:
@@ -190,13 +190,14 @@ def __update_feature_segment(field_database, trench, planum_or_profile, feature,
 
     return field_database.populate_resource(resource_data)
 
-def __update_find(field_database, trench, feature, identifier):
+def __update_find(field_database, trench, feature, identifier, geometry):
     if identifier is None:
         return None
 
     resource_data = {
         'identifier': identifier,
         'category': 'Find',
+        'geometry': geometry,
         'relations': {
             'isRecordedIn': [trench['resource']['id']],
             'liesWithin': [feature['resource']['id']]
