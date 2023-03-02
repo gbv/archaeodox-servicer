@@ -54,11 +54,11 @@ def __import_geometry(geometry, properties, field_database):
     feature_group_short_description = properties.get('group_info')
     feature_identifier = __get_identifier(properties.get('strat_unit'), 'Feature')
     feature_segment_short_description = properties.get('info')
+    find_identifier = __get_identifier(properties.get('find'), 'Find')
 
     __validate(planum_or_profile_identifier, planum_or_profile_category)
 
     trench = __update_trench(field_database)
-
     planum_or_profile = __update_planum_or_profile(
         field_database, trench, planum_or_profile_identifier, planum_or_profile_short_description,
         planum_or_profile_category, geometry=geometry if feature_identifier is None else None
@@ -72,12 +72,17 @@ def __import_geometry(geometry, properties, field_database):
         __update_feature_segment(
             field_database, trench, planum_or_profile, feature, feature_segment_short_description, geometry
         )
+    elif import_type == 'find' and find_identifier is not None:
+        feature = __update_feature(field_database, trench, planum_or_profile, feature_group, feature_identifier)
+        __update_find(field_database, trench, feature, find_identifier)
 
 def __get_import_type(properties):
     if settings.ShapefileImporter.PROFILE_PLANUM_NAME in properties['file_name']:
         return 'planumOrProfile'
     elif settings.ShapefileImporter.FEATURE_SEGMENT_NAME in properties['file_name']:
         return 'featureSegment'
+    elif settings.ShapefileImporter.FIND_NAME in properties['file_name']:
+        return 'find'
     else:
         return None
 
@@ -182,6 +187,21 @@ def __update_feature_segment(field_database, trench, planum_or_profile, feature,
 
     if short_description is not None:
         resource_data['amh-default:shortDescriptionFreetext'] = { 'de': short_description }
+
+    return field_database.populate_resource(resource_data)
+
+def __update_find(field_database, trench, feature, identifier):
+    if identifier is None:
+        return None
+
+    resource_data = {
+        'identifier': identifier,
+        'category': 'Find',
+        'relations': {
+            'isRecordedIn': [trench['resource']['id']],
+            'liesWithin': [feature['resource']['id']]
+        }
+    }
 
     return field_database.populate_resource(resource_data)
 

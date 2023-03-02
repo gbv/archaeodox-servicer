@@ -57,3 +57,4 @@ class CSVImporter:
 class ShapefileImporter:
     FEATURE_SEGMENT_NAME = ''
     PROFILE_PLANUM_NAME = ''
+    FIND_NAME = ''
