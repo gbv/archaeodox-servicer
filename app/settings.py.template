@@ -55,6 +55,8 @@ class CSVImporter:
     ALLOWED_CATEGORIES = []
 
 class ShapefileImporter:
-    FEATURE_SEGMENT_NAME = ''
-    PROFILE_PLANUM_NAME = ''
-    FIND_NAME = ''
+    FILE_NAME_MAPPING = {
+        'planumOrProfile': ['Excavation_Interfaces', 'Flaechengrenze', 'Profilgrenze'],
+        'featureSegment': ['Stratigraphic_Interfaces', 'Befunde'],
+        'find': ['Finds', 'Funde']
+    }

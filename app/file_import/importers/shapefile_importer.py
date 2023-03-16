@@ -77,14 +77,11 @@ def __import_geometry(geometry, properties, field_database):
         __update_find(field_database, trench, feature, find_identifier, geometry)
 
 def __get_import_type(properties):
-    if settings.ShapefileImporter.PROFILE_PLANUM_NAME in properties['file_name']:
-        return 'planumOrProfile'
-    elif settings.ShapefileImporter.FEATURE_SEGMENT_NAME in properties['file_name']:
-        return 'featureSegment'
-    elif settings.ShapefileImporter.FIND_NAME in properties['file_name']:
-        return 'find'
-    else:
-        return None
+    for import_type, file_name_keywords in settings.ShapefileImporter.FILE_NAME_MAPPING.items():
+        for keyword in file_name_keywords:
+            if keyword in properties['file_name']:
+                return import_type
+    return None
 
 def __get_planum_or_profile_short_description(properties):
     part1 = __read_value('part1_info', properties) + ' ' + __read_value('part1', properties)
