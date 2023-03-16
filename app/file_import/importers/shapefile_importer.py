@@ -61,23 +61,23 @@ def __import_geometry(geometry, properties, field_database):
 
     __validate(planum_or_profile_identifier, planum_or_profile_category)
 
-    trench = __update_trench(field_database)
+    excavation_area = __update_excavation_area(field_database)
     planum_or_profile = __update_planum_or_profile(
-        field_database, trench, planum_or_profile_identifier, planum_or_profile_short_description,
+        field_database, excavation_area, planum_or_profile_identifier, planum_or_profile_short_description,
         planum_or_profile_category, geometry=geometry if feature_identifier is None else None
     )
     
     if import_type == 'featureSegment' and feature_identifier is not None:
         feature_group = __update_feature_group(
-            field_database, trench, planum_or_profile, feature_group_identifier, feature_group_short_description
+            field_database, excavation_area, planum_or_profile, feature_group_identifier, feature_group_short_description
         )
-        feature = __update_feature(field_database, trench, planum_or_profile, feature_group, feature_identifier)
+        feature = __update_feature(field_database, excavation_area, planum_or_profile, feature_group, feature_identifier)
         __update_feature_segment(
-            field_database, trench, planum_or_profile, feature, feature_segment_short_description, geometry
+            field_database, excavation_area, planum_or_profile, feature, feature_segment_short_description, geometry
         )
     elif import_type == 'find' and find_identifier is not None:
-        feature = __update_feature(field_database, trench, planum_or_profile, None, feature_identifier)
-        __update_find(field_database, trench, feature, find_identifier, geometry)
+        feature = __update_feature(field_database, excavation_area, planum_or_profile, None, feature_identifier)
+        __update_find(field_database, excavation_area, feature, find_identifier, geometry)
 
 def __get_import_type(properties):
     for import_type, file_name_keywords in settings.ShapefileImporter.FILE_NAME_MAPPING.items():
@@ -119,16 +119,16 @@ def __validate(planum_or_profile_identifier, planum_or_profile_category):
     elif planum_or_profile_identifier is None:
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_MISSING_EXCA_INT)
 
-def __update_trench(field_database):
-    return field_database.get_or_create_document('Untersuchungsfläche', 'Trench')
+def __update_excavation_area(field_database):
+    return field_database.get_or_create_document('Untersuchungsfläche', 'ExcavationArea')
 
-def __update_planum_or_profile(field_database, trench, identifier, short_description, category, geometry=None):
+def __update_planum_or_profile(field_database, excavation_area, identifier, short_description, category, geometry=None):
     resource_data = {
         'identifier': identifier,
         'category': category,
         'shortDescription': { 'de': short_description },
         'relations': {
-            'isRecordedIn': [trench['resource']['id']]
+            'isRecordedIn': [excavation_area['resource']['id']]
         }
     }
 
@@ -137,7 +137,7 @@ def __update_planum_or_profile(field_database, trench, identifier, short_descrip
 
     return field_database.populate_resource(resource_data)
 
-def __update_feature_group(field_database, trench, planum_or_profile, identifier, short_description):    
+def __update_feature_group(field_database, excavation_area, planum_or_profile, identifier, short_description):    
     if identifier is None:
         return None
 
@@ -145,7 +145,7 @@ def __update_feature_group(field_database, trench, planum_or_profile, identifier
         'identifier': identifier,
         'category': 'FeatureGroup',
         'relations': {
-            'isRecordedIn': [trench['resource']['id']],
+            'isRecordedIn': [excavation_area['resource']['id']],
             'isPresentIn': [planum_or_profile['resource']['id']]
         }
     }
@@ -155,7 +155,7 @@ def __update_feature_group(field_database, trench, planum_or_profile, identifier
     
     return field_database.populate_resource(resource_data)
 
-def __update_feature(field_database, trench, planum_or_profile, feature_group, identifier):
+def __update_feature(field_database, excavation_area, planum_or_profile, feature_group, identifier):
     if identifier is None:
         return None
 
@@ -163,7 +163,7 @@ def __update_feature(field_database, trench, planum_or_profile, feature_group, i
         'identifier': identifier,
         'category': 'Feature',
         'relations': {
-            'isRecordedIn': [trench['resource']['id']],
+            'isRecordedIn': [excavation_area['resource']['id']],
             'isPresentIn': [planum_or_profile['resource']['id']],
         }
     }
@@ -173,13 +173,13 @@ def __update_feature(field_database, trench, planum_or_profile, feature_group, i
 
     return field_database.populate_resource(resource_data)
 
-def __update_feature_segment(field_database, trench, planum_or_profile, feature, short_description, geometry):
+def __update_feature_segment(field_database, excavation_area, planum_or_profile, feature, short_description, geometry):
     resource_data = {
         'identifier': __get_feature_segment_identifier(feature, field_database),
         'category': 'FeatureSegment',
         'geometry': geometry,
         'relations': {
-            'isRecordedIn': [trench['resource']['id']],
+            'isRecordedIn': [excavation_area['resource']['id']],
             'liesWithin': [feature['resource']['id']],
             'isPresentIn': [planum_or_profile['resource']['id']],
         }
@@ -190,7 +190,7 @@ def __update_feature_segment(field_database, trench, planum_or_profile, feature,
 
     return field_database.populate_resource(resource_data)
 
-def __update_find(field_database, trench, feature, identifier, geometry):
+def __update_find(field_database, excavation_area, feature, identifier, geometry):
     if identifier is None:
         return None
 
@@ -199,7 +199,7 @@ def __update_find(field_database, trench, feature, identifier, geometry):
         'category': 'Find',
         'geometry': geometry,
         'relations': {
-            'isRecordedIn': [trench['resource']['id']],
+            'isRecordedIn': [excavation_area['resource']['id']],
             'liesWithin': [feature['resource']['id']]
         }
     }
