@@ -57,6 +57,7 @@ class CSVImporter:
 class ShapefileImporter:
     FILE_NAME_MAPPING = {
         'planumOrProfile': ['Excavation_Interfaces', 'Flaechengrenze', 'Profilgrenze'],
+        'referenceLines': ['Reference_Lines', 'Referenzlinien'],
         'featureSegment': ['Stratigraphic_Interfaces', 'Befunde'],
         'find': ['Finds', 'Funde']
     }

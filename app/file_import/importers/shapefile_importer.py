@@ -48,6 +48,9 @@ def __import_geometry(geometry, properties, field_database):
         return
 
     planum_or_profile_category = __get_planum_or_profile_category(properties)
+    if import_type == 'referenceLines' and planum_or_profile_category != 'Profile':
+        return
+
     planum_or_profile_identifier = __get_identifier(properties.get('exca_int'), planum_or_profile_category)
     planum_or_profile_short_description = __get_planum_or_profile_short_description(properties)
     feature_group_identifier = __get_identifier(properties.get('group'), 'FeatureGroup')
