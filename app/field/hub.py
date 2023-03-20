@@ -13,11 +13,10 @@ class FieldHub(CouchDBServer):
     
     def __init__(self, host, template_project_name, user_name=None, password=None, auth_from_module=False, logger=None):
         super().__init__(host, user_name, password, auth_from_module)
-        self.template = CouchDatabase(self, template_project_name, settings.Couch.ADMIN_USER, settings.Couch.ADMIN_PASSWORD)
+        self.template_project = CouchDatabase(
+            self, template_project_name, settings.Couch.ADMIN_USER, settings.Couch.ADMIN_PASSWORD
+        )
         self.logger = logger
-
-    def get_config(self):
-        return self.template.get_document(FieldHub.CONFIG_DOCUMENT).json()
 
     def create_project(self, project_identifier):
         creation_info = requests.post(f'{settings.FieldHub.PROJECT_URL}/{project_identifier}',
@@ -32,7 +31,7 @@ class FieldHub(CouchDBServer):
     def create_configuration_document(self):
         return document_utility.get_document(
             FieldHub.CONFIG_DOCUMENT,
-            self.get_config()['resource']
+            self.__get_configuration_template()['resource']
         )
 
     def create_project_document(self, project_identifier):
@@ -43,3 +42,6 @@ class FieldHub(CouchDBServer):
             'relations': {}
         }
         return document_utility.get_document(FieldHub.PROJECT_DOCUMENT_ID, resource)
+
+    def __get_configuration_template(self):
+        return self.template_project.get_document(FieldHub.CONFIG_DOCUMENT).json()
