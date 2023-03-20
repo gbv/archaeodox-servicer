@@ -17,14 +17,14 @@ class CouchDatabase:
     def update_document(self, id, document):
         if not 'created' in document.keys():
             raise ValueError(f'Document has never been created: {document}')
-        existing = self.get_document(id).json()
+        existing = self.get_document(id)
         current_revision = existing['_rev']
         return self.session.put(f'{self.url}/{id}',
                                 params={ 'rev': current_revision },
                                 data=json.dumps(document))
 
     def get_document(self, doc_id):
-        return self.session.get(f'{self.url}/{doc_id}')
+        return self.session.get(f'{self.url}/{doc_id}').json()
 
     def search(self, query):
         response = self.session.post(self.search_url, json=query)
