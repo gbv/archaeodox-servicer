@@ -105,7 +105,7 @@ def __get_field_database(import_object):
     )
     db_name = import_object['vorgangsname']
     password = import_object['passwort']
-    return FieldDatabase(field_hub, db_name, password)
+    return FieldDatabase(field_hub, db_name, db_name, password)
 
 def __create_result_object(file_import_results, import_object, easydb):
     fields_data = {

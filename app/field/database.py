@@ -7,8 +7,8 @@ from app.field import document_utility
 
 
 class FieldDatabase(CouchDatabase):
-    def __init__(self, server, name, password):
-        super().__init__(server, name, name, password)
+    def __init__(self, server, name, user_name, password):
+        super().__init__(server, name, user_name, password)
         self.media_url = f'{settings.FieldHub.MEDIA_URL}/{self.name}/'
 
     def get_or_create_document(self, identifier, category=None):

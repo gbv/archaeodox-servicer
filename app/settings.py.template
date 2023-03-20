@@ -26,6 +26,9 @@ class FieldHub:
     PROJECT_URL = ''
     TEMPLATE_PROJECT_NAME = ''
 
+class ValuelistsUpdater:
+    VALUELISTS_PROJECT_NAME = ''
+
 class VorgangHandler:
     # If a child concept of this concept is selected in field 'lk_vorgang_kategorie' of the Vorgang object,
     # a new Field database is created.

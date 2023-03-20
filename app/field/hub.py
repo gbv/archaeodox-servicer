@@ -19,10 +19,6 @@ class FieldHub(CouchDBServer):
     def get_config(self):
         return self.template.get_document(FieldHub.CONFIG_DOCUMENT).json()
 
-    def update_config(self, configuration_document):
-        document_utility.add_modified_entry(configuration_document)
-        self.template.update_document(FieldHub.CONFIG_DOCUMENT, configuration_document)
-
     def create_project(self, project_identifier):
         creation_info = requests.post(f'{settings.FieldHub.PROJECT_URL}/{project_identifier}',
                                       auth=self.auth).json()
@@ -47,13 +43,3 @@ class FieldHub(CouchDBServer):
             'relations': {}
         }
         return document_utility.get_document(FieldHub.PROJECT_DOCUMENT_ID, resource)
-
-    def update_valuelists(self):
-        configuration_document = self.get_config()
-        for vocabulary_name in settings.Dante.VOCABULARY_NAMES:
-            if self.logger: self.logger.debug(f'Updating valuelist for vocabulary: {vocabulary_name}')
-            vocabulary = DanteVocabulary.from_uri(f'{settings.Dante.VOCABULARY_URI_BASE}/{vocabulary_name}/')
-            field_list = vocabulary.get_field_list()
-            valuelist_name = f'{settings.Dante.VOCABULARY_PREFIX}:{vocabulary_name}'
-            configuration_document['resource']['valuelists'][valuelist_name] = field_list
-        self.update_config(configuration_document)

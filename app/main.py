@@ -7,7 +7,7 @@ from app.servicer.task import Task
 from app.easydb.database import EasyDB
 from app.handlers.vorgang_handler import VorgangHandler
 from app.handlers.import_handler import ImportHandler
-from app.tasks import valuelist_updater
+from app.tasks import valuelists_updater
 
 
 app = Flask(__name__)
@@ -36,7 +36,7 @@ def generic_edb_hook(hook, object_type):
 def update_valuelists():
     try:
         task_label = 'Update_valuelists_' + str(time.time())
-        task = Task(task_label, servicer.logger, valuelist_updater.update)
+        task = Task(task_label, servicer.logger, valuelists_updater.update)
         servicer.delayed_task_queue.append(task)
         return task_label, 200
     except Exception as exception:
