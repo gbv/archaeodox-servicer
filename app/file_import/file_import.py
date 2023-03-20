@@ -33,7 +33,7 @@ def __get_files(import_object, easydb):
     return files
 
 def __import_files(files, import_object, easydb, logger):
-    database = __create_field_database(import_object)
+    database = __get_field_database(import_object)
     results = []
 
     for file in files:
@@ -95,7 +95,7 @@ def __run_importer(file, file_data, database):
     if file['format_settings']['importer'] == 'shapefile':
         shapefile_importer.run(file_data, database)
 
-def __create_field_database(import_object):
+def __get_field_database(import_object):
     if 'vorgangsname' not in import_object or 'passwort' not in import_object:
         return None
     field_hub = FieldHub(
