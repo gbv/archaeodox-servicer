@@ -7,7 +7,7 @@ from app.servicer.task import Task
 from app.easydb.database import EasyDB
 from app.handlers.vorgang_handler import VorgangHandler
 from app.handlers.import_handler import ImportHandler
-from app.field.hub import FieldHub
+from app.tasks import valuelist_updater
 
 
 app = Flask(__name__)
@@ -34,15 +34,9 @@ def generic_edb_hook(hook, object_type):
 
 @app.route('/update-valuelists', methods=['POST'])
 def update_valuelists():
-    def actually_update(logger, *args, **kwargs):
-        field_hub = FieldHub(settings.Couch.HOST_URL,
-                    settings.FieldHub.TEMPLATE_PROJECT_NAME,
-                    auth_from_module=True,
-                    logger=logger)
-        field_hub.update_valuelists()
     try:
         task_label = 'Update_valuelists_' + str(time.time())
-        task = Task(task_label, servicer.logger, actually_update)
+        task = Task(task_label, servicer.logger, valuelist_updater.update)
         servicer.delayed_task_queue.append(task)
         return task_label, 200
     except Exception as exception:
