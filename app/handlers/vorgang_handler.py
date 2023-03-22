@@ -18,7 +18,7 @@ class VorgangHandler(EasyDBHandler):
             try:
                 self.__add_field_project()
             except Exception as exception:
-                self.logger.error(exception)
+                self.logger.exception(exception)
                 self.__delete_vorgang()
         return self.full_data
 
