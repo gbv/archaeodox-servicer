@@ -58,6 +58,7 @@ def __import_geometry(geometry, properties, field_database):
     feature_identifier = __get_identifier(properties.get('strat_unit'), 'Feature')
     feature_segment_short_description = properties.get('info')
     find_identifier = __get_identifier(properties.get('find'), 'Find')
+    sample_identifier = __get_sample_identifier(properties)
 
     __validate(planum_or_profile_identifier, planum_or_profile_category)
 
@@ -77,7 +78,10 @@ def __import_geometry(geometry, properties, field_database):
         )
     elif import_type == 'find' and find_identifier is not None:
         feature = __update_feature(field_database, excavation_area, planum_or_profile, None, feature_identifier)
-        __update_find(field_database, excavation_area, feature, find_identifier, geometry)
+        __update_find_or_sample(field_database, excavation_area, feature, find_identifier, geometry, 'Find')
+    elif import_type == 'referencePoints' and sample_identifier is not None:
+        feature = __update_feature(field_database, excavation_area, planum_or_profile, None, feature_identifier)
+        __update_find_or_sample(field_database, excavation_area, feature, sample_identifier, geometry, 'Sample')
 
 def __get_import_type(properties):
     for import_type, file_name_keywords in settings.ShapefileImporter.FILE_NAME_MAPPING.items():
@@ -112,6 +116,12 @@ def __get_identifier(base_identifier, category):
         return None
 
     return settings.FileImport.CATEGORY_PREFIXES[category] + str(base_identifier)
+
+def __get_sample_identifier(properties):
+    if settings.ShapefileImporter.SAMPLE_KEYWORD.lower() in properties.get('info', '').lower():
+        return properties.get('refpoint')
+    else:
+        return None
 
 def __validate(planum_or_profile_identifier, planum_or_profile_category):
     if planum_or_profile_category is None:
@@ -190,13 +200,13 @@ def __update_feature_segment(field_database, excavation_area, planum_or_profile,
 
     return field_database.populate_resource(resource_data)
 
-def __update_find(field_database, excavation_area, feature, identifier, geometry):
+def __update_find_or_sample(field_database, excavation_area, feature, identifier, geometry, category):
     if identifier is None:
         return None
 
     resource_data = {
         'identifier': identifier,
-        'category': 'Find',
+        'category': category,
         'geometry': geometry,
         'relations': {
             'isRecordedIn': [excavation_area['resource']['id']],

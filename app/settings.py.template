@@ -61,6 +61,8 @@ class ShapefileImporter:
     FILE_NAME_MAPPING = {
         'planumOrProfile': ['Excavation_Interfaces', 'Flaechengrenze', 'Profilgrenze'],
         'referenceLines': ['Reference_Lines', 'Referenzlinien'],
+        'referencePoints': ['Reference_Points', 'Referenzpunkte'],
         'featureSegment': ['Stratigraphic_Interfaces', 'Befunde'],
         'find': ['Finds', 'Funde']
     }
+    SAMPLE_KEYWORD = 'probe'
