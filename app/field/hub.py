@@ -44,4 +44,4 @@ class FieldHub(CouchDBServer):
         return document_utility.get_document(FieldHub.PROJECT_DOCUMENT_ID, resource)
 
     def __get_configuration_template(self):
-        return self.template_project.get_document(FieldHub.CONFIG_DOCUMENT).json()
+        return self.template_project.get_document(FieldHub.CONFIG_DOCUMENT)
