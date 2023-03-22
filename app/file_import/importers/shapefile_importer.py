@@ -62,7 +62,10 @@ def __import_geometry(geometry, properties, field_database):
 
     __validate(planum_or_profile_identifier, planum_or_profile_category)
 
-    excavation_area = __update_excavation_area(field_database, __get_excavation_area_geometry(geometry, properties))
+    excavation_area = __update_excavation_area(
+        field_database,
+        geometry if import_type == 'excavationArea' else None
+    )
     planum_or_profile = __update_planum_or_profile(
         field_database, excavation_area, planum_or_profile_identifier, planum_or_profile_short_description,
         planum_or_profile_category, geometry=geometry if feature_identifier is None else None
@@ -88,7 +91,10 @@ def __get_import_type(properties):
         for keyword in file_name_keywords:
             if keyword in properties['file_name']:
                 return import_type
-    return None
+    if __is_excavation_area(properties):
+        return 'excavationArea'
+    else:
+        return None
 
 def __get_planum_or_profile_short_description(properties):
     part1 = __read_value('part1_info', properties) + ' ' + __read_value('part1', properties)
@@ -120,12 +126,6 @@ def __get_identifier(base_identifier, category):
 def __get_sample_identifier(properties):
     if __is_sample(properties):
         return properties.get('refpoint')
-    else:
-        return None
-
-def __get_excavation_area_geometry(geometry, properties):
-    if __is_excavation_area(properties):
-        return geometry
     else:
         return None
 
