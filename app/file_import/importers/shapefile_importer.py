@@ -63,12 +63,11 @@ def __import_geometry(geometry, properties, field_database):
     __validate(planum_or_profile_identifier, planum_or_profile_category, import_type)
 
     excavation_area = __update_excavation_area(
-        field_database,
-        geometry if import_type == 'excavationArea' else None
+        field_database, geometry if import_type == 'excavationArea' else None
     )
     planum_or_profile = __update_planum_or_profile(
         field_database, excavation_area, planum_or_profile_identifier, planum_or_profile_short_description,
-        planum_or_profile_category, geometry=geometry if feature_identifier is None else None
+        planum_or_profile_category, geometry if import_type == 'planumOrProfile' else None
     )
     
     if import_type == 'featureSegment' and feature_identifier is not None:
@@ -155,7 +154,7 @@ def __update_excavation_area(field_database, geometry):
 
     return field_database.populate_resource(resource_data)
 
-def __update_planum_or_profile(field_database, excavation_area, identifier, short_description, category, geometry=None):
+def __update_planum_or_profile(field_database, excavation_area, identifier, short_description, category, geometry):
     resource_data = {
         'identifier': identifier,
         'category': category,
