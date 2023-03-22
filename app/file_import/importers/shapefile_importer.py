@@ -65,10 +65,12 @@ def __import_geometry(geometry, properties, field_database):
     excavation_area = __update_excavation_area(
         field_database, geometry if import_type == 'excavationArea' else None
     )
-    planum_or_profile = __update_planum_or_profile(
-        field_database, excavation_area, planum_or_profile_identifier, planum_or_profile_short_description,
-        planum_or_profile_category, geometry if import_type == 'planumOrProfile' else None
-    )
+
+    if planum_or_profile_identifier is not None:
+        planum_or_profile = __update_planum_or_profile(
+            field_database, excavation_area, planum_or_profile_identifier, planum_or_profile_short_description,
+            planum_or_profile_category, geometry if import_type == 'planumOrProfile' else None
+        )
     
     if import_type == 'featureSegment' and feature_identifier is not None:
         feature_group = __update_feature_group(
