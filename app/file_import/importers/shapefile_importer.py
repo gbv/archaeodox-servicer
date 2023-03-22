@@ -60,7 +60,7 @@ def __import_geometry(geometry, properties, field_database):
     find_identifier = __get_identifier(properties.get('find'), 'Find')
     sample_identifier = __get_sample_identifier(properties)
 
-    __validate(planum_or_profile_identifier, planum_or_profile_category)
+    __validate(planum_or_profile_identifier, planum_or_profile_category, import_type)
 
     excavation_area = __update_excavation_area(
         field_database,
@@ -135,8 +135,10 @@ def __is_excavation_area(properties):
 def __is_sample(properties):
     return settings.ShapefileImporter.SAMPLE_KEYWORD.lower() in properties.get('info', '').lower()
 
-def __validate(planum_or_profile_identifier, planum_or_profile_category):
-    if planum_or_profile_category is None:
+def __validate(planum_or_profile_identifier, planum_or_profile_category, import_type):
+    if import_type == 'excavationArea':
+        return
+    elif planum_or_profile_category is None:
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_INVALID_NAME)
     elif planum_or_profile_identifier is None:
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_MISSING_EXCA_INT)
