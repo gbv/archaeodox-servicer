@@ -62,7 +62,7 @@ def __import_geometry(geometry, properties, field_database):
 
     __validate(planum_or_profile_identifier, planum_or_profile_category)
 
-    excavation_area = __update_excavation_area(field_database)
+    excavation_area = __update_excavation_area(field_database, __get_excavation_area_geometry(geometry, properties))
     planum_or_profile = __update_planum_or_profile(
         field_database, excavation_area, planum_or_profile_identifier, planum_or_profile_short_description,
         planum_or_profile_category, geometry=geometry if feature_identifier is None else None
@@ -118,10 +118,22 @@ def __get_identifier(base_identifier, category):
     return settings.FileImport.CATEGORY_PREFIXES[category] + str(base_identifier)
 
 def __get_sample_identifier(properties):
-    if settings.ShapefileImporter.SAMPLE_KEYWORD.lower() in properties.get('info', '').lower():
+    if __is_sample(properties):
         return properties.get('refpoint')
     else:
         return None
+
+def __get_excavation_area_geometry(geometry, properties):
+    if __is_excavation_area(properties):
+        return geometry
+    else:
+        return None
+
+def __is_excavation_area(properties):
+    return settings.ShapefileImporter.EXCAVATION_AREA_KEYWORD.lower() in properties.get('info', '').lower()
+
+def __is_sample(properties):
+    return settings.ShapefileImporter.SAMPLE_KEYWORD.lower() in properties.get('info', '').lower()
 
 def __validate(planum_or_profile_identifier, planum_or_profile_category):
     if planum_or_profile_category is None:
@@ -129,8 +141,17 @@ def __validate(planum_or_profile_identifier, planum_or_profile_category):
     elif planum_or_profile_identifier is None:
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_MISSING_EXCA_INT)
 
-def __update_excavation_area(field_database):
-    return field_database.get_or_create_document('Untersuchungsfläche', 'ExcavationArea')
+def __update_excavation_area(field_database, geometry):
+    resource_data = {
+        'identifier': 'Untersuchungsfläche',
+        'category': 'ExcavationArea',
+        'relations': {}
+    }
+
+    if geometry is not None:
+        resource_data['geometry'] = geometry
+
+    return field_database.populate_resource(resource_data)
 
 def __update_planum_or_profile(field_database, excavation_area, identifier, short_description, category, geometry=None):
     resource_data = {

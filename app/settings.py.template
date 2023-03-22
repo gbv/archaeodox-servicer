@@ -65,4 +65,5 @@ class ShapefileImporter:
         'featureSegment': ['Stratigraphic_Interfaces', 'Befunde'],
         'find': ['Finds', 'Funde']
     }
+    EXCAVATION_AREA_KEYWORD = 'grabungsgrenze'
     SAMPLE_KEYWORD = 'probe'
