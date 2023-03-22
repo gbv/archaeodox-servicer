@@ -125,7 +125,7 @@ def __get_identifier(base_identifier, category):
 
 def __get_sample_identifier(properties):
     if __is_sample(properties):
-        return properties.get('refpoint')
+        return __get_identifier(properties.get('refpoint'), 'Sample')
     else:
         return None
 
