@@ -42,6 +42,7 @@ class FileImport:
         'jpeg': { 'file_type': 'jpeg', 'expected_format': 'jpg', 'importer': 'image' },
         'tif': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
         'tiff': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
+        'png': { 'file_type': 'png', 'expected_format': 'png', 'importer': 'image' },
         'zip': { 'file_type': 'zip', 'expected_format': 'zip', 'importer': 'shapefile' }
     }
     SUCCESS_TAG_ID = 2
