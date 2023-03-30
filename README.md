@@ -1,19 +1,32 @@
-# Servicer- the swiss army knife for your easydb
+# archaeoDox Servicer
 
-This is the other end of the [servicer client plugin](https://github.com/chris-jan-trapp/easydb-servicer-client-plugin).
-It had been intended to break free from the limitations of the python interpreter that comes with easydb5 installations by routing the payload of server callbacks through an external service.
-The association between easydb data types and their handling by the servicer is pretty much hardcoded in the last ten lines of [app/servicer.py] and all functionality is also part of the codebase.
-A more flexible plugin system can be built when someone finds a second use case for this.
+This application is part of the archaeoDox system and accepts EasyDB server callbacks redirected by the [servicer client plugin](https://github.com/gbv/archaeodox-easydb-servicer-client-plugin). Its primary purpose is to connect an EasyDB instance with [Field](https://github.com/dainst/idai-field) databases; therefore it needs a [FieldHub](https://github.com/dainst/idai-field/tree/master/server) server instance to run.
 
-## Components
 
-Tha said, it is kind of modular and comes with some useful parts.
+## Functions
 
-- [app/utils/couch.py] is a client for couchdbs with some added functions for user and database creation, cloning of configuration and such.
-- [app/utils/field_client.py] provides a specialised couchdb client to work with the databases on an iDAI.field hub.
-- [app/utils/easydb_client.py] helps you with handling object in an easydb and provides session management. It also helps with downloading media files.
-- [app/utils/wfs_client.py] lets you handle geometries on a WFS
+### Field database creation
+For each newly created "Vorgang" object where the vocabulary concept in field "Vorgangskategorie" is a subconcept of a certain configured concept, a Field database is created. The name and password of the Field project are stored in the EasyDB.
+
+### File import
+Import files from an EasyDB instance to a Field project.
+* Image import
+* CSV import
+* Shapefile import
+
+### Vocabulary import
+Dante vocabularies can be converted to Field valuelists and added to a Field project.
+
 
 ## Setup
 
-The servicer talks to several webservices and requires credentials for some of them. These are imported from the credentials.py module in app/. When cloning the repo you are suposed to copy the credentials.py.template to credentials.py **AND THEN** enter real values. This way the template stays clean and the module will be ignored by git.
+1. Clone this repository
+2. Copy the file app/settings.py.template to app/settings.py:
+```
+scp app/settings.py.template app/settings.py
+```
+3. Fill in the values in app/settings.py
+4. Start the servicer with Docker:
+```
+docker compose up
+```
