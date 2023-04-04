@@ -50,7 +50,7 @@ def __import_files(files, import_object, easydb, logger):
         file['result'] = __import_file(file, import_object, database, easydb, logger)
 
     files.sort(key=lambda file: file['original_index'])
-    results = map(lambda file: file['result'], files)
+    results = list(map(lambda file: file['result'], files))
     __create_result_object(results, import_object, easydb)
 
 def __import_file(file, import_object, database, easydb, logger):
