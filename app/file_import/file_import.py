@@ -5,7 +5,7 @@ from app import settings, messages
 from app.field.database import FieldDatabase
 from app.field.hub import FieldHub
 from app.field import error_messages as field_error_messages
-from app.file_import.importers import image_importer, csv_importer, shapefile_importer
+from app.file_import.importers import image_importer, worldfile_importer, csv_importer, shapefile_importer
 
 
 def perform_import(import_object, easydb, logger):
@@ -30,7 +30,12 @@ def __get_files(import_object, easydb):
             'format_settings': settings.FileImport.FORMATS.get(file_extension, None),
             'detected_format': file_information['extension']
         })
+    __sort_files(files)
     return files
+
+def __sort_files(files):
+    # Sort files to make sure worldfiles are imported after images
+    files.sort(key=lambda element: element['format_settings']['importer'])
 
 def __import_files(files, import_object, easydb, logger):
     database = __get_field_database(import_object)
@@ -90,6 +95,8 @@ def __get_file_data(url):
 def __run_importer(file, file_data, database):
     if file['format_settings']['importer'] == 'image':
         image_importer.run(file_data, file['name'], database)
+    if file['format_settings']['importer'] == 'worldfile':
+        worldfile_importer.run(file_data, file['name'], database)
     if file['format_settings']['importer'] == 'csv':
         csv_importer.run(file_data, file['name'], database)
     if file['format_settings']['importer'] == 'shapefile':

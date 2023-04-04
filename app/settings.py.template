@@ -43,6 +43,14 @@ class FileImport:
         'tif': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
         'tiff': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
         'png': { 'file_type': 'png', 'expected_format': 'png', 'importer': 'image' },
+        'jgw': { 'file_type': 'jgw', 'expected_format': 'jgw', 'importer': 'worldfile' },
+        'jpgw': { 'file_type': 'jgw', 'expected_format': 'jgw', 'importer': 'worldfile' },
+        'jpegw': { 'file_type': 'jgw', 'expected_format': 'jgw', 'importer': 'worldfile' },
+        'tfw': { 'file_type': 'tfw', 'expected_format': 'tfw', 'importer': 'worldfile' },
+        'tifw': { 'file_type': 'tfw', 'expected_format': 'tfw', 'importer': 'worldfile' },
+        'tiffw': { 'file_type': 'tfw', 'expected_format': 'tfw', 'importer': 'worldfile' },
+        'pgw': { 'file_type': 'pgw', 'expected_format': 'pgw', 'importer': 'worldfile' },
+        'pngw': { 'file_type': 'pgw', 'expected_format': 'pgw', 'importer': 'worldfile' },
         'zip': { 'file_type': 'zip', 'expected_format': 'zip', 'importer': 'shapefile' }
     }
     SUCCESS_TAG_ID = 2
