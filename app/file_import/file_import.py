@@ -37,7 +37,7 @@ def __get_files(import_object, easydb):
     return files
 
 def __get_sorting_value(file):
-    if 'format_settings' in file:
+    if file['format_settings'] is not None:
         return file['format_settings']['importer']
     else:
         # Import files without recognized format last
