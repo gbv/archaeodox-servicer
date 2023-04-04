@@ -20,7 +20,7 @@ def __get_files(import_object, easydb):
     nested_files = '_nested:dokumente_extern__dateien'
     
     files = []
-    for file in inner_object_data[nested_files]:
+    for index, file in enumerate(inner_object_data[nested_files]):
         file_information = file['datei'][0]
         file_name = file_information['original_filename']
         file_extension = file_name.split('.')[-1]
@@ -28,14 +28,13 @@ def __get_files(import_object, easydb):
             'name': file_name,
             'url': dp.get(file_information, 'versions/original/download_url'),
             'format_settings': settings.FileImport.FORMATS.get(file_extension, None),
-            'detected_format': file_information['extension']
+            'detected_format': file_information['extension'],
+            'original_index': index
         })
-    __sort_files(files)
-    return files
 
-def __sort_files(files):
     # Sort files to make sure worldfiles are imported after images
     files.sort(key=__get_sorting_value)
+    return files
 
 def __get_sorting_value(file):
     if 'format_settings' in file:
@@ -46,12 +45,12 @@ def __get_sorting_value(file):
 
 def __import_files(files, import_object, easydb, logger):
     database = __get_field_database(import_object)
-    results = []
 
     for file in files:
-        result = __import_file(file, import_object, database, easydb, logger)
-        results.append(result)
+        file['result'] = __import_file(file, import_object, database, easydb, logger)
 
+    files.sort(key=lambda file: file['original_index'])
+    results = map(lambda file: file['result'], files)
     __create_result_object(results, import_object, easydb)
 
 def __import_file(file, import_object, database, easydb, logger):
