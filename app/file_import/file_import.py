@@ -35,7 +35,14 @@ def __get_files(import_object, easydb):
 
 def __sort_files(files):
     # Sort files to make sure worldfiles are imported after images
-    files.sort(key=lambda element: element['format_settings']['importer'])
+    files.sort(key=__get_sorting_value)
+
+def __get_sorting_value(file):
+    if 'format_settings' in file:
+        return file['format_settings']['importer']
+    else:
+        # Import files without recognized format last
+        return 'z'
 
 def __import_files(files, import_object, easydb, logger):
     database = __get_field_database(import_object)
