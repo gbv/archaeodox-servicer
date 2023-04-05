@@ -18,7 +18,7 @@ class VorgangHandler(EasyDBHandler):
             try:
                 self.__add_field_project()
             except Exception as exception:
-                self.logger.exception(exception)
+                self.logger.error(exception, exc_info=True)
                 self.__delete_vorgang()
         return self.full_data
 
@@ -61,9 +61,13 @@ class VorgangHandler(EasyDBHandler):
 
     def __delete_vorgang(self):
         self.object_data['vorgang'] = self.__get_vorgang_name_with_deleted_suffix()
-        tags = [{ '_id': settings.VorgangHandler.DELETED_TAG_ID }]
+        tags = [{ '_id': self.__get_deleted_tag_id() }]
         self.easydb.update_object('vorgang', self.object_data['_id'], self.object_data, tags)
 
+    def __get_deleted_tag_id(self):
+        pool_id = self.object_data['_pool']['pool']['_id']
+        return settings.VorgangHandler.DELETED_TAGS[pool_id]
+    
     def __get_vorgang_name_with_deleted_suffix(self):
         timestamp = datetime.utcnow().isoformat()
         return self.object_data['vorgang'] + VorgangHandler.DELETED_SUFFIX + timestamp

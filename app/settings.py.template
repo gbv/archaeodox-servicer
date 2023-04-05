@@ -33,7 +33,12 @@ class VorgangHandler:
     # If a child concept of this concept is selected in field 'lk_vorgang_kategorie' of the Vorgang object,
     # a new Field database is created.
     DANTE_PARENT_CONCEPT_ID = ''
-    DELETED_TAG_ID = 1
+
+    # Maps a pool ID to a tag ID
+    DELETED_TAGS = {
+        1: 1,
+        2: 2
+    }
 
 class FileImport:
     FORMATS = {
