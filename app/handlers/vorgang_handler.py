@@ -13,7 +13,7 @@ class VorgangHandler(EasyDBHandler):
         if self.object_data['_version'] > 1:
             return self.full_data
 
-        self.easydb.acquire_session()
+        self.easydb.acquire_access_token()
         if self.__is_field_project_required():
             try:
                 self.__add_field_project()
@@ -25,7 +25,7 @@ class VorgangHandler(EasyDBHandler):
     def __add_field_project(self):
         identifier = self.object_data['vorgang']
         self.logger.debug(f'Creating new Field project "{identifier}"')
-        self.easydb.acquire_session()
+        self.easydb.acquire_access_token()
         self.__validate_project_identifier(identifier)
         password = self.__create_field_project(identifier)
         self.__create_easydb_object(identifier, password)

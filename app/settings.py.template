@@ -8,6 +8,8 @@ class EasyDB:
     HOST_URL = ''
     USER_NAME = ''
     PASSWORD = ''
+    CLIENT_ID = ''
+    CLIENT_SECRET = ''
 
 class Dante:
     HOST_URL = ''

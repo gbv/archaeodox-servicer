@@ -9,7 +9,7 @@ from app.file_import.importers import image_importer, worldfile_importer, csv_im
 
 
 def perform_import(import_object, easydb, logger):
-    easydb.acquire_session()
+    easydb.acquire_access_token()
     files = __get_files(import_object, easydb)
     __import_files(files, import_object, easydb, logger)
 

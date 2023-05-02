@@ -9,7 +9,7 @@ class EasyDB:
 
     def __init__(self, url, logger):
         self.url = url
-        self.session_url = join(url, EasyDB.API_PATH, 'session')
+        self.session_url = join(url, EasyDB.API_PATH, 'user', 'session')
         self.search_url = join(url, EasyDB.API_PATH, 'search')
         self.session_auth_url = join(url, EasyDB.API_PATH, 'session', 'authenticate')
         self.db_url = join(url, EasyDB.API_PATH, 'db')
@@ -17,23 +17,21 @@ class EasyDB:
         self.create_asset_url = join(url, EasyDB.API_PATH, 'eas', 'rput')
         self.logger = logger
 
-    def acquire_session(self):
-        session_response = requests.get(self.session_url)
-        if session_response.status_code == 200:
-            session_info = json.loads(session_response.content)
-            self.session_token = session_info['token']
-
-            params = {
-                'token': self.session_token,
-                'login': settings.EasyDB.USER_NAME,
-                'password': settings.EasyDB.PASSWORD
-            }
-            auth_response = requests.post(self.session_auth_url, params=params)
-            self.logger.debug(f'Attempting auth.')
-            if not auth_response.status_code == 200:
-                raise ValueError(f'Failed to authenticate: {auth_response.text}')
+    def acquire_access_token(self):
+        url = join(self.url, 'api', 'oauth2', 'token')
+        data = {
+            'grant_type': 'password',
+            'scope': 'offline',
+            'client_id': settings.EasyDB.CLIENT_ID,
+            'client_secret': settings.EasyDB.CLIENT_SECRET,
+            'username': settings.EasyDB.USER_NAME,
+            'password': settings.EasyDB.PASSWORD
+        }
+        response = requests.post(url, data=data)
+        if response.status_code == 200:
+            self.access_token = json.loads(response.content)['access_token']
         else:
-            raise ValueError(f'Failed to acquire session from: {self.session_url}')
+            raise ValueError(f'Failed to acquire access token: {response.text}')
 
     def get_object_by_id(self, object_type, id):
         get_url = join(
@@ -42,7 +40,7 @@ class EasyDB:
             str(id)
         )
         params = {
-            'token': self.session_token,
+            'access_token': self.access_token,
             'format': 'long'
         }
 
@@ -67,7 +65,7 @@ class EasyDB:
             'fields': ['.'.join((object_type, field_name))],
             'in': [field_value]
         }
-        params = { 'token': self.session_token }
+        params = { 'access_token': self.access_token }
 
         response = requests.post(self.search_url, params=params, json={ 'search': [query] })
         if response.status_code == 200:
@@ -76,7 +74,7 @@ class EasyDB:
             return None
 
     def create_object(self, object_type, fields_data, pool=None, tags=None):
-        params = { 'token': self.session_token }
+        params = { 'access_token': self.access_token }
         data = { '_mask': object_type + '__all_fields' }
         if pool is not None:
             fields_data['_pool'] = pool
@@ -92,7 +90,7 @@ class EasyDB:
         return response.ok
 
     def update_object(self, object_type, id, fields_data, tags=None):
-        params = { 'token': self.session_token }
+        params = { 'access_token': self.access_token }
         current_object = self.get_object_by_id(object_type, id)
         current_version = current_object[object_type]['_version']
         current_object[object_type] = fields_data
@@ -108,7 +106,7 @@ class EasyDB:
 
     def create_asset_from_url(self, filename, url):
         params = {
-            'token': self.session_token,
+            'access_token': self.access_token,
             'filename': filename,
             'url': url
         }
