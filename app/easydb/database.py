@@ -41,7 +41,7 @@ class EasyDB:
         )
         params = {
             'access_token': self.access_token,
-            'format': 'long'
+            'format': 'full'
         }
 
         response = requests.get(get_url, params=params)
@@ -75,7 +75,10 @@ class EasyDB:
 
     def create_object(self, object_type, fields_data, pool=None, tags=None):
         params = { 'access_token': self.access_token }
-        data = { '_mask': object_type + '__all_fields' }
+        data = {
+            '_objecttype': object_type,
+            '_mask': object_type + '__all_fields'
+        }
         if pool is not None:
             fields_data['_pool'] = pool
         if tags is not None:
@@ -84,7 +87,7 @@ class EasyDB:
         data[object_type] = fields_data
 
         insert_url = join(self.db_url, object_type)
-        response = requests.put(insert_url, params=params, json=[data])
+        response = requests.post(insert_url, params=params, json=[data])
         if not response.ok:
             raise ConnectionError(response.text)
         return response.ok
