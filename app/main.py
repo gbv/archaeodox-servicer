@@ -4,7 +4,7 @@ from flask import Flask, request as incoming_request
 from app import settings
 from app.servicer.servicer import Servicer
 from app.servicer.task import Task
-from app.easydb.database import EasyDB
+from app.fylr.database import Fylr
 from app.handlers.vorgang_handler import VorgangHandler
 from app.handlers.import_handler import ImportHandler
 from app.tasks import valuelists_updater
@@ -44,7 +44,7 @@ def update_valuelists():
         return str(exception), 500
 
 
-edb = EasyDB(settings.EasyDB.HOST_URL, app.logger)
+edb = Fylr(settings.Fylr.HOST_URL, app.logger)
 
 servicer = Servicer(app.logger, edb)
 

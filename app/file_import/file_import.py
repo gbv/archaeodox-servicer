@@ -8,14 +8,14 @@ from app.field import error_messages as field_error_messages
 from app.file_import.importers import image_importer, worldfile_importer, csv_importer, shapefile_importer
 
 
-def perform_import(import_object, easydb, logger):
-    easydb.acquire_access_token()
-    files = __get_files(import_object, easydb)
-    __import_files(files, import_object, easydb, logger)
+def perform_import(import_object, fylr, logger):
+    fylr.acquire_access_token()
+    files = __get_files(import_object, fylr)
+    __import_files(files, import_object, fylr, logger)
 
-def __get_files(import_object, easydb):
+def __get_files(import_object, fylr):
     id = import_object['_id']
-    wrapped_object_data = easydb.get_object_by_id('dokumente_extern', id)
+    wrapped_object_data = fylr.get_object_by_id('dokumente_extern', id)
     inner_object_data = wrapped_object_data['dokumente_extern']
     nested_files = '_nested:dokumente_extern__dateien'
     
@@ -43,20 +43,20 @@ def __get_sorting_value(file):
         # Import files without recognized format last
         return 'z'
 
-def __import_files(files, import_object, easydb, logger):
+def __import_files(files, import_object, fylr, logger):
     database = __get_field_database(import_object)
 
     for file in files:
-        file['result'] = __import_file(file, import_object, database, easydb, logger)
+        file['result'] = __import_file(file, import_object, database, fylr, logger)
 
     files.sort(key=lambda file: file['original_index'])
     results = list(map(lambda file: file['result'], files))
-    __create_result_object(results, import_object, easydb)
+    __create_result_object(results, import_object, fylr)
 
-def __import_file(file, import_object, database, easydb, logger):
+def __import_file(file, import_object, database, fylr, logger):
     result = {
-        'dokument': __get_cloned_asset(file, easydb),
-        'dokumententyp': __get_file_type_object(file, easydb)
+        'dokument': __get_cloned_asset(file, fylr),
+        'dokumententyp': __get_file_type_object(file, fylr)
     }
 
     try:
@@ -70,16 +70,16 @@ def __import_file(file, import_object, database, easydb, logger):
     
     return result
 
-def __get_cloned_asset(file, easydb):
-    cloned_asset = easydb.create_asset_from_url(file['name'], file['url'])
+def __get_cloned_asset(file, fylr):
+    cloned_asset = fylr.create_asset_from_url(file['name'], file['url'])
     cloned_asset[0]['preferred'] = True
     return cloned_asset
 
-def __get_file_type_object(file, easydb):
+def __get_file_type_object(file, fylr):
     if file['format_settings'] is None:
         return None
     else:
-        return easydb.get_object_by_field_value('dateityp', 'name', file['format_settings']['file_type'])
+        return fylr.get_object_by_field_value('dateityp', 'name', file['format_settings']['file_type'])
 
 def __validate(file, file_type_object, import_object, database):
     if database is None:
@@ -120,12 +120,12 @@ def __get_field_database(import_object):
     password = import_object['passwort']
     return FieldDatabase(field_hub, db_name, db_name, password)
 
-def __create_result_object(file_import_results, import_object, easydb):
+def __create_result_object(file_import_results, import_object, fylr):
     fields_data = {
         '_nested:import_ergebnis__dokument': file_import_results
     }
     tags = __get_tags(__is_failed(file_import_results))
-    easydb.create_object('import_ergebnis', fields_data, pool=import_object['_pool'], tags=tags)
+    fylr.create_object('import_ergebnis', fields_data, pool=import_object['_pool'], tags=tags)
 
 def __is_failed(file_import_results):
     for result in file_import_results:

@@ -3,17 +3,17 @@ from datetime import datetime
 from app import settings
 from app.field.hub import FieldHub
 from app.field.database import FieldDatabase
-from app.handlers.easydb_handler import EasyDBHandler
+from app.handlers.fylr_handler import FylrHandler
 
 
-class VorgangHandler(EasyDBHandler):
+class VorgangHandler(FylrHandler):
     DELETED_SUFFIX = '#deleted_'
 
     def process_request(self, *args, **kwargs):
         if self.object_data['_version'] > 1:
             return self.full_data
 
-        self.easydb.acquire_access_token()
+        self.fylr.acquire_access_token()
         if self.__is_field_project_required():
             try:
                 self.__add_field_project()
@@ -25,10 +25,10 @@ class VorgangHandler(EasyDBHandler):
     def __add_field_project(self):
         identifier = self.object_data['vorgang']
         self.logger.debug(f'Creating new Field project "{identifier}"')
-        self.easydb.acquire_access_token()
+        self.fylr.acquire_access_token()
         self.__validate_project_identifier(identifier)
         password = self.__create_field_project(identifier)
-        self.__create_easydb_object(identifier, password)
+        self.__create_fylr_object(identifier, password)
 
     def __is_field_project_required(self):
         if VorgangHandler.DELETED_SUFFIX in self.object_data['vorgang']:
@@ -39,7 +39,7 @@ class VorgangHandler(EasyDBHandler):
     def __validate_project_identifier(self, identifier):
         if identifier is None or len(identifier) == 0:
             raise ValueError('Field "vorgang" has to be filled out')
-        if self.easydb.get_object_by_field_value('field_datenbank', 'db_name', identifier) != None:
+        if self.fylr.get_object_by_field_value('field_datenbank', 'db_name', identifier) != None:
             raise ValueError(f'Field database "{identifier}" already exists.')
         FieldDatabase.check_database_name(identifier)
 
@@ -50,19 +50,19 @@ class VorgangHandler(EasyDBHandler):
         password = hub.create_project(identifier)
         return password
 
-    def __create_easydb_object(self, identifier, password):
+    def __create_fylr_object(self, identifier, password):
         fields_data = {
             'db_name': identifier,
             'passwort': password,
             'lk_vorgang': self.inner_data
         }
 
-        self.easydb.create_object('field_datenbank', fields_data)
+        self.fylr.create_object('field_datenbank', fields_data)
 
     def __delete_vorgang(self):
         self.object_data['vorgang'] = self.__get_vorgang_name_with_deleted_suffix()
         tags = [{ '_id': self.__get_deleted_tag_id() }]
-        self.easydb.update_object('vorgang', self.object_data['_id'], self.object_data, tags)
+        self.fylr.update_object('vorgang', self.object_data['_id'], self.object_data, tags)
 
     def __get_deleted_tag_id(self):
         pool_id = self.object_data['_pool']['pool']['_id']

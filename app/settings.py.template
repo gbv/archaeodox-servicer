@@ -4,7 +4,7 @@ import logging
 class Main:
     LOGGING_LEVEL = logging.INFO
 
-class EasyDB:
+class Fylr:
     HOST_URL = ''
     USER_NAME = ''
     PASSWORD = ''

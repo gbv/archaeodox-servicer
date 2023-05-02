@@ -4,17 +4,17 @@ from os.path import join
 from app import settings
     
 
-class EasyDB:
+class Fylr:
     API_PATH = 'api/v1'
 
     def __init__(self, url, logger):
         self.url = url
-        self.session_url = join(url, EasyDB.API_PATH, 'user', 'session')
-        self.search_url = join(url, EasyDB.API_PATH, 'search')
-        self.session_auth_url = join(url, EasyDB.API_PATH, 'session', 'authenticate')
-        self.db_url = join(url, EasyDB.API_PATH, 'db')
-        self.objects_url = join(url, EasyDB.API_PATH, 'objects')
-        self.create_asset_url = join(url, EasyDB.API_PATH, 'eas', 'rput')
+        self.session_url = join(url, Fylr.API_PATH, 'user', 'session')
+        self.search_url = join(url, Fylr.API_PATH, 'search')
+        self.session_auth_url = join(url, Fylr.API_PATH, 'session', 'authenticate')
+        self.db_url = join(url, Fylr.API_PATH, 'db')
+        self.objects_url = join(url, Fylr.API_PATH, 'objects')
+        self.create_asset_url = join(url, Fylr.API_PATH, 'eas', 'rput')
         self.logger = logger
 
     def acquire_access_token(self):
@@ -22,10 +22,10 @@ class EasyDB:
         data = {
             'grant_type': 'password',
             'scope': 'offline',
-            'client_id': settings.EasyDB.CLIENT_ID,
-            'client_secret': settings.EasyDB.CLIENT_SECRET,
-            'username': settings.EasyDB.USER_NAME,
-            'password': settings.EasyDB.PASSWORD
+            'client_id': settings.Fylr.CLIENT_ID,
+            'client_secret': settings.Fylr.CLIENT_SECRET,
+            'username': settings.Fylr.USER_NAME,
+            'password': settings.Fylr.PASSWORD
         }
         response = requests.post(url, data=data)
         if response.status_code == 200:
