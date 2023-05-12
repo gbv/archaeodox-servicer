@@ -46,5 +46,6 @@ def __create_handler(object_type, object, logger, fylr):
         'vorgang': VorgangHandler,
         'dokumente_extern': ImportHandler
     }
+    del object['_score']
     handler_class = handler_map[object_type]
     return handler_class(object, logger, fylr)
