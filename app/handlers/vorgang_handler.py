@@ -11,7 +11,7 @@ class VorgangHandler(FylrHandler):
 
     def process_request(self, *args, **kwargs):
         if self.object_data['_version'] > 1:
-            return self.full_data
+            return
 
         self.fylr.acquire_access_token()
         if self.__is_field_project_required():
@@ -20,7 +20,7 @@ class VorgangHandler(FylrHandler):
             except Exception as exception:
                 self.logger.error(exception, exc_info=True)
                 self.__delete_vorgang()
-        return self.full_data
+        return
 
     def __add_field_project(self):
         identifier = self.object_data['vorgang']
@@ -54,7 +54,7 @@ class VorgangHandler(FylrHandler):
         fields_data = {
             'db_name': identifier,
             'passwort': password,
-            'lk_vorgang': self.inner_data
+            'lk_vorgang': self.data
         }
 
         self.fylr.create_object('field_datenbank', fields_data)

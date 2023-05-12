@@ -52,26 +52,39 @@ class Fylr:
         return result
 
     def get_object_by_field_value(self, object_type, field_name, field_value):
-        search_result = self.search(object_type, field_name, field_value)
+        search_result = self.field_search(object_type, field_name, field_value)
         if search_result is not None and len(search_result) == 1:
             return search_result[0]
         else:
             return None
 
-    def search(self, object_type, field_name, field_value):
+    def field_search(self, object_type, field_name, field_value):
         query = {
             'type': 'in',
             'bool': 'must',
             'fields': ['.'.join((object_type, field_name))],
             'in': [field_value]
         }
-        params = { 'access_token': self.access_token }
-
-        response = requests.post(self.search_url, params=params, json={ 'search': [query] })
-        if response.status_code == 200:
-            return json.loads(response.content)['objects']
-        else:
-            return None
+        return self.__search(query)
+        
+    def changelog_search(self, object_type, from_date, to_date, operation):
+        query = {
+            'type': 'complex',
+            'search': [
+                {
+                    'type': 'changelog_range',
+                    'operation': operation,
+                    'from': from_date,
+                    'to': to_date
+                },
+                {
+                    'type': 'in',
+                    'fields': ['_objecttype'],
+                    'in': [object_type]
+                }
+            ]
+        }
+        return self.__search(query)
 
     def create_object(self, object_type, fields_data, pool=None, tags=None):
         params = { 'access_token': self.access_token }
@@ -118,3 +131,13 @@ class Fylr:
         if not response.ok:
             raise ConnectionError(response.text)
         return response.json()
+
+    def __search(self, query):
+        params = { 'access_token': self.access_token }
+
+        response = requests.post(self.search_url, params=params, json={ 'search': [query] })
+        if response.status_code == 200:
+            return json.loads(response.content)['objects']
+        else:
+            self.logger.error(response)
+            return None
