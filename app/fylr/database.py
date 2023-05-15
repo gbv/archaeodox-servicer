@@ -119,6 +119,14 @@ class Fylr:
         if not response.ok:
             raise ConnectionError(response.text)
         return response.ok
+    
+    def download_asset(self, url):
+        params = { 'access_token': self.access_token }
+        response = requests.get(url, params)
+        if response.ok:
+            return response.content
+        else:
+            raise ValueError(response.text)
 
     def create_asset_from_url(self, filename, url):
         params = {

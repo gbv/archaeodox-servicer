@@ -26,7 +26,7 @@ def __get_files(import_object, fylr):
         file_extension = file_name.split('.')[-1]
         files.append({
             'name': file_name,
-            'url': dp.get(file_information, 'versions/original/download_url'),
+            'url': dp.get(file_information, 'versions/original/url'),
             'format_settings': settings.FileImport.FORMATS.get(file_extension, None),
             'detected_format': file_information['extension'],
             'original_index': index
@@ -61,7 +61,7 @@ def __import_file(file, import_object, database, fylr, logger):
 
     try:
         __validate(file, result['dokumententyp'], import_object, database)
-        file_data = __get_file_data(file['url'])
+        file_data = fylr.download_asset(file['url'])
         __run_importer(file, file_data, database)
         result['fehlermeldung'] = messages.FileImport.SUCCESS
     except Exception as error:
@@ -90,13 +90,6 @@ def __validate(file, file_type_object, import_object, database):
         raise ValueError(messages.FileImport.ERROR_UNSUPPORTED_FILE_FORMAT)
     if file['format_settings']['expected_format'] != file['detected_format']:
         raise ValueError(messages.FileImport.ERROR_INVALID_FILE_FORMAT)
-
-def __get_file_data(url):
-    response = requests.get(url)
-    if response.ok:
-        return response.content
-    else:
-        raise ValueError(response.text)
 
 def __run_importer(file, file_data, database):
     if file['format_settings']['importer'] == 'image':
