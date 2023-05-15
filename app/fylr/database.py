@@ -123,8 +123,7 @@ class Fylr:
         return response.ok
     
     def download_asset(self, url):
-        params = { 'access_token': self.access_token }
-        response = requests.get(url, params)
+        response = requests.get(url + '&access_token=' + self.access_token)
         if response.ok:
             return response.content
         else:
@@ -134,7 +133,7 @@ class Fylr:
         params = {
             'access_token': self.access_token,
             'filename': filename,
-            'url': url
+            'url': url + '&access_token=' + self.access_token
         }
 
         response = requests.post(self.create_asset_url, params=params)
