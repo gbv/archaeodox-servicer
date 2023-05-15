@@ -1,4 +1,3 @@
-import requests
 from dpath import util as dp
 
 from app import settings, messages
