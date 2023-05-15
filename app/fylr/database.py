@@ -54,7 +54,9 @@ class Fylr:
     def get_object_by_field_value(self, object_type, field_name, field_value):
         search_result = self.field_search(object_type, field_name, field_value)
         if search_result is not None and len(search_result) == 1:
-            return search_result[0]
+            result_object = search_result[0]
+            del result_object['_score']
+            return result_object
         else:
             return None
 
