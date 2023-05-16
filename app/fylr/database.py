@@ -132,7 +132,7 @@ class Fylr:
     def create_asset_from_url(self, filename, url):
         params = {
             'access_token': self.access_token,
-            'filename': filename,
+            'instance': filename,
             'url': url + '&access_token=' + self.access_token
         }
 
