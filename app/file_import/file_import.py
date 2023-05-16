@@ -23,9 +23,11 @@ def __get_files(import_object, fylr):
         file_information = file['datei'][0]
         file_name = file_information['original_filename']
         file_extension = file_name.split('.')[-1]
+        file_url = dp.get(file_information, 'versions/original/url')
         files.append({
             'name': file_name,
-            'url': dp.get(file_information, 'versions/original/url'),
+            'data': fylr.download_asset(file_url),
+            'mimetype': dp.get(file_information, 'versions/original/technical_metadata/mime_type'),
             'format_settings': settings.FileImport.FORMATS.get(file_extension, None),
             'detected_format': file_information['extension'],
             'original_index': index
@@ -60,8 +62,7 @@ def __import_file(file, import_object, database, fylr, logger):
 
     try:
         __validate(file, result['dokumententyp'], import_object, database)
-        file_data = fylr.download_asset(file['url'])
-        __run_importer(file, file_data, database)
+        __run_importer(file, file['data'], database)
         result['fehlermeldung'] = messages.FileImport.SUCCESS
     except Exception as error:
         logger.debug(f'Import failed for file {file["name"]}', exc_info=True)
@@ -70,7 +71,7 @@ def __import_file(file, import_object, database, fylr, logger):
     return result
 
 def __get_cloned_asset(file, fylr):
-    cloned_asset = fylr.create_asset_from_url(file['name'], file['url'])
+    cloned_asset = fylr.create_asset(file['name'], file['data'], file['mimetype'])
     cloned_asset[0]['preferred'] = True
     return cloned_asset
 

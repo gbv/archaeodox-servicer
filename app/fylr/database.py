@@ -14,7 +14,7 @@ class Fylr:
         self.session_auth_url = join(url, Fylr.API_PATH, 'session', 'authenticate')
         self.db_url = join(url, Fylr.API_PATH, 'db')
         self.objects_url = join(url, Fylr.API_PATH, 'objects')
-        self.create_asset_url = join(url, Fylr.API_PATH, 'eas', 'rput')
+        self.create_asset_url = join(url, Fylr.API_PATH, 'eas', 'put')
         self.logger = logger
 
     def acquire_access_token(self):
@@ -129,14 +129,15 @@ class Fylr:
         else:
             raise ValueError(response.text)
 
-    def create_asset_from_url(self, filename, url):
+    def create_asset(self, filename, data, mimetype):
         params = {
             'access_token': self.access_token,
-            'instance': filename,
-            'url': url + '&access_token=' + self.access_token
+            'instance': filename
         }
-
-        response = requests.post(self.create_asset_url, params=params)
+        files = {
+            'file': (filename, data, mimetype)
+        }
+        response = requests.post(self.create_asset_url, params=params, files=files)
         if not response.ok:
             raise ConnectionError(response.text)
         return response.json()
