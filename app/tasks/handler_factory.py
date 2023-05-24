@@ -22,7 +22,7 @@ def __create_handlers(object_type, logger):
     handlers = []
     for new_object in new_objects:
         id = new_object['_global_object_id']
-        if id not in handled_objects_ids:
+        if id not in handled_objects_ids and new_object[object_type]['_version'] == 1:
             handlers.append(__create_handler(object_type, new_object, logger, fylr))
             handled_objects_ids.append(id)
     return handlers

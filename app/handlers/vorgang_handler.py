@@ -10,9 +10,6 @@ class VorgangHandler(FylrHandler):
     DELETED_SUFFIX = '#deleted_'
 
     def process_request(self, *args, **kwargs):
-        if self.object_data['_version'] > 1:
-            return
-
         self.fylr.acquire_access_token()
         if self.__is_field_project_required():
             try:
