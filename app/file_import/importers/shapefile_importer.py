@@ -60,7 +60,10 @@ def __import_geometry(geometry, properties, field_database):
     find_identifier = __get_identifier(properties.get('find'), 'Find')
     sample_identifier = __get_sample_identifier(properties)
 
-    __validate(planum_or_profile_identifier, planum_or_profile_category, import_type, properties['file_name'])
+    __validate(
+        planum_or_profile_identifier, planum_or_profile_category, feature_identifier,
+        import_type, properties['file_name']
+    )
 
     excavation_area = __update_excavation_area(
         field_database, geometry if import_type == 'excavationArea' else None
@@ -136,13 +139,15 @@ def __is_excavation_area(properties):
 def __is_sample(properties):
     return settings.ShapefileImporter.SAMPLE_KEYWORD.lower() in properties.get('info', '').lower()
 
-def __validate(planum_or_profile_identifier, planum_or_profile_category, import_type, file_name):
+def __validate(planum_or_profile_identifier, planum_or_profile_category, feature_identifier, import_type, file_name):
     if import_type == 'excavationArea':
         return
     elif planum_or_profile_category is None:
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_INVALID_NAME + ' ' + file_name)
     elif planum_or_profile_identifier is None:
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_MISSING_EXCA_INT + ' ' + file_name)
+    elif import_type in ['featureSegment', 'find', 'referencePoints'] and feature_identifier is None:
+        raise ValueError(messages.FileImport.ERROR_SHAPEFILE_MISSING_STRAT_UNIT + ' ' + file_name)
 
 def __update_excavation_area(field_database, geometry):
     resource_data = {
@@ -247,7 +252,6 @@ def __get_feature_segment_identifier(feature, field_database):
     return __get_identifier(f'{base_feature_identifier}-{str(number)}', 'FeatureSegment')
 
 def __get_feature_segment_identifier_number(feature_id, field_database):
-    
     feature_segments = __get_existing_feature_segments(feature_id, field_database)
     numbers = sorted(map(__get_number_from_feature_segment, feature_segments))
     if len(numbers) == 0:

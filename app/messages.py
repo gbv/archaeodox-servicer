@@ -8,6 +8,7 @@ class FileImport:
     ERROR_UNSUPPORTED_FILE_FORMAT = 'Das Dateiformat wird nicht unterstützt.'
     ERROR_SHAPEFILE_INVALID_NAME = 'Im Dateinamen des Shapefiles muss entweder die Zeichenfolge "FLZ" (bei Flächenzeichnungen) oder "PRZ" (für Profile) enthalten sein:'
     ERROR_SHAPEFILE_MISSING_EXCA_INT = 'Das Attribut "exca_int" in der Attributtabelle des Shapefiles muss ausgefüllt sein:'
+    ERROR_SHAPEFILE_MISSING_STRAT_UNIT = 'Das Attribut "strat_unit" in der Attributtabelle des Shapefiles muss ausgefüllt sein:'
     ERROR_GEOTIFF_GEOREFERENCE = 'Die Georeferenzierungsdaten konnten nicht ausgelesen werden. Bitte prüfen Sie, ob es sich um eine gültige GeoTIFF-Datei handelt.'
     ERROR_NO_WORLDFILE_MATCH = 'Das Worldfile konnte nicht eindeutig einer Bilddatei zugewiesen werden.'
     ERROR_INVALID_WORLDFILE = 'Die Datei ist kein gültiges Worldfile.'
