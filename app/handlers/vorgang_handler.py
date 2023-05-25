@@ -58,12 +58,8 @@ class VorgangHandler(FylrHandler):
 
     def __delete_vorgang(self):
         self.object_data['vorgang'] = self.__get_vorgang_name_with_deleted_suffix()
-        tags = [{ '_id': self.__get_deleted_tag_id() }]
+        tags = [{ '_id': settings.VorgangHandler.DELETED_TAG }]
         self.fylr.update_object('vorgang', self.object_data['_id'], self.object_data, tags)
-
-    def __get_deleted_tag_id(self):
-        pool_id = self.object_data['_pool']['pool']['_id']
-        return settings.VorgangHandler.DELETED_TAGS[pool_id]
     
     def __get_vorgang_name_with_deleted_suffix(self):
         timestamp = datetime.utcnow().isoformat()

@@ -2,7 +2,7 @@ import logging
 
 
 class Main:
-    LOGGING_LEVEL = logging.INFO
+    LOGGING_LEVEL = logging.DEBUG
 
 class Fylr:
     HOST_URL = ''
@@ -35,12 +35,7 @@ class VorgangHandler:
     # If a child concept of this concept is selected in field 'lk_vorgang_kategorie' of the Vorgang object,
     # a new Field database is created.
     DANTE_PARENT_CONCEPT_ID = ''
-
-    # Maps a pool ID to a tag ID
-    DELETED_TAGS = {
-        1: 1,
-        2: 2
-    }
+    DELETED_TAG: 1
 
 class FileImport:
     FORMATS = {
