@@ -62,30 +62,19 @@ def __set_relations(image_document, planum_or_profile_identifier, field_database
     field_database.update_document(image_document['resource']['id'], image_document)
 
 def __link_with_profile_or_planum(image_document, planum_or_profile_document):
-    __set_depicted_in_relation(image_document, planum_or_profile_document)
-    __set_depicts_relation(image_document, planum_or_profile_document)
+    __add_relation_target(planum_or_profile_document['resource'], 'isDepictedIn', image_document['resource']['id'])
+    __add_relation_target(image_document['resource'], 'depicts', planum_or_profile_document['resource']['id'])
 
 def __set_as_map_layer(image_document, project_document):
-    __set_has_map_layer_relation(image_document, project_document)
-    __set_is_map_layer_relation(image_document)
+    __add_relation_target(project_document['resource'], 'hasMapLayer', image_document['resource']['id'])
+    __add_relation_target(image_document['resource'], 'isMapLayerOf', 'project')
 
-def __set_depicted_in_relation(image_document, planum_or_profile_document):
-    resource = planum_or_profile_document['resource']
+def __add_relation_target(resource, relation_name, relation_target_id):
     if 'relations' not in resource:
         resource['relations'] = {}
-    resource['relations']['isDepictedIn'] = [image_document['resource']['id']]
-
-def __set_depicts_relation(image_document, planum_or_profile_document):
-    image_document['resource']['relations']['depicts'] = [planum_or_profile_document['resource']['id']]
-
-def __set_has_map_layer_relation(image_document, project_document):
-    resource = project_document['resource']
-    if 'relations' not in resource:
-        resource['relations'] = {}
-    resource['relations']['hasMapLayer'] = [image_document['resource']['id']]
-
-def __set_is_map_layer_relation(image_document):
-    image_document['resource']['relations']['isMapLayerOf'] = ['project']
+    if relation_name not in resource['relations']:
+        resource['relations'][relation_name] = []
+    resource['relations'][relation_name].append(relation_target_id)
 
 def __get_image_bytes(pil_image_object, format, quality=None):
     out_bytes = io.BytesIO()
