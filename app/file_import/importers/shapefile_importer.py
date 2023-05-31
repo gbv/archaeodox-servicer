@@ -62,7 +62,7 @@ def __import_geometry(geometry, properties, field_database):
     sample_identifier = __get_sample_identifier(properties)
 
     __validate(
-        planum_or_profile_identifier, planum_or_profile_category, feature_identifier,
+        planum_or_profile_identifier, planum_or_profile_category, feature_identifier, sample_identifier,
         import_type, properties['file_name']
     )
 
@@ -140,15 +140,24 @@ def __is_excavation_area(properties):
 def __is_sample(properties):
     return settings.ShapefileImporter.SAMPLE_KEYWORD.lower() in properties.get('info', '').lower()
 
-def __validate(planum_or_profile_identifier, planum_or_profile_category, feature_identifier, import_type, file_name):
+def __validate(planum_or_profile_identifier, planum_or_profile_category, feature_identifier, sample_identifier,
+               import_type, file_name):
     if import_type == 'excavationArea':
         return
     elif planum_or_profile_category is None:
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_INVALID_NAME + ' ' + file_name)
     elif planum_or_profile_identifier is None:
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_MISSING_EXCA_INT + ' ' + file_name)
-    elif import_type in ['featureSegment', 'find', 'referencePoints'] and feature_identifier is None:
+    elif __is_feature_identifier_missing(feature_identifier, sample_identifier, import_type):
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_MISSING_STRAT_UNIT + ' ' + file_name)
+
+def __is_feature_identifier_missing(feature_identifier, sample_identifier, import_type):
+    if import_type in ['featureSegment', 'find'] and feature_identifier is None:
+        return True
+    elif import_type == 'referencePoints' and sample_identifier is not None and feature_identifier is None:
+        return True
+    else:
+        return False
 
 def __update_excavation_area(field_database, geometry):
     resource_data = {
