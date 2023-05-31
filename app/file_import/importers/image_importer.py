@@ -74,7 +74,8 @@ def __add_relation_target(resource, relation_name, relation_target_id):
         resource['relations'] = {}
     if relation_name not in resource['relations']:
         resource['relations'][relation_name] = []
-    resource['relations'][relation_name].append(relation_target_id)
+    if relation_target_id not in resource['relations'][relation_name]:
+        resource['relations'][relation_name].append(relation_target_id)
 
 def __get_image_bytes(pil_image_object, format, quality=None):
     out_bytes = io.BytesIO()
