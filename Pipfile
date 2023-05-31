@@ -11,6 +11,7 @@ python-dotenv = "*"
 pillow = "*"
 geotiff = "*"
 waitress="*"
+jsondiff="*"
 
 [dev-packages]
 ipykernel = "*"

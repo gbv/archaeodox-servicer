@@ -5,6 +5,7 @@ from os.path import join, basename
 from shutil import rmtree
 from osgeo import gdal
 from zipfile import ZipFile
+from jsondiff import diff
 
 from app import settings, messages
 
@@ -213,8 +214,12 @@ def __update_feature(field_database, excavation_area, planum_or_profile, feature
     return field_database.populate_resource(resource_data)
 
 def __update_feature_segment(field_database, excavation_area, planum_or_profile, feature, short_description, geometry):
+    existing_feature_segments = __get_existing_feature_segments(feature['resource']['id'], field_database)
+    if __is_existing(geometry, existing_feature_segments):
+        return None
+
     resource_data = {
-        'identifier': __get_feature_segment_identifier(feature, field_database),
+        'identifier': __get_feature_segment_identifier(feature, existing_feature_segments),
         'category': 'FeatureSegment',
         'geometry': geometry,
         'relations': {
@@ -245,15 +250,14 @@ def __update_find_or_sample(field_database, excavation_area, feature, identifier
 
     return field_database.populate_resource(resource_data)
 
-def __get_feature_segment_identifier(feature, field_database):
+def __get_feature_segment_identifier(feature, existing_feature_segments):
     base_feature_identifier = __get_base_identifier(feature)
-    number = __get_feature_segment_identifier_number(feature['resource']['id'], field_database)
+    number = __get_feature_segment_identifier_number(existing_feature_segments)
 
     return __get_identifier(f'{base_feature_identifier}-{str(number)}', 'FeatureSegment')
 
-def __get_feature_segment_identifier_number(feature_id, field_database):
-    feature_segments = __get_existing_feature_segments(feature_id, field_database)
-    numbers = sorted(map(__get_number_from_feature_segment, feature_segments))
+def __get_feature_segment_identifier_number(existing_feature_segments):
+    numbers = sorted(map(__get_number_from_feature_segment, existing_feature_segments))
     if len(numbers) == 0:
         return 1
     else:
@@ -264,7 +268,7 @@ def __get_existing_feature_segments(feature_id, field_database):
         'selector': {
             'resource.relations.liesWithin': {
                 '$elemMatch': {
-                    "$eq": feature_id
+                    '$eq': feature_id
                 }
             }
         } 
@@ -281,3 +285,10 @@ def __get_number_from_feature_segment(document):
 def __get_base_identifier(document):
     category = document['resource']['category']
     return document['resource']['identifier'].replace(settings.FileImport.CATEGORY_PREFIXES[category], '')
+
+def __is_existing(geometry, existing_feature_segments):
+    for feature_segment in existing_feature_segments:
+        feature_segment_geometry = feature_segment['resource']['geometry']
+        if feature_segment_geometry is not None and diff(geometry, feature_segment_geometry) == {}:
+            return True
+    return False
