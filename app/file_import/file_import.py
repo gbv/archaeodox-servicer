@@ -42,7 +42,7 @@ def __get_files(import_object, fylr):
 
 def __has_worldfile(file, files):
     base_name = __get_base_name(file['name'])
-    worldfiles = filter(lambda file: file['importer'] == 'worldfile', files)
+    worldfiles = filter(lambda file: file['format_settings']['importer'] == 'worldfile', files)
     worldfile_names = map(lambda file: file['name'], worldfiles)
     for worldfile_name in worldfile_names:
        if __get_base_name(worldfile_name) == base_name:
