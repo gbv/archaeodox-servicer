@@ -39,21 +39,21 @@ class VorgangHandler:
 
 class FileImport:
     FORMATS = {
-        'csv': { 'file_type': 'csv', 'expected_format': 'csv', 'importer': 'csv' },
-        'jpg': { 'file_type': 'jpeg', 'expected_format': 'jpg', 'importer': 'image' },
-        'jpeg': { 'file_type': 'jpeg', 'expected_format': 'jpg', 'importer': 'image' },
-        'tif': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
-        'tiff': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
-        'png': { 'file_type': 'png', 'expected_format': 'png', 'importer': 'image' },
-        'jgw': { 'file_type': 'jgw', 'expected_format': 'jgw', 'importer': 'worldfile' },
-        'jpgw': { 'file_type': 'jgw', 'expected_format': 'jpgw', 'importer': 'worldfile' },
-        'jpegw': { 'file_type': 'jgw', 'expected_format': 'jpegw', 'importer': 'worldfile' },
-        'tfw': { 'file_type': 'tfw', 'expected_format': 'tfw', 'importer': 'worldfile' },
-        'tifw': { 'file_type': 'tfw', 'expected_format': 'tifw', 'importer': 'worldfile' },
-        'tiffw': { 'file_type': 'tfw', 'expected_format': 'tiffw', 'importer': 'worldfile' },
-        'pgw': { 'file_type': 'pgw', 'expected_format': 'pgw', 'importer': 'worldfile' },
-        'pngw': { 'file_type': 'pgw', 'expected_format': 'pngw', 'importer': 'worldfile' },
-        'zip': { 'file_type': 'zip', 'expected_format': 'zip', 'importer': 'shapefile' }
+        'csv': { 'file_type': 'csv', 'importer': 'csv' },
+        'jpg': { 'file_type': 'jpeg', 'importer': 'image' },
+        'jpeg': { 'file_type': 'jpeg', 'importer': 'image' },
+        'tif': { 'file_type': 'tiff', 'importer': 'image' },
+        'tiff': { 'file_type': 'tiff', 'importer': 'image' },
+        'png': { 'file_type': 'png', 'importer': 'image' },
+        'jgw': { 'file_type': 'jgw', 'importer': 'worldfile' },
+        'jpgw': { 'file_type': 'jgw', 'importer': 'worldfile' },
+        'jpegw': { 'file_type': 'jgw', 'importer': 'worldfile' },
+        'tfw': { 'file_type': 'tfw', 'importer': 'worldfile' },
+        'tifw': { 'file_type': 'tfw', 'importer': 'worldfile' },
+        'tiffw': { 'file_type': 'tfw', 'importer': 'worldfile' },
+        'pgw': { 'file_type': 'pgw', 'importer': 'worldfile' },
+        'pngw': { 'file_type': 'pgw', 'importer': 'worldfile' },
+        'zip': { 'file_type': 'zip', 'importer': 'shapefile' }
     }
     SUCCESS_TAG_ID = 2
     FAILURE_TAG_ID = 3
