@@ -22,6 +22,7 @@ class CouchDatabase:
             raise ValueError(f'Document has never been created: {document}')
         existing = self.get_document(id)
         current_revision = existing['_rev']
+        document['_rev'] = current_revision
         response = self.session.put(
             f'{self.url}/{id}',
             params={ 'rev': current_revision },
