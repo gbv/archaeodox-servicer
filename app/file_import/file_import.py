@@ -41,7 +41,7 @@ def __get_files(import_object, fylr):
     return files
 
 def __has_worldfile(file, files):
-    base_name = __get_base_name(file)
+    base_name = __get_base_name(file['name'])
     worldfiles = filter(lambda file: file['importer'] == 'worldfile', files)
     worldfile_names = map(lambda file: file['name'], worldfiles)
     for worldfile_name in worldfile_names:
