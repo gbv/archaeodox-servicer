@@ -48,8 +48,8 @@ class FieldDatabase(CouchDatabase):
         for relation_name, target_ids in relations.items():
             document['resource']['relations'][relation_name] = target_ids
     
-        response = self.update_document(document['_id'], document=document)
-        document['_rev'] = response.json()['rev']
+        updated_document = self.update_document(document['_id'], document=document)
+        document['_rev'] = updated_document['rev']
         return document
 
     @staticmethod

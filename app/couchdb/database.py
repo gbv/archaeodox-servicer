@@ -29,10 +29,9 @@ class CouchDatabase:
             data=json.dumps(document)
         )
         if response.ok:
-            return
+            return response.json()
         else:
             raise ValueError(response.json()['reason'])
-
 
     def get_document(self, doc_id):
         return self.session.get(f'{self.url}/{doc_id}').json()
