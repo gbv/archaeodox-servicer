@@ -6,6 +6,8 @@ from app.handlers.vorgang_handler import VorgangHandler
 from app.handlers.import_handler import ImportHandler
 
 handled_objects_ids = []
+date_format = '%Y-%m-%dT%H:%M:%S%z'
+max_object_age = 5 # Minutes
 
 
 def run_handlers(object_type, logger):
@@ -22,14 +24,13 @@ def __create_handlers(object_type, logger):
     handlers = []
     for new_object in new_objects:
         id = new_object['_global_object_id']
-        if id not in handled_objects_ids and new_object[object_type]['_version'] == 1:
+        if id not in handled_objects_ids and __is_newly_created(new_object):
             handlers.append(__create_handler(object_type, new_object, logger, fylr))
             handled_objects_ids.append(id)
     return handlers
 
 def __fetch_new_objects(object_type, fylr):
-    date_format = '%Y-%m-%dT%H:%M:%SZ'
-    from_date = datetime.now(timezone.utc) - timedelta(hours=0, minutes=5)
+    from_date = datetime.now(timezone.utc) - timedelta(hours=0, minutes=max_object_age)
     to_date = datetime.now(timezone.utc)
 
     fylr.acquire_access_token()
@@ -49,3 +50,8 @@ def __create_handler(object_type, object, logger, fylr):
     del object['_score']
     handler_class = handler_map[object_type]
     return handler_class(object, logger, fylr)
+
+def __is_newly_created(object):
+    creation_date = datetime.strptime(object['_created'], date_format)
+    min_date = datetime.now(timezone.utc) - timedelta(hours=0, minutes=max_object_age)
+    return creation_date > min_date
