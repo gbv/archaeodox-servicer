@@ -32,10 +32,26 @@ def __get_files(import_object, fylr):
             'detected_format': file_information['extension'],
             'original_index': index
         })
+    
+    for file in filter(lambda file: file['format_settings']['importer'] == 'image', files):
+        file['has_worldfile'] = __has_worldfile(file, files)
 
     # Sort files to make sure worldfiles are imported after images
     files.sort(key=__get_sorting_value)
     return files
+
+def __has_worldfile(file, files):
+    base_name = __get_base_name(file)
+    worldfiles = filter(lambda file: file['importer'] == 'worldfile', files)
+    worldfile_names = map(lambda file: file['name'], worldfiles)
+    for worldfile_name in worldfile_names:
+       if __get_base_name(worldfile_name) == base_name:
+           return True
+    return False
+
+def __get_base_name(file_name):
+    extension = file_name.split('.')[-1]
+    return file_name.replace('.' + extension, '')
 
 def __get_sorting_value(file):
     if file['format_settings'] is not None:
@@ -93,7 +109,7 @@ def __validate(file, file_type_object, import_object, database):
 
 def __run_importer(file, file_data, database):
     if file['format_settings']['importer'] == 'image':
-        image_importer.run(file_data, file['name'], database)
+        image_importer.run(file_data, file['name'], file['has_worldfile'], database)
     if file['format_settings']['importer'] == 'worldfile':
         worldfile_importer.run(file_data, file['name'], database)
     if file['format_settings']['importer'] == 'csv':

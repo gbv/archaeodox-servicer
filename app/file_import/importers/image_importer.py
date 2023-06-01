@@ -6,7 +6,7 @@ from geotiff import GeoTiff
 from app import settings, messages
 
 
-def run(image_data, image_file_name, field_database):
+def run(image_data, image_file_name, has_worldfile, field_database):
     image_document = field_database.get_or_create_document(image_file_name)
     id = image_document['_id']
     planum_or_profile_identifier = __get_planum_or_profile_identifier(image_file_name)
@@ -16,10 +16,12 @@ def run(image_data, image_file_name, field_database):
     __initialize_image_document(image_document, image_file_name, planum_or_profile_identifier, image)
 
     mimetype, encoding = mimetypes.guess_type(image_file_name)
-    if mimetype is None:
-        return
+    is_geotiff = False
     if mimetype == 'image/tiff':
-        __append_georeference(image_document, image_object)
+        is_geotiff = __append_georeference(image_document, image_object)
+    if not is_geotiff and not has_worldfile and planum_or_profile_identifier is not None:
+        raise ValueError(messages.FileImport.ERROR_MISSING_GEOREFERENCE)
+    
     format = basename(mimetype)
     
     response = field_database.upload_image(id, __get_image_bytes(image, format), mimetype, 'original_image')
@@ -108,5 +110,6 @@ def __append_georeference(image_document, image_data):
             'topRightCoordinates': [upper_right[1], upper_right[0]],
             'bottomLeftCoordinates': [lower_left[1], lower_left[0]]
         }
+        return True
     except Exception:
-        raise ValueError(messages.FileImport.ERROR_GEOTIFF_GEOREFERENCE)
+        return False
