@@ -33,8 +33,8 @@ class CouchDatabase:
         else:
             raise ValueError(response.json()['reason'])
 
-    def get_document(self, doc_id):
-        return self.session.get(f'{self.url}/{doc_id}').json()
+    def get_document(self, id):
+        return self.session.get(f'{self.url}/{id}').json()
 
     def search(self, query):
         response = self.session.post(self.search_url, json=query)
