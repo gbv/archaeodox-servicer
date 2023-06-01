@@ -34,12 +34,15 @@ def __get_files(import_object, fylr):
             'original_index': index
         })
     
-    for file in filter(lambda file: file['format_settings']['importer'] == 'image', files):
+    for file in __get_image_files(files):
         file['has_worldfile'] = __has_worldfile(file, files)
 
     # Sort files to make sure worldfiles are imported after images
     files.sort(key=__get_sorting_value)
     return files
+
+def __get_image_files(files):
+    return filter(lambda file: file['format_settings'] is not None and file['format_settings']['importer'] == 'image', files)
 
 def __has_worldfile(file, files):
     base_name = __get_base_name(file['name'])
