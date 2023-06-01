@@ -18,8 +18,8 @@ class FieldDatabase(CouchDatabase):
         else:
             id = str(uuid4())
             document = self.__get_empty_document(id, identifier, category)
-            response = self.create_document(id, document)
-            document['_rev'] = response.json()['rev']
+            created_document = self.create_document(id, document)
+            document['_rev'] = created_document['rev']
             return document
 
     def upload_image(self, id, image_data, mimetype, image_type):
