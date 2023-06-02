@@ -28,7 +28,6 @@ def __get_files(import_object, fylr):
             'name': file_name,
             'data': fylr.download_asset(file_url),
             'mimetype': dp.get(file_information, 'versions/original/technical_metadata/mime_type'),
-            'file_extension': file_extension,
             'format_settings': settings.FileImport.FORMATS.get(file_extension, None),
             'detected_format': file_information['extension'],
             'original_index': index
@@ -108,7 +107,7 @@ def __validate(file, file_type_object, import_object, database):
         raise ValueError(messages.FileImport.ERROR_VORGANG_NOT_IN_FILENAME)
     if file_type_object is None:
         raise ValueError(messages.FileImport.ERROR_UNSUPPORTED_FILE_FORMAT)
-    if file['file_extension'] != file['detected_format']:
+    if file['format_settings']['expected_format'] != file['detected_format']:
         raise ValueError(messages.FileImport.ERROR_INVALID_FILE_FORMAT)
 
 def __run_importer(file, file_data, database):
