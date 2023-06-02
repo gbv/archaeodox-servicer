@@ -108,7 +108,7 @@ def __validate(file, file_type_object, import_object, database):
     if file_type_object is None:
         raise ValueError(messages.FileImport.ERROR_UNSUPPORTED_FILE_FORMAT)
     if file['format_settings']['expected_format'] != file['detected_format']:
-        raise ValueError(messages.FileImport.ERROR_INVALID_FILE_FORMAT)
+        raise ValueError(messages.FileImport.ERROR_INVALID_FILE_FORMAT + ' ' + file['detected_format'])
 
 def __run_importer(file, file_data, database):
     if file['format_settings']['importer'] == 'image':
