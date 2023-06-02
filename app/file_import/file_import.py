@@ -29,7 +29,7 @@ def __get_files(import_object, fylr):
             'data': fylr.download_asset(file_url),
             'mimetype': dp.get(file_information, 'versions/original/technical_metadata/mime_type'),
             'format_settings': settings.FileImport.FORMATS.get(file_extension, None),
-            'detected_format': file_information['extension'],
+            'detected_format': file_information['technical_metadata']['file_type_extension'],
             'original_index': index
         })
     
