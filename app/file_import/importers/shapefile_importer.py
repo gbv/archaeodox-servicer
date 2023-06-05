@@ -51,6 +51,10 @@ def __import_geometry(geometry, properties, field_database):
     planum_or_profile_category = __get_planum_or_profile_category(properties)
     if import_type == 'referenceLines' and planum_or_profile_category != 'Profile':
         return
+    
+    sample_identifier = __get_sample_identifier(properties)
+    if import_type == 'referencePoints' and sample_identifier is None:
+        return
 
     planum_or_profile_identifier = __get_identifier(properties.get('exca_int'), planum_or_profile_category)
     planum_or_profile_short_description = __get_planum_or_profile_short_description(properties)
@@ -59,7 +63,6 @@ def __import_geometry(geometry, properties, field_database):
     feature_identifier = __get_identifier(properties.get('strat_unit'), 'Feature')
     feature_segment_short_description = properties.get('info')
     find_identifier = __get_identifier(properties.get('find'), 'Find')
-    sample_identifier = __get_sample_identifier(properties)
 
     __validate(
         planum_or_profile_identifier, planum_or_profile_category, feature_identifier, sample_identifier,
@@ -148,16 +151,8 @@ def __validate(planum_or_profile_identifier, planum_or_profile_category, feature
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_INVALID_NAME + ' ' + file_name)
     elif planum_or_profile_identifier is None:
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_MISSING_EXCA_INT + ' ' + file_name)
-    elif __is_feature_identifier_missing(feature_identifier, sample_identifier, import_type):
+    elif import_type in ['featureSegment', 'find', 'referencePoints'] and feature_identifier is None:
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_MISSING_STRAT_UNIT + ' ' + file_name)
-
-def __is_feature_identifier_missing(feature_identifier, sample_identifier, import_type):
-    if import_type in ['featureSegment', 'find'] and feature_identifier is None:
-        return True
-    elif import_type == 'referencePoints' and sample_identifier is not None and feature_identifier is None:
-        return True
-    else:
-        return False
 
 def __update_excavation_area(field_database, geometry):
     resource_data = {
