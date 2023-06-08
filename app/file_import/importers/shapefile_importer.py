@@ -65,7 +65,7 @@ def __import_geometry(geometry, properties, field_database):
     find_identifier = __get_identifier(properties.get('find'), 'Find')
 
     __validate(
-        planum_or_profile_identifier, planum_or_profile_category, feature_identifier, sample_identifier,
+        planum_or_profile_identifier, planum_or_profile_category, feature_identifier,
         import_type, properties['file_name']
     )
 
@@ -143,7 +143,7 @@ def __is_excavation_area(properties):
 def __is_sample(properties):
     return settings.ShapefileImporter.SAMPLE_KEYWORD.lower() in properties.get('info', '').lower()
 
-def __validate(planum_or_profile_identifier, planum_or_profile_category, feature_identifier, sample_identifier,
+def __validate(planum_or_profile_identifier, planum_or_profile_category, feature_identifier,
                import_type, file_name):
     if import_type == 'excavationArea':
         return
@@ -151,7 +151,7 @@ def __validate(planum_or_profile_identifier, planum_or_profile_category, feature
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_INVALID_NAME + ' ' + file_name)
     elif planum_or_profile_identifier is None:
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_MISSING_EXCA_INT + ' ' + file_name)
-    elif import_type in ['featureSegment', 'find', 'referencePoints'] and feature_identifier is None:
+    elif import_type in ['featureSegment', 'referencePoints'] and feature_identifier is None:
         raise ValueError(messages.FileImport.ERROR_SHAPEFILE_MISSING_STRAT_UNIT + ' ' + file_name)
 
 def __update_excavation_area(field_database, geometry):
@@ -247,10 +247,12 @@ def __update_find_or_sample(field_database, excavation_area, feature, identifier
         'category': category,
         'geometry': geometry,
         'relations': {
-            'isRecordedIn': [excavation_area['resource']['id']],
-            'liesWithin': [feature['resource']['id']]
+            'isRecordedIn': [excavation_area['resource']['id']]
         }
     }
+
+    if feature is not None:
+        resource_data['relations']['liesWithin'] = [feature['resource']['id']]
 
     return field_database.populate_resource(resource_data)
 
