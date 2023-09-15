@@ -195,7 +195,7 @@ def __update_feature_group(field_database, excavation_area, planum_or_profile, i
     }
 
     if short_description is not None:
-        resource_data['amh-default:shortDescriptionFreetext'] = { 'de': short_description }
+        resource_data['shortDescriptionAddendum'] = { 'de': short_description }
     
     return field_database.populate_resource(resource_data)
 
@@ -234,7 +234,7 @@ def __update_feature_segment(field_database, excavation_area, planum_or_profile,
     }
 
     if short_description is not None:
-        resource_data['amh-default:shortDescriptionFreetext'] = { 'de': short_description }
+        resource_data['shortDescriptionAddendum'] = { 'de': short_description }
 
     return field_database.populate_resource(resource_data)
 
