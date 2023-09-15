@@ -9,12 +9,7 @@ class Fylr:
 
     def __init__(self, url, logger):
         self.url = url
-        self.session_url = join(url, Fylr.API_PATH, 'user', 'session')
-        self.search_url = join(url, Fylr.API_PATH, 'search')
-        self.session_auth_url = join(url, Fylr.API_PATH, 'session', 'authenticate')
         self.db_url = join(url, Fylr.API_PATH, 'db')
-        self.objects_url = join(url, Fylr.API_PATH, 'objects')
-        self.create_asset_url = join(url, Fylr.API_PATH, 'eas', 'put')
         self.logger = logger
 
     def acquire_access_token(self):
@@ -101,8 +96,8 @@ class Fylr:
         fields_data['_version'] = 1
         data[object_type] = fields_data
 
-        insert_url = join(self.db_url, object_type)
-        response = requests.post(insert_url, params=params, json=[data])
+        url = join(self.db_url, object_type)
+        response = requests.post(url, params=params, json=[data])
         if not response.ok:
             raise ConnectionError(response.text)
         return response.ok
@@ -116,8 +111,8 @@ class Fylr:
         if tags is not None:
             current_object['_tags'] = tags
 
-        update_url = join(self.db_url, object_type)  
-        response = requests.post(update_url, params=params, json=[current_object])
+        url = join(self.db_url, object_type)  
+        response = requests.post(url, params=params, json=[current_object])
         if not response.ok:
             raise ConnectionError(response.text)
         return response.ok
@@ -137,15 +132,16 @@ class Fylr:
         files = {
             'file': (filename, data, mimetype)
         }
-        response = requests.post(self.create_asset_url, params=params, files=files)
+        url = join(self.url, Fylr.API_PATH, 'eas', 'put')
+        response = requests.post(url, params=params, files=files)
         if not response.ok:
             raise ConnectionError(response.text)
         return response.json()
 
     def __search(self, query):
         params = { 'access_token': self.access_token }
-
-        response = requests.post(self.search_url, params=params, json={ 'search': [query] })
+        url = join(self.url, Fylr.API_PATH, 'search')
+        response = requests.post(url, params=params, json={ 'search': [query] })
         if response.status_code == 200:
             return json.loads(response.content)['objects']
         else:
