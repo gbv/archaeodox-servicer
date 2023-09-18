@@ -10,7 +10,9 @@ from app.file_import.importers import image_importer, worldfile_importer, csv_im
 def perform_import(import_object, fylr, logger):
     fylr.acquire_access_token()
     files = __get_files(import_object, fylr)
-    __import_files(files, import_object, fylr, logger)
+    results = __import_files(files, import_object, fylr, logger)
+    __create_result_object(results, import_object, fylr)
+    __delete_import_object(import_object, fylr)
 
 def __get_files(import_object, fylr):
     id = import_object['_id']
@@ -72,8 +74,7 @@ def __import_files(files, import_object, fylr, logger):
         file['result'] = __import_file(file, import_object, database, fylr, logger)
 
     files.sort(key=lambda file: file['original_index'])
-    results = list(map(lambda file: file['result'], files))
-    __create_result_object(results, import_object, fylr)
+    return list(map(lambda file: file['result'], files))
 
 def __import_file(file, import_object, database, fylr, logger):
     result = {
@@ -140,6 +141,9 @@ def __create_result_object(file_import_results, import_object, fylr):
     }
     tags = __get_tags(__is_failed(file_import_results))
     fylr.create_object('import_ergebnis', fields_data, pool=import_object['_pool'], tags=tags)
+
+def __delete_import_object(import_object, fylr):
+    fylr.delete_object('dokumente_extern', import_object['_id'])
 
 def __is_failed(file_import_results):
     for result in file_import_results:

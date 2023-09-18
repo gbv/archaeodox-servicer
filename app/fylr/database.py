@@ -117,6 +117,17 @@ class Fylr:
             raise ConnectionError(response.text)
         return response.ok
     
+    def delete_object(self, object_type, id):
+        params = { 'access_token': self.access_token, 'delete_policy': 'remove', 'confirm': 'delete' }
+        current_object = self.get_object_by_id(object_type, id)
+        current_version = current_object[object_type]['_version']
+        
+        url = join(self.db_url, object_type)
+        response = requests.delete(url, params=params, json=[[id, current_version]])
+        if not response.status_code == 200:
+            raise ConnectionError(response.text)
+        return response.ok
+
     def download_asset(self, url):
         response = requests.get(url + '&access_token=' + self.access_token)
         if response.ok:
