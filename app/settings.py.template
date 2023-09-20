@@ -38,6 +38,7 @@ class VorgangHandler:
     DELETED_TAG: 1
 
 class FileImport:
+    ORDER = ['csv', 'shapefile', 'image', 'worldfile']
     FORMATS = {
         'csv': { 'file_type': 'csv', 'expected_format': 'txt', 'importer': 'csv' },
         'jpg': { 'file_type': 'jpeg', 'expected_format': 'jpg', 'importer': 'image' },

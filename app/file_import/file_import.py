@@ -62,10 +62,10 @@ def __get_base_name(file_name):
 
 def __get_sorting_value(file):
     if file['format_settings'] is not None:
-        return file['format_settings']['importer']
+        return settings.FileImport.ORDER.index(file['format_settings']['importer'])
     else:
         # Import files without recognized format last
-        return 'z'
+        return len(settings.FileImport.ORDER)
 
 def __import_files(files, import_object, fylr, logger):
     database = __get_field_database(import_object)
