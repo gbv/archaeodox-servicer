@@ -24,5 +24,5 @@ services:
 networks:
   hostnet:
     external: true
-    name: fylr-archaeodox_fylr
+    name: fylr_fylr
 

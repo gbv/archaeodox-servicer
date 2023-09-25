@@ -27,9 +27,6 @@ def __get_files(import_object, fylr):
         file_name = file_information['original_filename']
         file_extension = file_name.split('.')[-1]
         file_url = dp.get(file_information, 'versions/original/url')
-        # TODO Remove
-        file_url = file_url.replace('http://localhost:8080', 'http://fylr:8080')
-        #
         format_settings = settings.FileImport.FORMATS.get(file_extension, None)
         import_settings = __get_import_settings(file_name)
         files.append({
