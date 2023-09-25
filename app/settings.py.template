@@ -38,23 +38,207 @@ class VorgangHandler:
     DELETED_TAG: 1
 
 class FileImport:
-    ORDER = ['csv', 'shapefile', 'image', 'worldfile']
+    ORDER = ['csv', 'shapefile', 'image', 'worldfile', 'fylr']
+    IMPORT_MAPPING = {
+        'DB': {
+            'document_type_concept_id': '5c4eefaf-1877-4d40-b76b-53e45b0b40b2',
+            'importers': {
+                'fylr': ['pdf', 'txt']
+            }
+        },
+        'DT': {
+            'document_type_concept_id': 'f03c4c18-f9e5-498f-b6e0-ac547f89b215',
+            'importers': {
+                'fylr': ['pdf', 'txt']
+            }
+        },
+        'DP': {
+            'document_type_concept_id': '9faf2ff6-4d19-4c10-bd30-b05a837afe82',
+            'importers': {
+                'fylr': ['pdf', 'txt']
+            }
+        },
+        'DV': {
+            'document_type_concept_id': 'b2010b57-0d1e-4a39-a197-8235ed7d5af9',
+            'importers': {
+                'fylr': ['pdf', 'txt']
+            }
+        },
+        'DI': {
+            'document_type_concept_id': 'f6812b27-cd3f-4635-83f6-64641ba65edc',
+            'importers': {
+                'fylr': ['pdf', 'txt']
+            }
+        },
+        'DE': {
+            'document_type_concept_id': '6116c148-8817-4271-bb99-59f71bfcabf5',
+            'importers': {
+                'fylr': ['pdf', 'txt']
+            }
+        },
+        'DH': {
+            'document_type_concept_id': '3894ae68-f890-414e-b809-4b747c141f5f',
+            'importers': {
+                'fylr': ['pdf', 'txt']
+            }
+        },
+        'VP': {
+            'document_type_concept_id': '659b8355-f357-4000-bfe1-4a116f89d2d5',
+            'importers': {
+                'fylr': ['obj', 'png', 'pts']
+            }
+        },
+        'V': {
+            'document_type_concept_id': '977615df-0b40-4915-9a01-d5ec71b5bb71',
+            'importers': {
+                'fylr': ['csv', 'dat', 'gsi', 'txt']
+            }
+        },
+        'VK': {
+            'document_type_concept_id': 'a1b54c0d-71ca-4240-8715-a2e7898fcc37',
+            'importers': {
+                'fylr': ['csv', 'dat', 'gsi', 'txt']
+            }
+        },
+        'VI': {
+            'document_type_concept_id': '659b8355-f357-4000-bfe1-4a116f89d2d5',
+            'importers': {
+                'fylr': ['csv', 'dat', 'gsi', 'txt']
+            }
+        },
+        'F': {
+            'document_type_concept_id': 'eb5fa0d5-1ae0-4780-afeb-829fc7741f9e',
+            'importers': {
+                'image': ['jpeg', 'tiff']
+            }
+        },
+        'FG': {
+            'document_type_concept_id': 'eeacef86-1be9-4c60-bb88-b738d02d0786',
+            'importers': {
+                'fylr': ['jpeg', 'tiff']
+            }
+        },
+        'SFM': {
+            'document_type_concept_id': '847cede5-193a-499a-b25c-49ade7179bc3',
+            'importers': {
+                'fylr': ['jpeg', 'tiff']
+            }
+        },
+        'GV': {
+            'document_type_concept_id': 'bee18381-1966-417a-9754-d27e977dcc3a',
+            'importers': {
+                'shapefile': ['zip']
+            }
+        },
+        'GR': {
+            'document_type_concept_id': '4661e519-6f95-4d40-88da-d7e1645e9396',
+            'importers': {
+                'fylr': ['jgw', 'jpeg', 'pgw', 'png', 'tfw', 'tiff']
+            }
+        },
+        'G': {
+            'document_type_concept_id': '3cbdb896-b45d-41be-b62c-e728648a85db',
+            'importers': {
+                'fylr': ['zip']
+            }
+        },
+        'FLZ': {
+            'document_type_concept_id': 'fa9d60ed-d1d4-4963-ae19-72d8c65e79c1',
+            'importers': {
+                'image': ['jpg', 'tiff', 'png'],
+                'worldfile': ['jgw', 'pgw', 'tfw'],
+                'fylr': ['pdf']
+            },
+            'numbered': True
+        },
+        'PRZ': {
+            'document_type_concept_id': 'fa9d60ed-d1d4-4963-ae19-72d8c65e79c1',
+            'importers': {
+                'image': ['jpg', 'tiff', 'png'],
+                'worldfile': ['jgw', 'pgw', 'tfw'],
+                'fylr': ['pdf']
+            },
+            'numbered': True
+        },
+        'ZF': {
+            'document_type_concept_id': 'ff294c40-4e16-4d59-bfd7-322d176f5be8',
+            'importers': {
+                'fylr': ['pdf']
+            }
+        },
+        'ZA': {
+            'document_type_concept_id': '42ea703b-8c4f-45bf-bf5b-519432585ed1',
+            'importers': {
+                'fylr': ['pdf']
+            }
+        },
+        'BB': {
+            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'importers': {
+                'fylr': ['csv', 'pdf'],
+                'csv': ['csv']
+            }
+        },
+        'BK': {
+            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'importers': {
+                'fylr': ['csv', 'pdf'],
+                'csv': ['csv']
+            }
+        },
+        'BF': {
+            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'importers': {
+                'fylr': ['csv', 'pdf'],
+                'csv': ['csv']
+            }
+        },
+        'BP': {
+            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'importers': {
+                'fylr': ['csv', 'pdf'],
+                'csv': ['csv']
+            }
+        },
+        'BZ': {
+            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'importers': {
+                'fylr': ['csv', 'pdf'],
+                'csv': ['csv']
+            }
+        },
+        'BF': {
+            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'importers': {
+                'fylr': ['csv', 'pdf'],
+                'csv': ['csv']
+            }
+        },
+        'BD': {
+            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'importers': {
+                'fylr': ['csv', 'pdf']
+            }
+        }
+    }
     FORMATS = {
-        'csv': { 'file_type': 'csv', 'expected_format': 'txt', 'importer': 'csv' },
-        'jpg': { 'file_type': 'jpeg', 'expected_format': 'jpg', 'importer': 'image' },
-        'jpeg': { 'file_type': 'jpeg', 'expected_format': 'jpg', 'importer': 'image' },
-        'tif': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
-        'tiff': { 'file_type': 'tiff', 'expected_format': 'tif', 'importer': 'image' },
-        'png': { 'file_type': 'png', 'expected_format': 'png', 'importer': 'image' },
-        'jgw': { 'file_type': 'jgw', 'expected_format': 'txt', 'importer': 'worldfile' },
-        'jpgw': { 'file_type': 'jgw', 'expected_format': 'txt', 'importer': 'worldfile' },
-        'jpegw': { 'file_type': 'jgw', 'expected_format': 'txt', 'importer': 'worldfile' },
-        'tfw': { 'file_type': 'tfw', 'expected_format': 'txt', 'importer': 'worldfile' },
-        'tifw': { 'file_type': 'tfw', 'expected_format': 'txt', 'importer': 'worldfile' },
-        'tiffw': { 'file_type': 'tfw', 'expected_format': 'txt', 'importer': 'worldfile' },
-        'pgw': { 'file_type': 'pgw', 'expected_format': 'txt', 'importer': 'worldfile' },
-        'pngw': { 'file_type': 'pgw', 'expected_format': 'txt', 'importer': 'worldfile' },
-        'zip': { 'file_type': 'zip', 'expected_format': 'zip', 'importer': 'shapefile' }
+        'csv': { 'file_type': 'csv', 'expected_format': 'txt' },
+        'jpg': { 'file_type': 'jpeg', 'expected_format': 'jpg' },
+        'jpeg': { 'file_type': 'jpeg', 'expected_format': 'jpg' },
+        'jgw': { 'file_type': 'jgw', 'expected_format': 'txt' },
+        'jpgw': { 'file_type': 'jgw', 'expected_format': 'txt' },
+        'jpegw': { 'file_type': 'jgw', 'expected_format': 'txt' },
+        'pdf': { 'file_type': 'pdf', 'expected_format': 'pdf' },
+        'png': { 'file_type': 'png', 'expected_format': 'png' },
+        'pgw': { 'file_type': 'pgw', 'expected_format': 'txt' },
+        'pngw': { 'file_type': 'pgw', 'expected_format': 'txt' },
+        'tif': { 'file_type': 'tiff', 'expected_format': 'tif' },
+        'tiff': { 'file_type': 'tiff', 'expected_format': 'tif' },
+        'tfw': { 'file_type': 'tfw', 'expected_format': 'txt' },
+        'tifw': { 'file_type': 'tfw', 'expected_format': 'txt' },
+        'tiffw': { 'file_type': 'tfw', 'expected_format': 'txt' },
+        'txt': { 'file_type': 'txt', 'expected_format': 'txt' },
+        'zip': { 'file_type': 'zip', 'expected_format': 'zip' }
     }
     SUCCESS_TAG_ID = 2
     FAILURE_TAG_ID = 3
