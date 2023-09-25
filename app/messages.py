@@ -15,3 +15,6 @@ class FileImport:
     ERROR_MISSING_GEOREFERENCE = 'Zu diesem Bild wurden keine Georeferenzierungsdaten gefunden. Es dürfen ausschließlich georeferenzierte Bilder (GeoTIFF oder zusätzlicher Import eines Worldfiles) als Planzeichnungen importiert werden.'
     ERROR_NO_WORLDFILE_MATCH = 'Das Worldfile konnte nicht eindeutig einer Bilddatei zugewiesen werden.'
     ERROR_INVALID_WORLDFILE = 'Die Datei ist kein gültiges Worldfile.'
+    ERROR_PERSON_NOT_FOUND = 'Für diese Person bzw. Institution konnte kein Datensatz gefunden werden:'
+    ERROR_DOCUMENT_TYPE_CONCEPT_NOT_FOUND = 'Das Konzept eines Dokumententyps konnte nicht in Dante gefunden werden. Konzept-ID:'
+    

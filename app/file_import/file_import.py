@@ -5,7 +5,7 @@ from app import settings, messages
 from app.field.database import FieldDatabase
 from app.field.hub import FieldHub
 from app.field import error_messages as field_error_messages
-from app.file_import.importers import image_importer, worldfile_importer, csv_importer, shapefile_importer
+from app.file_import.importers import image_importer, worldfile_importer, csv_importer, shapefile_importer, fylr_importer
 
 
 def perform_import(import_object, fylr, logger):
@@ -36,6 +36,7 @@ def __get_files(import_object, fylr):
             'name': file_name,
             'data': fylr.download_asset(file_url),
             'mimetype': dp.get(file_information, 'versions/original/technical_metadata/mime_type'),
+            'user_name': dp.get(file_information, 'upload_user/user/_generated_displayname'),
             'format_settings': format_settings,
             'importers': __get_importers(format_settings, import_settings),
             'document_type_concept_id': __get_document_type_concept_id(import_settings),
@@ -122,7 +123,7 @@ def __import_file(file, import_object, database, fylr, logger):
     try:
         __validate(file, result['dokumententyp'], import_object, database)
         for importer in file['importers']:
-            __run_importer(importer, file, file['data'], database)
+            __run_importer(importer, file, file['data'], import_object, database, fylr)
         result['fehlermeldung'] = messages.FileImport.SUCCESS
     except Exception as error:
         logger.debug(f'Import failed for file {file["name"]}', exc_info=True)
@@ -155,7 +156,7 @@ def __validate(file, file_type_object, import_object, database):
     if len(file['importers']) == 0:
         raise ValueError(messages.FileImport.ERROR_UNSUPPORTED_FILE_FORMAT_FOR_DOCUMENT_TYPE)
 
-def __run_importer(importer, file, file_data, database):
+def __run_importer(importer, file, file_data, import_object, database, fylr):
     if importer == 'image':
         image_importer.run(file_data, file['name'], file['has_worldfile'], database)
     elif importer == 'worldfile':
@@ -164,6 +165,9 @@ def __run_importer(importer, file, file_data, database):
         csv_importer.run(file_data, file['name'], database)
     elif importer == 'shapefile':
         shapefile_importer.run(file_data, database)
+    elif importer == 'fylr':
+        fylr_importer.run(__get_cloned_asset(file, fylr), file['document_type_concept_id'], file['user_name'],
+                          import_object['_pool'], fylr)
 
 def __get_field_database(import_object):
     if 'vorgangsname' not in import_object or 'passwort' not in import_object:

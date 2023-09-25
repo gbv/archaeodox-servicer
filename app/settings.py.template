@@ -39,6 +39,7 @@ class VorgangHandler:
 
 class FileImport:
     ORDER = ['csv', 'shapefile', 'image', 'worldfile', 'fylr']
+    DOCUMENT_TYPE_VOCABULARY_NAME = 'amh_documentary_step_role'
     IMPORT_MAPPING = {
         'DB': {
             'document_type_concept_id': '5c4eefaf-1877-4d40-b76b-53e45b0b40b2',
