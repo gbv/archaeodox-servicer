@@ -53,10 +53,10 @@ def __get_files(import_object, fylr):
 
 def __get_import_settings(file_name):
     document_type_code = __get_document_type_code(file_name)
-    if re.match(r'^[A-Z]{1,3}\d*$', document_type_code):
+    if re.match(r'^[A-Z]{1,3}\d+$', document_type_code):
         document_type_code = re.search(r'^[A-Z]{1,3}', document_type_code)[0]
         import_settings = settings.FileImport.IMPORT_MAPPING.get(document_type_code, None)
-        if import_settings is not None and import_settings['numbered'] == True:
+        if import_settings is not None and import_settings.get('numbered', False) == True:
             return import_settings
         else:
             return None
