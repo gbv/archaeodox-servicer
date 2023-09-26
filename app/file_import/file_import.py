@@ -70,7 +70,7 @@ def __get_document_type_code(file_name):
 
 def __get_importers(format_settings, import_settings):
     importers = []
-    if import_settings is not None:
+    if format_settings is not None and import_settings is not None:
         for importer, file_formats in import_settings['importers'].items():
             if format_settings['file_type'] in file_formats:
                 importers.append(importer)
