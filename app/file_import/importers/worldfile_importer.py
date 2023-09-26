@@ -14,9 +14,13 @@ def run(worldfile_data, worldfile_name, field_database):
     field_database.populate_resource(changed_fields, image_document['resource']['identifier'])
 
 def __get_image_file_extensions():
-    formats = settings.FileImport.FORMATS
-    extensions = formats.keys()
-    return filter(lambda extension: formats[extension]['importer'] == 'image', extensions)
+    formats = []
+    for document_type_configuration in settings.FileImport.IMPORT_MAPPING.values():
+        for format in document_type_configuration['importers'].get('image', []):
+            if format not in formats:
+                formats.append(format)
+    format_settings = settings.FileImport.FORMATS
+    return filter(lambda extension: format_settings[extension]['file_type'] in formats, format_settings.keys())
 
 def __get_image_document(worldfile_name, field_database, image_file_extensions):
         possible_image_file_names = __get_possible_image_file_names(worldfile_name, image_file_extensions)
