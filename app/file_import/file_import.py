@@ -74,6 +74,7 @@ def __get_importers(format_settings, import_settings):
         for importer, file_formats in import_settings['importers'].items():
             if format_settings['file_type'] in file_formats:
                 importers.append(importer)
+    importers.sort(key=lambda importer: settings.FileImport.ORDER.index(importer))
     return importers
 
 def __get_image_files(files):
