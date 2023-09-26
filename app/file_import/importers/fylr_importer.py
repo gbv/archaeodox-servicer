@@ -26,7 +26,7 @@ def __get_description(file_name):
     return file_name[second_underscore_index:].replace('_', ' ').strip()
 
 def __remove_extension(file_name):
-    extension_index = file_name.rfind('.')
+    extension_index = file_name.find('.')
     return file_name[:extension_index]
 
 def __get_concept_name(concept_id):
