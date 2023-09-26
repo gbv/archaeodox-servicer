@@ -164,7 +164,7 @@ def __run_importer(importer, file, file_data, import_object, database, fylr):
         shapefile_importer.run(file_data, database)
     elif importer == 'fylr':
         fylr_importer.run(__get_cloned_asset(file, fylr), file['document_type_concept_id'], file['user_name'],
-                          import_object['_pool'], fylr)
+                          file['name'], import_object['_pool'], fylr)
 
 def __get_field_database(import_object):
     if 'vorgangsname' not in import_object or 'passwort' not in import_object:
