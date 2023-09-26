@@ -1,7 +1,7 @@
 import csv, io
 from dpath import util as dp
 
-from app import settings
+from app import settings, messages
 
 
 def run(file_data, file_name, field_database):
@@ -21,12 +21,12 @@ def __get_category(file_name):
     for category in settings.CSVImporter.ALLOWED_CATEGORIES:
         if extracted_category.replace('+', ':').lower() == category.lower():
             return category
-    raise ValueError(f'Failed to import file: {file_name}. Category {extracted_category} is not a valid category.')
+    raise ValueError(f'{messages.FileImport.ERROR_CSV_CATEGORY_NOT_CONFIGURED} {extracted_category}')
 
 def __extract_category_from_file_name(file_name):
     segments = file_name.split('.')
     if len(segments) < 3:
-        raise ValueError(f'No category found in file name: {file_name}')
+        raise ValueError(messages.FileImport.ERROR_CSV_CATEGORY_NOT_FOUND)
     else:
         return segments[-2]
 
