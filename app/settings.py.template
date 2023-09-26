@@ -146,7 +146,7 @@ class FileImport:
         'FLZ': {
             'document_type_concept_id': 'fa9d60ed-d1d4-4963-ae19-72d8c65e79c1',
             'importers': {
-                'image': ['jpg', 'tiff', 'png'],
+                'image': ['jpeg', 'tiff', 'png'],
                 'worldfile': ['jgw', 'pgw', 'tfw'],
                 'fylr': ['pdf']
             },
@@ -155,7 +155,7 @@ class FileImport:
         'PRZ': {
             'document_type_concept_id': 'fa9d60ed-d1d4-4963-ae19-72d8c65e79c1',
             'importers': {
-                'image': ['jpg', 'tiff', 'png'],
+                'image': ['jpeg', 'tiff', 'png'],
                 'worldfile': ['jgw', 'pgw', 'tfw'],
                 'fylr': ['pdf']
             },
