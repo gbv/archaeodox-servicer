@@ -324,7 +324,7 @@ def __get_base_identifier(document):
 
 def __is_existing(geometry, existing_feature_segments):
     for feature_segment in existing_feature_segments:
-        feature_segment_geometry = feature_segment['resource']['geometry']
+        feature_segment_geometry = feature_segment['resource'].get('geometry', None)
         if feature_segment_geometry is not None and diff(geometry, feature_segment_geometry) == {}:
             return True
     return False
