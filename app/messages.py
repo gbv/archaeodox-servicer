@@ -20,3 +20,4 @@ class FileImport:
     ERROR_INVALID_DATE = 'Das im Dateinamen angegebene Datum ist ungültig:'
     ERROR_CSV_CATEGORY_NOT_FOUND = 'Im Dateinamen konnte keine Kategoriebezeichnung gefunden werden.'
     ERROR_CSV_CATEGORY_NOT_CONFIGURED = 'Im Dateinamen ist eine Kategorie angegeben, die in der Field-Datenbank nicht konfiguriert ist:'
+    ERROR_MIMETYPE_NOT_DETECTED = 'Der Medientyp der Datei konnte nicht ermittelt werden.'

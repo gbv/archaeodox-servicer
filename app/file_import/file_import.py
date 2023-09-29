@@ -32,8 +32,8 @@ def __get_files(import_object, fylr):
         files.append({
             'name': file_name,
             'data': fylr.download_asset(file_url),
-            'mimetype': dp.get(file_information, 'versions/original/technical_metadata/mime_type'),
-            'user_name': dp.get(file_information, 'upload_user/user/_generated_displayname'),
+            'mimetype': dp.get(file_information, 'versions/original/technical_metadata/mime_type', default=None),
+            'user_name': dp.get(file_information, 'upload_user/user/_generated_displayname', default=None),
             'format_settings': format_settings,
             'importers': __get_importers(format_settings, import_settings),
             'document_type_concept_id': __get_document_type_concept_id(import_settings),
@@ -132,6 +132,8 @@ def __import_file(file, import_object, database, fylr, logger):
     return result
 
 def __get_cloned_asset(file, fylr):
+    if file['mimetype'] is None:
+        return None
     cloned_asset = fylr.create_asset(file['name'], file['data'], file['mimetype'])
     cloned_asset[0]['preferred'] = True
     return cloned_asset
@@ -143,6 +145,8 @@ def __get_file_type_object(file, fylr):
         return fylr.get_object_by_field_value('import_ergebnis_dateityp', 'name', file['format_settings']['file_type'])
 
 def __validate(file, file_type_object, import_object, database):
+    if file['mimetype'] is None:
+        raise ValueError(messages.FileImport.ERROR_MIMETYPE_NOT_DETECTED)
     if database is None:
         raise ValueError(messages.FileImport.ERROR_MISSING_CREDENTIALS)
     if not file['name'].startswith(import_object['vorgangsname']):
