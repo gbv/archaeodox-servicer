@@ -48,7 +48,7 @@ class FileImport:
             }
         },
         'DT': {
-            'document_type_concept_id': 'f03c4c18-f9e5-498f-b6e0-ac547f89b215',
+            'document_type_concept_id': '8fd96e3b-aaac-44d4-88fa-a866a45f88b8',
             'importers': {
                 'fylr': ['pdf', 'txt']
             }
@@ -84,7 +84,7 @@ class FileImport:
             }
         },
         'VP': {
-            'document_type_concept_id': '659b8355-f357-4000-bfe1-4a116f89d2d5',
+            'document_type_concept_id': 'd28474f2-6946-4eb7-b14d-aac27e322aa0',
             'importers': {
                 'fylr': ['obj', 'png', 'pts']
             }
@@ -102,7 +102,7 @@ class FileImport:
             }
         },
         'VI': {
-            'document_type_concept_id': '659b8355-f357-4000-bfe1-4a116f89d2d5',
+            'document_type_concept_id': '46453e4c-585f-4f0e-8122-99cda0664b39',
             'importers': {
                 'fylr': ['csv', 'dat', 'gsi', 'txt']
             }
@@ -174,49 +174,49 @@ class FileImport:
             }
         },
         'BB': {
-            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'document_type_concept_id': '7adddb02-e36c-4304-b2fe-f8c9c2b4ddf2',
             'importers': {
                 'fylr': ['csv', 'pdf'],
                 'csv': ['csv']
             }
         },
         'BK': {
-            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'document_type_concept_id': '457ba3b7-c755-46cc-a58f-5b9f3d201fca',
             'importers': {
                 'fylr': ['csv', 'pdf'],
                 'csv': ['csv']
             }
         },
         'BF': {
-            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'document_type_concept_id': 'e4ee23ed-fe5e-42df-bd6f-be4843c0cd7e',
             'importers': {
                 'fylr': ['csv', 'pdf'],
                 'csv': ['csv']
             }
         },
         'BP': {
-            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'document_type_concept_id': '82328aa3-539c-493a-af4e-5decc6033d69',
             'importers': {
                 'fylr': ['csv', 'pdf'],
                 'csv': ['csv']
             }
         },
         'BZ': {
-            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'document_type_concept_id': 'bd5543f8-8e6f-4fd9-a6d8-496822cd4527',
             'importers': {
                 'fylr': ['csv', 'pdf'],
                 'csv': ['csv']
             }
         },
         'BF': {
-            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'document_type_concept_id': '7c12950e-e11b-4d49-a8d8-a84ac8a95832',
             'importers': {
                 'fylr': ['csv', 'pdf'],
                 'csv': ['csv']
             }
         },
         'BD': {
-            'document_type_concept_id': '7b57d556-30c6-4ef5-a9a4-b1d8c947f251',
+            'document_type_concept_id': '07fe15ee-61e6-440d-9398-ac2503887f0c',
             'importers': {
                 'fylr': ['csv', 'pdf']
             }
