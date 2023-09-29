@@ -17,5 +17,6 @@ class FileImport:
     ERROR_INVALID_WORLDFILE = 'Die Datei ist kein gültiges Worldfile.'
     ERROR_PERSON_NOT_FOUND = 'Für diese Person bzw. Institution konnte kein Datensatz gefunden werden:'
     ERROR_DOCUMENT_TYPE_CONCEPT_NOT_FOUND = 'Das Konzept eines Dokumententyps konnte nicht in Dante gefunden werden. Konzept-ID:'
+    ERROR_INVALID_DATE = 'Das im Dateinamen angegebene Datum ist ungültig:'
     ERROR_CSV_CATEGORY_NOT_FOUND = 'Im Dateinamen konnte keine Kategoriebezeichnung gefunden werden.'
     ERROR_CSV_CATEGORY_NOT_CONFIGURED = 'Im Dateinamen ist eine Kategorie angegeben, die in der Field-Datenbank nicht konfiguriert ist:'
