@@ -9,7 +9,8 @@ def run(cloned_asset, document_type_concept_id, user_name, file_name, vorgang_na
     person = __get_person(user_name, fylr)
     document_type_concept = __get_document_type_concept(document_type_concept_id)
     (description, date) = __parse_file_name(file_name)
-    __create_fylr_object(cloned_asset, document_type_concept, person, description, date, vorgang, fylr)
+    document = __create_document_object(cloned_asset, document_type_concept, person, description, date, vorgang, fylr)
+    __add_document_to_vorgang(document, vorgang, fylr)
 
 def __get_vorgang(vorgang_name, fylr):
     vorgang = fylr.get_object_by_field_value('vorgang', 'vorgang', vorgang_name)
@@ -28,6 +29,13 @@ def __get_document_type_concept(concept_id):
         'conceptURI': f'{settings.Dante.VOCABULARY_URI_BASE}/{settings.FileImport.DOCUMENT_TYPE_VOCABULARY_NAME}/{concept_id}',
         'conceptName': __get_concept_name(concept_id)
     }
+
+def __get_concept_name(concept_id):
+    dante_database = DanteDatabase(settings.Dante.HOST_URL)
+    concept = dante_database.get(settings.FileImport.DOCUMENT_TYPE_VOCABULARY_NAME, concept_id)
+    if concept is None:
+        raise ValueError(f'{messages.FileImport.ERROR_DOCUMENT_TYPE_CONCEPT_NOT_FOUND} {concept_id}')
+    return concept['prefLabel']['de']
 
 def __parse_file_name(file_name):
     file_name = __remove_extension(file_name)
@@ -56,14 +64,7 @@ def __validate_date(date_string, year, month, day):
     except Exception:
         raise ValueError(f'{messages.FileImport.ERROR_INVALID_DATE} {date_string}')
 
-def __get_concept_name(concept_id):
-    dante_database = DanteDatabase(settings.Dante.HOST_URL)
-    concept = dante_database.get(settings.FileImport.DOCUMENT_TYPE_VOCABULARY_NAME, concept_id)
-    if concept is None:
-        raise ValueError(f'{messages.FileImport.ERROR_DOCUMENT_TYPE_CONCEPT_NOT_FOUND} {concept_id}')
-    return concept['prefLabel']['de']
-
-def __create_fylr_object(cloned_asset, document_type_concept, person, description, date, vorgang, fylr):
+def __create_document_object(cloned_asset, document_type_concept, person, description, date, vorgang, fylr):
     object = {
         'typ': document_type_concept,
         'datei': cloned_asset,
@@ -76,4 +77,14 @@ def __create_fylr_object(cloned_asset, document_type_concept, person, descriptio
             'value': date
         }
 
-    fylr.create_object('dokumente_manuell', object, pool=vorgang['vorgang']['_pool'])
+    return fylr.create_object('dokumente_manuell', object, pool=vorgang['vorgang']['_pool'])
+
+def __add_document_to_vorgang(document, vorgang, fylr):
+    entry = { 'lk_dokument': document }
+    data = vorgang['vorgang']
+
+    if data.get('_nested:vorgang__dokumente', None) is None:
+        data['_nested:vorgang__dokumente'] = []
+    data['_nested:vorgang__dokumente'].append(entry)
+
+    fylr.update_object('vorgang', data['_id'], data)
