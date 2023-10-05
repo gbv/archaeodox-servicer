@@ -37,7 +37,7 @@ def __get_files(import_object, fylr):
             'format_settings': format_settings,
             'importers': __get_importers(format_settings, import_settings),
             'document_type_concept_id': __get_document_type_concept_id(import_settings),
-            'detected_format': file_information['technical_metadata']['file_type_extension'],
+            'detected_format': dp.get(file_information, 'technical_metadata/file_type_extension', default=None),
             'original_index': index
         })
     
