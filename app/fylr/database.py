@@ -100,7 +100,7 @@ class Fylr:
         response = requests.post(url, params=params, json=[data])
         if not response.ok:
             raise ConnectionError(response.text)
-        return response.ok
+        return response.json()[0]
 
     def update_object(self, object_type, id, fields_data, tags=None):
         params = { 'access_token': self.access_token }
