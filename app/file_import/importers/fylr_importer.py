@@ -4,11 +4,18 @@ from app import settings, messages
 from app.dante.database import DanteDatabase
 
 
-def run(cloned_asset, document_type_concept_id, user_name, file_name, pool, fylr):
+def run(cloned_asset, document_type_concept_id, user_name, file_name, vorgang_name, fylr):
+    vorgang = __get_vorgang(vorgang_name, fylr)
     person = __get_person(user_name, fylr)
     document_type_concept = __get_document_type_concept(document_type_concept_id)
     (description, date) = __parse_file_name(file_name)
-    __create_fylr_object(cloned_asset, document_type_concept, person, description, date, pool, fylr)
+    __create_fylr_object(cloned_asset, document_type_concept, person, description, date, vorgang, fylr)
+
+def __get_vorgang(vorgang_name, fylr):
+    vorgang = fylr.get_object_by_field_value('vorgang', 'vorgang', vorgang_name)
+    if vorgang is None:
+        raise ValueError(f'{messages.FileImport.ERROR_VORGANG_NOT_FOUND} {vorgang_name}')
+    return vorgang
 
 def __get_person(user_name, fylr):
     result = fylr.get_object_by_field_value('person_institution', 'vollstaendiger_name', user_name)
@@ -56,7 +63,7 @@ def __get_concept_name(concept_id):
         raise ValueError(f'{messages.FileImport.ERROR_DOCUMENT_TYPE_CONCEPT_NOT_FOUND} {concept_id}')
     return concept['prefLabel']['de']
 
-def __create_fylr_object(cloned_asset, document_type_concept, person, description, date, pool, fylr):
+def __create_fylr_object(cloned_asset, document_type_concept, person, description, date, vorgang, fylr):
     object = {
         'typ': document_type_concept,
         'datei': cloned_asset,
@@ -69,4 +76,4 @@ def __create_fylr_object(cloned_asset, document_type_concept, person, descriptio
             'value': date
         }
 
-    fylr.create_object('dokumente_manuell', object, pool=pool)
+    fylr.create_object('dokumente_manuell', object, pool=vorgang['vorgang']['_pool'])

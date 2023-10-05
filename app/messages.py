@@ -21,3 +21,4 @@ class FileImport:
     ERROR_CSV_CATEGORY_NOT_FOUND = 'Im Dateinamen konnte keine Kategoriebezeichnung gefunden werden.'
     ERROR_CSV_CATEGORY_NOT_CONFIGURED = 'Im Dateinamen ist eine Kategorie angegeben, die in der Field-Datenbank nicht konfiguriert ist:'
     ERROR_MIMETYPE_NOT_DETECTED = 'Der Medientyp der Datei konnte nicht ermittelt werden.'
+    ERROR_VORGANG_NOT_FOUND = 'Der Vorgang konnte nicht gefunden werden:'
