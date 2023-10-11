@@ -208,7 +208,7 @@ class FileImport:
                 'csv': ['csv']
             }
         },
-        'BF': {
+        'BFO': {
             'document_type_concept_id': '7c12950e-e11b-4d49-a8d8-a84ac8a95832',
             'importers': {
                 'fylr': ['csv', 'pdf'],
