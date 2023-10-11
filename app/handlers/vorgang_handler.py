@@ -36,7 +36,7 @@ class VorgangHandler(FylrHandler):
     def __validate_project_identifier(self, identifier):
         if identifier is None or len(identifier) == 0:
             raise ValueError('Field "vorgang" has to be filled out')
-        if self.fylr.get_object_by_field_value('field_datenbank', 'db_name', identifier) != None:
+        if self.fylr.get_object_by_field_values('field_datenbank', { 'db_name': identifier }) != None:
             raise ValueError(f'Field database "{identifier}" already exists.')
         FieldDatabase.check_database_name(identifier)
 

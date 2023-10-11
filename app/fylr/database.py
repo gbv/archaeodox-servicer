@@ -46,8 +46,16 @@ class Fylr:
             raise ValueError(f'{response.status_code}: {response.text}')
         return result
 
-    def get_object_by_field_value(self, object_type, field_name, field_value):
-        search_result = self.field_search(object_type, field_name, field_value)
+    def get_object_by_field_values(self, object_type, field_values):
+        query = { 'type': 'complex', 'search': [] }
+        for field_name, field_value in field_values.items():
+            query['search'].append({
+                'type': 'in',
+                'bool': 'must',
+                'fields': ['.'.join((object_type, field_name))],
+                'in': [field_value]
+            })
+        search_result = self.__search(query)
         if search_result is not None and len(search_result) == 1:
             result_object = search_result[0]
             del result_object['_score']
@@ -55,15 +63,6 @@ class Fylr:
         else:
             return None
 
-    def field_search(self, object_type, field_name, field_value):
-        query = {
-            'type': 'in',
-            'bool': 'must',
-            'fields': ['.'.join((object_type, field_name))],
-            'in': [field_value]
-        }
-        return self.__search(query)
-        
     def changelog_search(self, object_type, from_date, to_date, operation):
         query = {
             'type': 'complex',
