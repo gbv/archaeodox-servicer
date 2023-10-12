@@ -63,7 +63,8 @@ def __get_import_settings(file_name):
         return settings.FileImport.IMPORT_MAPPING.get(document_type_code, None)
 
 def __get_document_type_code(file_name):
-    file_name_segments = file_name.split('_')
+    base_name = __get_base_name(file_name)
+    file_name_segments = base_name.split('_')
     if len(file_name_segments) < 2:
         return None
     return file_name_segments[1]
