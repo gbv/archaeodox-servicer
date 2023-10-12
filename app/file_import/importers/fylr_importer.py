@@ -8,7 +8,7 @@ def run(cloned_asset, document_type_concept_id, user_name, file_name, vorgang_na
     (vorgang, person, document_type_concept, description, date) = __get_document_data(
         document_type_concept_id, user_name, file_name, vorgang_name, fylr
     )
-    document = __get_document_object(document_type_concept, description, date, fylr)
+    document = __get_document_object(file_name, fylr)
     if document is not None:
         __update_document_object(document, cloned_asset, person, fylr)
     else:
@@ -74,14 +74,11 @@ def __validate_date(date_string, year, month, day):
     except Exception:
         raise ValueError(f'{messages.FileImport.ERROR_INVALID_DATE} {date_string}')
 
-def __get_document_object(document_type_concept, description, date, fylr):
+def __get_document_object(file_name, fylr):
     return fylr.get_object_by_field_values(
         'dokumente_manuell',
-        {
-            'typ.conceptURI': document_type_concept['conceptURI'],
-            'beschreibung': description,
-            'datum': date
-        })
+        { 'datei.original_filename': file_name }
+    )
 
 def __update_document_object(document, cloned_asset, person, fylr):
     data = document['dokumente_manuell']
