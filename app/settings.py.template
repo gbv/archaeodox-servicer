@@ -223,16 +223,20 @@ class FileImport:
         }
     }
     FORMATS = {
+        'dat': { 'file_type': 'dat', 'expected_format': 'txt' },
         'csv': { 'file_type': 'csv', 'expected_format': 'txt' },
+        'gsi': { 'file_type': 'gsi', 'expected_format': 'txt' },
         'jpg': { 'file_type': 'jpeg', 'expected_format': 'jpg' },
         'jpeg': { 'file_type': 'jpeg', 'expected_format': 'jpg' },
         'jgw': { 'file_type': 'jgw', 'expected_format': 'txt' },
         'jpgw': { 'file_type': 'jgw', 'expected_format': 'txt' },
         'jpegw': { 'file_type': 'jgw', 'expected_format': 'txt' },
+        'obj': { 'file_type': 'obj', 'expected_format': 'txt' },
         'pdf': { 'file_type': 'pdf', 'expected_format': 'pdf' },
         'png': { 'file_type': 'png', 'expected_format': 'png' },
         'pgw': { 'file_type': 'pgw', 'expected_format': 'txt' },
         'pngw': { 'file_type': 'pgw', 'expected_format': 'txt' },
+        'pts': { 'file_type': 'pts', 'expected_format': 'txt' },
         'tif': { 'file_type': 'tiff', 'expected_format': 'tif' },
         'tiff': { 'file_type': 'tiff', 'expected_format': 'tif' },
         'tfw': { 'file_type': 'tfw', 'expected_format': 'txt' },
