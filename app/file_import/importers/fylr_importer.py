@@ -5,17 +5,22 @@ from app.dante.database import DanteDatabase
 
 
 def run(cloned_asset, document_type_concept_id, user_name, file_name, vorgang_name, fylr):
-    vorgang = __get_vorgang(vorgang_name, fylr)
-    person = __get_person(user_name, fylr)
-    document_type_concept_uri = __get_document_type_concept_uri(document_type_concept_id)
-    document_type_concept = __get_document_type_concept(document_type_concept_id, document_type_concept_uri)
-    (description, date) = __parse_file_name(file_name)
-    document = __get_document_object(document_type_concept_uri, description, date, fylr)
+    (vorgang, person, document_type_concept, description, date) = __get_document_data(
+        document_type_concept_id, user_name, file_name, vorgang_name, fylr
+    )
+    document = __get_document_object(document_type_concept, description, date, fylr)
     if document is not None:
         __update_document_object(document, cloned_asset, person, fylr)
     else:
         document = __create_document_object(cloned_asset, document_type_concept, person, description, date, vorgang, fylr)
         __add_document_to_vorgang(document, vorgang, fylr)
+
+def __get_document_data(document_type_concept_id, user_name, file_name, vorgang_name, fylr):
+    vorgang = __get_vorgang(vorgang_name, fylr)
+    person = __get_person(user_name, fylr)
+    document_type_concept = __get_document_type_concept(document_type_concept_id)
+    (description, date) = __parse_file_name(file_name)
+    return (vorgang, person, document_type_concept, description, date)
 
 def __get_vorgang(vorgang_name, fylr):
     vorgang = fylr.get_object_by_field_values('vorgang', { 'vorgang': vorgang_name })
@@ -29,12 +34,9 @@ def __get_person(user_name, fylr):
         raise ValueError(f'{messages.FileImport.ERROR_PERSON_NOT_FOUND} {user_name}')
     return result
 
-def __get_document_type_concept_uri(concept_id):
-    return f'{settings.Dante.VOCABULARY_URI_BASE}/{settings.FileImport.DOCUMENT_TYPE_VOCABULARY_NAME}/{concept_id}'
-
-def __get_document_type_concept(concept_id, concept_uri):
+def __get_document_type_concept(concept_id):
     return {
-        'conceptURI': concept_uri,
+        'conceptURI': f'{settings.Dante.VOCABULARY_URI_BASE}/{settings.FileImport.DOCUMENT_TYPE_VOCABULARY_NAME}/{concept_id}',
         'conceptName': __get_concept_name(concept_id)
     }
 
@@ -72,11 +74,11 @@ def __validate_date(date_string, year, month, day):
     except Exception:
         raise ValueError(f'{messages.FileImport.ERROR_INVALID_DATE} {date_string}')
 
-def __get_document_object(document_type_concept_uri, description, date, fylr):
+def __get_document_object(document_type_concept, description, date, fylr):
     return fylr.get_object_by_field_values(
         'dokumente_manuell',
         {
-            'typ.conceptURI': document_type_concept_uri,
+            'typ.conceptURI': document_type_concept['conceptURI'],
             'beschreibung': description,
             'datum': date
         })
