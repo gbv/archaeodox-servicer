@@ -105,13 +105,19 @@ class Fylr:
         params = { 'access_token': self.access_token }
         current_object = self.get_object_by_id(object_type, id)
         current_version = current_object[object_type]['_version']
-        current_object[object_type] = fields_data
-        current_object[object_type]['_version'] = current_version + 1
+        updated_object = {
+            '_mask': current_object['_mask'],
+            '_objecttype': object_type
+        }
+        updated_object[object_type] = fields_data
+        updated_object[object_type]['_version'] = current_version + 1
         if tags is not None:
-            current_object['_tags'] = tags
+            updated_object['_tags'] = tags
+        else:
+            updated_object['_tags'] = current_object['_tags']
 
         url = join(self.db_url, object_type)  
-        response = requests.post(url, params=params, json=[current_object])
+        response = requests.post(url, params=params, json=[updated_object])
         if not response.ok:
             raise ConnectionError(response.text)
         return response.ok
