@@ -164,6 +164,7 @@ class FileImport:
         'ZF': {
             'document_type_concept_id': 'ff294c40-4e16-4d59-bfd7-322d176f5be8',
             'importers': {
+                'image': ['jpeg', 'tiff'],
                 'fylr': ['pdf']
             }
         },
@@ -223,8 +224,8 @@ class FileImport:
         }
     }
     FORMATS = {
-        'dat': { 'file_type': 'dat', 'expected_format': 'txt' },
         'csv': { 'file_type': 'csv', 'expected_format': 'txt' },
+        'dat': { 'file_type': 'dat', 'expected_format': 'txt' },
         'gsi': { 'file_type': 'gsi', 'expected_format': 'txt' },
         'jpg': { 'file_type': 'jpeg', 'expected_format': 'jpg' },
         'jpeg': { 'file_type': 'jpeg', 'expected_format': 'jpg' },
