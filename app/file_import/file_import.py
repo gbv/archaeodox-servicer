@@ -28,13 +28,15 @@ def __get_files(import_object, fylr):
         file_extension = file_name.split('.')[-1]
         file_url = dp.get(file_information, 'versions/original/url')
         format_settings = settings.FileImport.FORMATS.get(file_extension, None)
-        import_settings = __get_import_settings(file_name)
+        document_type_code = __get_document_type_code(file_name)
+        import_settings = __get_import_settings(document_type_code)
         files.append({
             'name': file_name,
             'data': fylr.download_asset(file_url),
             'mimetype': dp.get(file_information, 'versions/original/technical_metadata/mime_type', default=None),
             'user_name': dp.get(file_information, 'upload_user/user/_generated_displayname', default=None),
             'format_settings': format_settings,
+            'document_type_code': document_type_code,
             'importers': __get_importers(format_settings, import_settings),
             'document_type_concept_id': __get_document_type_concept_id(import_settings),
             'detected_format': dp.get(file_information, 'technical_metadata/file_type_extension', default=None),
@@ -48,8 +50,7 @@ def __get_files(import_object, fylr):
     files.sort(key=__get_sorting_value)
     return files
 
-def __get_import_settings(file_name):
-    document_type_code = __get_document_type_code(file_name)
+def __get_import_settings(document_type_code):
     if document_type_code is None:
         return None
     elif re.match(r'^[A-Z]{1,3}\d+$', document_type_code):
@@ -166,7 +167,7 @@ def __validate(file, file_type_object, import_object, database):
 
 def __run_importer(importer, file, file_data, import_object, database, fylr):
     if importer == 'image':
-        image_importer.run(file_data, file['name'], file['has_worldfile'], database)
+        image_importer.run(file_data, file['name'], file['document_type_code'], file['has_worldfile'], database)
     elif importer == 'worldfile':
         worldfile_importer.run(file_data, file['name'], database)
     elif importer == 'csv':

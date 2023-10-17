@@ -255,6 +255,12 @@ class FileImport:
 class ImageImporter:
     THUMBNAIL_HEIGHT = 320
     THUMBNAIL_JPEG_QUALITY = 60
+    CATEGORIES = {
+        'F': 'Photo',
+        'FLZ': 'PlanDrawing',
+        'PRZ': 'PlanDrawing',
+        'ZF': 'FindDrawing'
+    }
 
 class CSVImporter:
     ALLOWED_CATEGORIES = []

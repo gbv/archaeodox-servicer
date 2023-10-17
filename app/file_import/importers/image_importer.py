@@ -6,14 +6,14 @@ from geotiff import GeoTiff
 from app import settings, messages
 
 
-def run(image_data, image_file_name, has_worldfile, field_database):
+def run(image_data, image_file_name, document_type_code, has_worldfile, field_database):
     image_document = field_database.get_or_create_document(image_file_name)
     id = image_document['_id']
     planum_or_profile_identifier = __get_planum_or_profile_identifier(image_file_name)
 
     image_object = io.BytesIO(image_data)
     image = Image.open(io.BytesIO(image_object.getvalue()))
-    __initialize_image_document(image_document, image_file_name, planum_or_profile_identifier, image)
+    __initialize_image_document(image_document, image_file_name, document_type_code, image)
 
     mimetype, encoding = mimetypes.guess_type(image_file_name)
     is_geotiff = False
@@ -43,16 +43,21 @@ def __get_planum_or_profile_identifier(image_file_name):
     else:
         return None
 
-def __initialize_image_document(image_document, image_file_name, planum_or_profile_identifier, image):
+def __initialize_image_document(image_document, image_file_name, document_type_code, image):
     width, height = image.size
     resource = image_document['resource']
+    resource['category'] = __get_category(document_type_code)
     resource['width'] = width
     resource['height'] = height
     resource['originalFilename'] = image_file_name
     if 'relations' not in resource:
         resource['relations'] = {}
-    if planum_or_profile_identifier is not None:
-        resource['category'] = 'PlanDrawing'
+
+def __get_category(document_type_code):
+    # Remove number from document type code if necessary
+    if len(document_type_code) > 3:
+        document_type_code = document_type_code[:3]
+    return settings.ImageImporter.CATEGORIES[document_type_code]
 
 def __set_relations(image_document, planum_or_profile_identifier, field_database):
     planum_or_profile_document = field_database.get_or_create_document(planum_or_profile_identifier)
