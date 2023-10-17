@@ -28,8 +28,7 @@ def __get_files(import_object, fylr):
         file_extension = file_name.split('.')[-1]
         file_url = dp.get(file_information, 'versions/original/url')
         format_settings = settings.FileImport.FORMATS.get(file_extension, None)
-        document_type_code = __get_document_type_code(file_name)
-        import_settings = __get_import_settings(document_type_code)
+        (document_type_code, import_settings) = __parse_file_name(file_name)
         files.append({
             'name': file_name,
             'data': fylr.download_asset(file_url),
@@ -50,18 +49,18 @@ def __get_files(import_object, fylr):
     files.sort(key=__get_sorting_value)
     return files
 
-def __get_import_settings(document_type_code):
+def __parse_file_name(file_name):
+    document_type_code = __get_document_type_code(file_name)
     if document_type_code is None:
-        return None
+        import_settings = None
     elif re.match(r'^[A-Z]{1,3}\d+$', document_type_code):
         document_type_code = re.search(r'^[A-Z]{1,3}', document_type_code)[0]
         import_settings = settings.FileImport.IMPORT_MAPPING.get(document_type_code, None)
-        if import_settings is not None and import_settings.get('numbered', False) == True:
-            return import_settings
-        else:
-            return None
+        if import_settings.get('numbered', False) == False:
+            import_settings = None
     else:
-        return settings.FileImport.IMPORT_MAPPING.get(document_type_code, None)
+        import_settings = settings.FileImport.IMPORT_MAPPING.get(document_type_code, None)
+    return (document_type_code, import_settings)
 
 def __get_document_type_code(file_name):
     base_name = __get_base_name(file_name)

@@ -46,18 +46,12 @@ def __get_planum_or_profile_identifier(image_file_name):
 def __initialize_image_document(image_document, image_file_name, document_type_code, image):
     width, height = image.size
     resource = image_document['resource']
-    resource['category'] = __get_category(document_type_code)
+    resource['category'] = settings.ImageImporter.CATEGORIES[document_type_code]
     resource['width'] = width
     resource['height'] = height
     resource['originalFilename'] = image_file_name
     if 'relations' not in resource:
         resource['relations'] = {}
-
-def __get_category(document_type_code):
-    # Remove number from document type code if necessary
-    if len(document_type_code) > 3:
-        document_type_code = document_type_code[:3]
-    return settings.ImageImporter.CATEGORIES[document_type_code]
 
 def __set_relations(image_document, planum_or_profile_identifier, field_database):
     planum_or_profile_document = field_database.get_or_create_document(planum_or_profile_identifier)
