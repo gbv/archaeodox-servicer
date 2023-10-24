@@ -202,7 +202,7 @@ class FileImport:
                 'csv': ['csv']
             }
         },
-        'BZ': {
+        'BZP': {
             'document_type_concept_id': 'bd5543f8-8e6f-4fd9-a6d8-496822cd4527',
             'importers': {
                 'fylr': ['csv', 'pdf'],
@@ -220,6 +220,13 @@ class FileImport:
             'document_type_concept_id': '07fe15ee-61e6-440d-9398-ac2503887f0c',
             'importers': {
                 'fylr': ['csv', 'pdf']
+            }
+        },
+        'BZF': {
+            'document_type_concept_id': 'e49a1a8a-d82f-4545-9cd0-a5feaee11b5b',
+            'importers': {
+                'fylr': ['csv', 'pdf'],
+                'csv': ['csv']
             }
         }
     }
