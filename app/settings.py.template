@@ -231,7 +231,7 @@ class FileImport:
         }
     }
     FORMATS = {
-        'csv': { 'file_type': 'csv', 'expected_format': 'txt' },
+        'csv': { 'file_type': 'csv', 'expected_format': 'csv' },
         'dat': { 'file_type': 'dat', 'expected_format': 'txt' },
         'gsi': { 'file_type': 'gsi', 'expected_format': 'txt' },
         'jpg': { 'file_type': 'jpeg', 'expected_format': 'jpg' },
