@@ -64,7 +64,7 @@ def __import_geometry(geometry, properties, field_database, dante_database):
     feature_group_short_description_addendum = properties.get('group_info')
     feature_identifier = __get_identifier(properties.get('strat_unit'), 'Feature')
     feature_short_description = __get_feature_short_description(
-        properties, 'amh_befunde', dante_database, properties['file_name']
+        properties, 'amh_befunde', dante_database, properties['file_name'], import_type
     )
     feature_short_description_addendum = properties.get('info_alias')
     find_identifier = __get_identifier(properties.get('find'), 'Find')
@@ -125,7 +125,10 @@ def __get_planum_or_profile_short_description(properties):
     result = part1.strip() + ', ' + part2.strip()
     return result
 
-def __get_feature_short_description(properties, vocabulary_name, dante_database, file_name):
+def __get_feature_short_description(properties, vocabulary_name, dante_database, file_name, import_type):
+    if import_type != 'featureSegment':
+        return None
+
     concept_label = properties.get('info')
     return __get_concept_id(concept_label, vocabulary_name, dante_database, file_name)
 
