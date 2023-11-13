@@ -35,6 +35,7 @@ def __convert_to_geojson(zip_file):
             with open(geojson_path, 'r') as geojson_data:
                 collection = json.load(geojson_data)
                 for feature in collection['features']:
+                    feature['properties'] = { key: value for key, value in feature['properties'].items() if value is not None }
                     feature['properties']['file_name'] = shape_file_name
             features += collection['features']
             
@@ -133,7 +134,10 @@ def __get_short_description_from_dante(properties, import_type, dante_database, 
         return None
 
     concept_label = properties.get('info')
-    return __get_concept_id(concept_label, vocabulary_name, dante_database, file_name)
+    if concept_label is None:
+        return None
+    else:
+        return __get_concept_id(concept_label, vocabulary_name, dante_database, file_name)
 
 def __get_concept_id(concept_label, vocabulary_name, dante_database, file_name):
     concept_label = concept_label.strip()
