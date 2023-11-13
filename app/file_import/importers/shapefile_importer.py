@@ -129,12 +129,9 @@ def __get_planum_or_profile_short_description(properties):
     return result
 
 def __get_short_description_from_dante(properties, import_type, dante_database, file_name):
-    vocabulary_name = settings.ShapefileImporter.SHORT_DESCRIPTION_DANTE_VOCABULARIES[import_type]
-    if vocabulary_name is None:
-        return None
-
+    vocabulary_name = settings.ShapefileImporter.SHORT_DESCRIPTION_DANTE_VOCABULARIES.get(import_type)
     concept_label = properties.get('info')
-    if concept_label is None:
+    if vocabulary_name is None or concept_label is None:
         return None
     else:
         return __get_concept_id(concept_label, vocabulary_name, dante_database, file_name)
