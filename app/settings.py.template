@@ -282,3 +282,7 @@ class ShapefileImporter:
     }
     EXCAVATION_AREA_KEYWORD = 'grabungsgrenze'
     SAMPLE_KEYWORD = 'probe'
+    SHORT_DESCRIPTION_DANTE_VOCABULARIES = {
+        'featureSegment': 'amh_befunde',
+        'find': 'amh_objektbezeichnung'
+    }

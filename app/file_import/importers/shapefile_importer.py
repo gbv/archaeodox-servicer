@@ -63,8 +63,8 @@ def __import_geometry(geometry, properties, field_database, dante_database):
     feature_group_identifier = __get_identifier(properties.get('group'), 'FeatureGroup')
     feature_group_short_description_addendum = properties.get('group_info')
     feature_identifier = __get_identifier(properties.get('strat_unit'), 'Feature')
-    feature_short_description = __get_feature_short_description(
-        properties, 'amh_befunde', dante_database, properties['file_name'], import_type
+    find_or_feature_short_description = __get_short_description_from_dante(
+        properties, import_type, dante_database, properties['file_name']
     )
     feature_short_description_addendum = properties.get('info_alias')
     find_identifier = __get_identifier(properties.get('find'), 'Find')
@@ -91,23 +91,25 @@ def __import_geometry(geometry, properties, field_database, dante_database):
         )
         feature = __update_feature(
             field_database, excavation_area, planum_or_profile, feature_group, feature_identifier,
-            feature_short_description, feature_short_description_addendum
+            find_or_feature_short_description, feature_short_description_addendum
         )
         __update_feature_segment(
             field_database, excavation_area, planum_or_profile, feature, geometry
         )
     elif import_type == 'find' and find_identifier is not None:
         feature = __update_feature(
-            field_database, excavation_area, planum_or_profile, None, feature_identifier, feature_short_description,
+            field_database, excavation_area, planum_or_profile, None, feature_identifier, None,
             feature_short_description_addendum
         )
-        __update_find_or_sample(field_database, excavation_area, feature, find_identifier, geometry, 'Find')
+        __update_find_or_sample(field_database, excavation_area, feature, find_identifier,
+                                find_or_feature_short_description, geometry, 'Find')
     elif import_type == 'referencePoints' and sample_identifier is not None:
         feature = __update_feature(
-            field_database, excavation_area, planum_or_profile, None, feature_identifier, feature_short_description,
+            field_database, excavation_area, planum_or_profile, None, feature_identifier, None,
             feature_short_description_addendum
         )
-        __update_find_or_sample(field_database, excavation_area, feature, sample_identifier, geometry, 'Sample')
+        __update_find_or_sample(field_database, excavation_area, feature, sample_identifier, None,
+            geometry, 'Sample')
 
 def __get_import_type(properties):
     for import_type, file_name_keywords in settings.ShapefileImporter.FILE_NAME_MAPPING.items():
@@ -125,8 +127,9 @@ def __get_planum_or_profile_short_description(properties):
     result = part1.strip() + ', ' + part2.strip()
     return result
 
-def __get_feature_short_description(properties, vocabulary_name, dante_database, file_name, import_type):
-    if import_type != 'featureSegment':
+def __get_short_description_from_dante(properties, import_type, dante_database, file_name):
+    vocabulary_name = settings.ShapefileImporter.SHORT_DESCRIPTION_DANTE_VOCABULARIES[import_type]
+    if vocabulary_name is None:
         return None
 
     concept_label = properties.get('info')
@@ -271,7 +274,8 @@ def __update_feature_segment(field_database, excavation_area, planum_or_profile,
 
     return field_database.populate_resource(resource_data)
 
-def __update_find_or_sample(field_database, excavation_area, feature, identifier, geometry, category):
+def __update_find_or_sample(field_database, excavation_area, feature, identifier, short_description, geometry,
+                            category):
     if identifier is None:
         return None
 
@@ -283,6 +287,9 @@ def __update_find_or_sample(field_database, excavation_area, feature, identifier
             'isRecordedIn': [excavation_area['resource']['id']]
         }
     }
+
+    if short_description is not None:
+        resource_data['shortDescription'] = short_description
 
     if feature is not None:
         resource_data['relations']['liesWithin'] = [feature['resource']['id']]
