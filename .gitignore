@@ -1,6 +1,6 @@
 app/credentials.py
 app/settings.py
-app/__pycache__
+**/__pycache__
 
 *.pyc
 *.ipynb
