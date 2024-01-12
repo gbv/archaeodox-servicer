@@ -1,5 +1,6 @@
 import requests, re
 from uuid import uuid4
+from collections import OrderedDict
 
 from app import settings
 from app.couchdb.database import CouchDatabase
@@ -35,19 +36,14 @@ class FieldDatabase(CouchDatabase):
                 data=image_data.getvalue()
             )
 
-    def populate_resource(self, resource_data, identifier=None):
+    def populate_resource(self, resource_data, identifier=None, extended_relations=[]):
         if identifier is None:
             identifier = resource_data['identifier']
         document = self.get_or_create_document(identifier)
 
-        for key in resource_data:
-            if key not in ['relations', 'id']:
-                document['resource'][key] = resource_data[key]
+        self.__update_fields(document, resource_data)
+        self.__update_relations(document, resource_data, extended_relations)
 
-        relations = resource_data.get('relations', {})
-        for relation_name, target_ids in relations.items():
-            document['resource']['relations'][relation_name] = target_ids
-    
         updated_document = self.update_document(document['_id'], document=document)
         document['_rev'] = updated_document['rev']
         return document
@@ -69,3 +65,19 @@ class FieldDatabase(CouchDatabase):
             resource['category'] = category
         
         return document_utility.get_document(id, resource)
+
+    def __update_fields(self, document, resource_data):
+        for key in resource_data:
+            if key not in ['relations', 'id']:
+                document['resource'][key] = resource_data[key]
+
+    def __update_relations(self, document, resource_data, extended_relations):
+        existing_relations = document['resource']['relations']
+        new_relations = resource_data.get('relations', {})
+        for relation_name, target_ids in new_relations.items():
+            if relation_name in extended_relations:
+                existing_relations[relation_name] = list(
+                    OrderedDict.fromkeys(existing_relations[relation_name] + target_ids)
+                )
+            else:
+                existing_relations[relation_name] = target_ids

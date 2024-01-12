@@ -232,7 +232,7 @@ def __update_feature_group(field_database, excavation_area, planum_or_profile, i
     if short_description_addendum is not None:
         resource_data['shortDescriptionAddendum'] = { 'de': short_description_addendum }
     
-    return field_database.populate_resource(resource_data)
+    return field_database.populate_resource(resource_data, extended_relations=['isPresentIn'])
 
 def __update_feature(field_database, excavation_area, planum_or_profile, feature_group, identifier,
                      short_description, short_description_addendum):
@@ -255,7 +255,7 @@ def __update_feature(field_database, excavation_area, planum_or_profile, feature
     if feature_group is not None:
         resource_data['relations']['liesWithin'] = [feature_group['resource']['id']]
 
-    return field_database.populate_resource(resource_data)
+    return field_database.populate_resource(resource_data, extended_relations=['isPresentIn'])
 
 def __update_feature_segment(field_database, excavation_area, planum_or_profile, feature, geometry):
     existing_feature_segments = __get_existing_feature_segments(feature['resource']['id'], field_database)
