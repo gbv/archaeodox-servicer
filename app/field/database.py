@@ -75,7 +75,7 @@ class FieldDatabase(CouchDatabase):
         existing_relations = document['resource']['relations']
         new_relations = resource_data.get('relations', {})
         for relation_name, target_ids in new_relations.items():
-            if relation_name in extended_relations:
+            if relation_name in extended_relations and relation_name in existing_relations:
                 existing_relations[relation_name] = list(
                     OrderedDict.fromkeys(existing_relations[relation_name] + target_ids)
                 )
