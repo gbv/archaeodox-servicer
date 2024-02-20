@@ -1,5 +1,5 @@
 import time
-from flask import Flask, request as incoming_request
+from flask import Flask
 
 from app import settings
 from app.queue.queue import Queue
@@ -18,7 +18,7 @@ app.logger.setLevel(settings.Main.LOGGING_LEVEL)
 @app.route('/run-delayed', methods=['GET'])
 def run_delayed():
     try:
-        task_label = task_queue.pop()
+        task_label = task_queue.run_next()
         return task_label, 200
     except Exception as exception:
         app.logger.exception(exception)

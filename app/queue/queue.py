@@ -1,4 +1,5 @@
 import time
+import threading
 
 
 class Queue():
@@ -12,7 +13,10 @@ class Queue():
         self.tasks.append((time_stamp, task))
         self.logger.debug(f'Enqueued {task}.')
 
-    def pop(self):
+    def run_next(self):
+        if self.__is_running():
+            return f'Already running.'
+        
         def sufficiently_aged(time_task_pair):
             now = time.time()
             max_time_stamp = now - self.delay
@@ -21,9 +25,12 @@ class Queue():
         matured_tasks = list(filter(sufficiently_aged, self.tasks))
 
         if matured_tasks:
-            time_stamp, next_task = self.tasks.pop(0)
-            self.logger.debug(f'Popped Task: {next_task.label}')
-            next_task.run()
-            return next_task.label
+            _, next_task = self.tasks.pop(0)
+            threading.Thread(name='task_runner', target=next_task.run).start()
+            return f'Starting task: {next_task.label}'
         else:
             return 'No scheduled tasks.'
+
+    def __is_running(self):
+        task_runner_threads = list(filter(lambda thread: thread.name == 'task_runner', threading.enumerate()))
+        return len(task_runner_threads) > 0
