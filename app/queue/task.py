@@ -7,6 +7,7 @@ class Task:
         self.kwargs = kwargs
         self.kwargs['logger'] = logger
 
-    def run(self):
+    def run(self, on_completed):
         self.logger.info(f'Running task {self.label}.')
-        return self.function(*self.args, **self.kwargs)
+        self.function(*self.args, **self.kwargs)
+        on_completed()

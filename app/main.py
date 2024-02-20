@@ -54,7 +54,8 @@ task_queue = Queue(app.logger, 4)
 def get_status():
     return {
         'running': task_queue.is_running(),
-        'queuedTasks': len(task_queue.tasks)
+        'queuedTasks': len(task_queue.tasks),
+        'completedTasks': task_queue.get_task_count()
     }
 
 app.logger.debug('Started servicer')
