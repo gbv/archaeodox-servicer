@@ -4,9 +4,6 @@ from flask import Flask
 from app import settings
 from app.queue.queue import Queue
 from app.queue.task import Task
-from app.fylr.database import Fylr
-from app.handlers.vorgang_handler import VorgangHandler
-from app.handlers.import_handler import ImportHandler
 from app.tasks import valuelists_updater
 from app.tasks import handler_factory
 
@@ -46,8 +43,18 @@ def update_valuelists():
     except Exception as exception:
         app.logger.exception(exception)
         return str(exception), 500
+    
+@app.route('/status', methods=['GET'])
+def status():
+    return get_status(), 200
 
 task_queue = Queue(app.logger, 4)
 
+
+def get_status():
+    return {
+        'running': task_queue.is_running(),
+        'queuedTasks': len(task_queue.tasks)
+    }
 
 app.logger.debug('Started servicer')

@@ -14,7 +14,7 @@ class Queue():
         self.logger.debug(f'Enqueued {task}.')
 
     def run_next(self):
-        if self.__is_running():
+        if self.is_running():
             return f'Already running.'
         
         def sufficiently_aged(time_task_pair):
@@ -31,6 +31,6 @@ class Queue():
         else:
             return 'No scheduled tasks.'
 
-    def __is_running(self):
+    def is_running(self):
         task_runner_threads = list(filter(lambda thread: thread.name == 'task_runner', threading.enumerate()))
         return len(task_runner_threads) > 0
