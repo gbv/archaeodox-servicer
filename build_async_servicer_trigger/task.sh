@@ -1,1 +1,1 @@
-curl http://servicer:5000/run-delayed | /dev/null
+curl http://servicer:5000/run-next-task | /dev/null

@@ -12,8 +12,8 @@ app = Flask(__name__)
 app.logger.setLevel(settings.Main.LOGGING_LEVEL)
 
 
-@app.route('/run-delayed', methods=['GET'])
-def run_delayed():
+@app.route('/run-next-task', methods=['GET'])
+def run_next_task():
     try:
         task_label = task_queue.run_next()
         return task_label, 200
