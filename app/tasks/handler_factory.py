@@ -7,7 +7,7 @@ from app.handlers.import_handler import ImportHandler
 
 handled_objects_ids = []
 date_format = '%Y-%m-%dT%H:%M:%S%z'
-max_object_age = 5 # Minutes
+max_object_age = 15 # Minutes
 
 
 def run_handlers(object_type, logger):
