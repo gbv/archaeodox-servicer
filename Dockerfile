@@ -1,4 +1,4 @@
-FROM osgeo/gdal
+FROM ghcr.io/osgeo/gdal:latest
 RUN apt update
 
 RUN apt -y install python3-pip
