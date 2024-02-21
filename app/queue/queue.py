@@ -1,5 +1,6 @@
 import time
 import threading
+import json
 
 
 class Queue():
@@ -37,8 +38,9 @@ class Queue():
 
     def get_task_count(self):
         try:
-            with open('taskCount') as file:
-                return int(file.read())
+            with open('queueState.json') as file:
+                state = json.loads(file.read())
+                return state['taskCount']
         except Exception:
             return 0
 
@@ -47,5 +49,6 @@ class Queue():
         self.__write_task_count(current_task_count + 1)
 
     def __write_task_count(self, task_count):
-        with open('taskCount', 'w') as file:
-            file.write(str(task_count))
+        with open('queueState.json', 'w') as file:
+            state = { 'taskCount': task_count }
+            file.write(json.dumps(state))
