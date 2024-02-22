@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 
 from app import settings
 from app.fylr.database import Fylr
@@ -7,31 +7,32 @@ from app.handlers.import_handler import ImportHandler
 
 handled_objects_ids = []
 date_format = '%Y-%m-%dT%H:%M:%S%z'
-max_object_age = 15 # Minutes
+time_margin = 5 # Minutes
 
 
-def run_handlers(object_type, logger):
-    handlers = __create_handlers(object_type, logger)
+def run_handlers(object_type, task_creation_time, logger):
+    handlers = __create_handlers(object_type, task_creation_time, logger)
     for handler in handlers:
         handler.process_request()
 
-def __create_handlers(object_type, logger):
+def __create_handlers(object_type, task_creation_time, logger):
     fylr = Fylr(settings.Fylr.HOST_URL, logger)
-    new_objects = __fetch_new_objects(object_type, fylr)
+    new_objects = __fetch_new_objects(object_type, task_creation_time, fylr)
     if new_objects is None:
         return
     
     handlers = []
     for new_object in new_objects:
         id = new_object['_global_object_id']
-        if id not in handled_objects_ids and __is_newly_created(new_object):
+        if id not in handled_objects_ids and __is_newly_created(new_object, task_creation_time):
             handlers.append(__create_handler(object_type, new_object, logger, fylr))
             handled_objects_ids.append(id)
     return handlers
 
-def __fetch_new_objects(object_type, fylr):
-    from_date = datetime.now(timezone.utc) - timedelta(hours=0, minutes=max_object_age)
-    to_date = datetime.now(timezone.utc)
+def __fetch_new_objects(object_type, task_creation_time, fylr):
+    delta = timedelta(hours=0, minutes=time_margin)
+    from_date = task_creation_time - delta
+    to_date = task_creation_time + delta
 
     fylr.acquire_access_token()
 
@@ -51,7 +52,7 @@ def __create_handler(object_type, object, logger, fylr):
     handler_class = handler_map[object_type]
     return handler_class(object, logger, fylr)
 
-def __is_newly_created(object):
-    creation_date = datetime.strptime(object['_created'], date_format)
-    min_date = datetime.now(timezone.utc) - timedelta(hours=0, minutes=max_object_age)
-    return creation_date > min_date
+def __is_newly_created(object, task_creation_time):
+    object_creation_time = datetime.strptime(object['_created'], date_format)
+    min_creation_time = task_creation_time - timedelta(hours=0, minutes=time_margin)
+    return object_creation_time > min_creation_time

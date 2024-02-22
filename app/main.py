@@ -1,4 +1,5 @@
 import time
+from datetime import datetime, timezone
 from flask import Flask
 
 from app import settings
@@ -26,7 +27,13 @@ def handle(object_type):
     app.logger.debug(f'Handle new Fylr objects of type: {object_type}')
     try:
         task_label = 'Handle_new_objects_' + str(time.time())
-        task = Task(task_label, app.logger, handler_factory.run_handlers, object_type=object_type)
+        task = Task(
+            task_label,
+            app.logger,
+            handler_factory.run_handlers,
+            object_type=object_type,
+            task_creation_time=datetime.now(timezone.utc)
+        )
         task_queue.append(task)
         return task_label, 200
     except Exception as exception:
