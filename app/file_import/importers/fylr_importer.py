@@ -10,10 +10,10 @@ def run(cloned_asset, document_type_concept_id, user_name, file_name, vorgang_na
     )
     document = __get_document_object(file_name, fylr)
     if document is not None:
-        __update_document_object(document, cloned_asset, person, fylr)
+        document =__update_document_object(document, cloned_asset, person, fylr)
     else:
         document = __create_document_object(cloned_asset, document_type_concept, person, description, date, vorgang, fylr)
-        __add_document_to_vorgang(document, vorgang, fylr)
+    __add_document_to_vorgang(document, vorgang, fylr)
 
 def __get_document_data(document_type_concept_id, user_name, file_name, vorgang_name, fylr):
     vorgang = __get_vorgang(vorgang_name, fylr)
@@ -85,6 +85,7 @@ def __update_document_object(document, cloned_asset, person, fylr):
     data['datei'] = cloned_asset
     data['lk_bearbeiter'] = person
     fylr.update_object('dokumente_manuell', data['_id'], data)
+    return fylr.get_object_by_id('dokumente_manuell', data['_id'])
 
 def __create_document_object(cloned_asset, document_type_concept, person, description, date, vorgang, fylr):
     object = {
@@ -107,6 +108,10 @@ def __add_document_to_vorgang(document, vorgang, fylr):
 
     if data.get('_nested:vorgang__dokumente', None) is None:
         data['_nested:vorgang__dokumente'] = []
-    data['_nested:vorgang__dokumente'].append(entry)
+    if not __is_already_linked_to_vorgang(document, data):
+        data['_nested:vorgang__dokumente'].append(entry)
+        fylr.update_object('vorgang', data['_id'], data)
 
-    fylr.update_object('vorgang', data['_id'], data)
+def __is_already_linked_to_vorgang(document, vorgang_data):
+    uuids = list(map(lambda e: e['lk_dokument']['_uuid'], vorgang_data['_nested:vorgang__dokumente']))
+    return document['_uuid'] in uuids
