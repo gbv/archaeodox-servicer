@@ -32,6 +32,8 @@ def __extract_category_from_file_name(file_name):
 
 def __get_resource(row, category, field_database):
     resource = __get_filled_in_fields(row)
+    if 'identifier' not in resource:
+        raise ValueError(messages.FileImport.ERROR_CSV_IDENTIFIER_NOT_FOUND)
     resource['category'] = category
     resource['identifier'] = __get_prefixed_identifier(resource['identifier'], category)
     __inflate(resource)
