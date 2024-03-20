@@ -113,5 +113,5 @@ def __add_document_to_vorgang(document, vorgang, fylr):
         fylr.update_object('vorgang', data['_id'], data)
 
 def __is_already_linked_to_vorgang(document, vorgang_data):
-    uuids = list(map(lambda e: e['lk_dokument']['_uuid'], vorgang_data['_nested:vorgang__dokumente']))
+    uuids = list(map(lambda entry: entry['lk_dokument']['_uuid'], vorgang_data['_nested:vorgang__dokumente']))
     return document['_uuid'] in uuids
