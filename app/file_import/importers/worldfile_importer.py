@@ -49,7 +49,7 @@ def __get_image_name(worldfile_name, image_file_extension):
     return base_name + '.' + image_file_extension
 
 def __create_georeference(worldfile_data, width, height):
-    values = __get_worldfile_values(worldfile_data.decode('utf-8'))
+    values = __get_worldfile_values(worldfile_data.decode('utf-8-sig'))
 
     topLeftCoordinates = computeLatLng(0, 0, values);
     topRightCoordinates = computeLatLng(width - 1, 0, values);

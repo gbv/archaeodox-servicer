@@ -6,7 +6,7 @@ from app import settings, messages
 
 def run(file_data, file_name, field_database):
     category = __get_category(file_name)
-    file_object = io.StringIO(file_data.decode('utf-8'))
+    file_object = io.StringIO(file_data.decode('utf-8-sig'))
 
     with file_object:
         csv_reader = csv.DictReader(file_object, delimiter=',', quotechar='"')
