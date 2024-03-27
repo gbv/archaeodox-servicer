@@ -39,6 +39,7 @@ def __get_resource(row, category, field_database):
     __inflate(resource)
     __split_array_fields(resource)
     __split_relation_targets(resource, field_database)
+    __convert_values(resource)
     return resource
 
 def __get_filled_in_fields(row):
@@ -68,6 +69,41 @@ def __split_relation_targets(resource, field_database):
             __get_document(target_identifier, field_database)['_id'] for target_identifier in target_identifiers
         ]
         resource['relations'][relation_name] = target_ids
+
+def __convert_values(resource):
+    for field_name, field_content in resource.items():
+        if field_content == 'true':
+            resource[field_name] = True
+        elif field_content == 'false':
+            resource[field_name] = False
+        elif field_name in settings.CSVImporter.INT_FIELDS:
+            resource[field_name] = int(field_content)
+        elif field_name in settings.CSVImporter.FLOAT_FIELDS:
+            resource[field_name] = float(field_content)
+        elif field_name in settings.CSVImporter.DATING_FIELDS:
+            __convertDatings(field_content)
+        elif field_name in settings.CSVImporter.DIMENSION_FIELDS:
+            __convertDimensions(field_content)
+
+def __convertDatings(datings):
+    for dating in datings:
+        if 'begin' in dating and 'inputYear' in dating['begin']:
+            dating['begin']['inputYear'] = int(dating['begin']['inputYear'])
+        if 'end' in dating and 'inputYear' in dating['end']:
+            dating['end']['inputYear'] = int(dating['end']['inputYear'])
+        if 'isImprecise' in dating:
+            dating['isImprecise'] = dating['isImprecise'] == True
+        if 'isUncertain' in dating: 
+            dating['isUncertain'] = dating['isUncertain'] == True
+
+def __convertDimensions(dimensions):
+    for dimension in dimensions:
+        if 'inputValue' in dimension:
+            dimension['inputValue'] = int(dimension['inputValue'])
+        if 'inputRangeEndValue' in dimension:
+            dimension['inputRangeEndValue'] = int(dimension['inputRangeEndValue'])
+        if 'isImprecise' in dimension:
+            dimension['isImprecise'] = dimension['isImprecise'] == True
 
 def __get_prefixed_identifier(identifier, category):
     prefix = settings.FileImport.CATEGORY_PREFIXES.get(category)

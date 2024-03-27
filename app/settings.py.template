@@ -271,8 +271,12 @@ class ImageImporter:
 
 class CSVImporter:
     ALLOWED_CATEGORIES = []
-    ARRAY_FIELDS = ['archaeoDox:documentationUnit', 'processor', 'featureForm', 'featureBorders',
+    ARRAY_FIELDS = ['staff', 'archaeoDox:documentationUnit', 'processor', 'featureForm', 'featureBorders',
         'archaeoDox:distinguishingCriterium', 'featureSegmentForm', 'featureSegmentBorders']
+    INT_FIELDS = ['epsgId', 'webGisId', 'height', 'width', 'amount']
+    FLOAT_FIELDS = ['weight']
+    DATING_FIELDS = ['dating']
+    DIMENSION_FIELDS = ['dimensionVerticalExtent']
 
 class ShapefileImporter:
     FILE_NAME_MAPPING = {
