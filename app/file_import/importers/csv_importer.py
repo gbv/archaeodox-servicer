@@ -37,6 +37,7 @@ def __get_resource(row, category, field_database):
     resource['category'] = category
     resource['identifier'] = __get_prefixed_identifier(resource['identifier'], category)
     __inflate(resource)
+    __split_array_fields(resource)
     __split_relation_targets(resource, field_database)
     return resource
 
@@ -52,6 +53,12 @@ def __inflate(resource):
     for key in nested_keys:
         dp.new(resource, key, resource[key], separator='.')
         resource.pop(key)
+
+def __split_array_fields(resource):
+    for field_name, field_content in resource.items():
+        if field_name in settings.CSVImporter.ARRAY_FIELDS:
+            entries = field_content.split(';')
+            resource[field_name] = entries
 
 def __split_relation_targets(resource, field_database):
     relations = resource.get('relations', {})

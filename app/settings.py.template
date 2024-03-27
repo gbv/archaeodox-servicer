@@ -271,6 +271,8 @@ class ImageImporter:
 
 class CSVImporter:
     ALLOWED_CATEGORIES = []
+    ARRAY_FIELDS = ['archaeoDox:documentationUnit', 'processor', 'featureForm', 'featureBorders',
+        'archaeoDox:distinguishingCriterium', 'featureSegmentForm', 'featureSegmentBorders']
 
 class ShapefileImporter:
     FILE_NAME_MAPPING = {
