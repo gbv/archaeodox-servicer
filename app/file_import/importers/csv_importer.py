@@ -9,7 +9,7 @@ def run(file_data, file_name, field_database):
     file_object = io.StringIO(file_data.decode('utf-8-sig'))
 
     with file_object:
-        csv_reader = csv.DictReader(file_object, delimiter=',', quotechar='"')
+        csv_reader = csv.DictReader(file_object, delimiter=';', quotechar='"')
         resources = [__get_resource(row, category, field_database) for row in csv_reader]
 
     for resource in resources:
