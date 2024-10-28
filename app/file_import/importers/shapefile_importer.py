@@ -313,6 +313,7 @@ def __get_feature_segment_identifier_number(existing_feature_segments):
 def __get_existing_feature_segments(feature_id, field_database):
     query = {
         'selector': {
+            'resource.category': 'FeatureSegment',
             'resource.relations.liesWithin': {
                 '$elemMatch': {
                     '$eq': feature_id
