@@ -32,6 +32,7 @@ def __get_person(user_name, fylr):
     result = fylr.get_object_by_field_values('person_institution', { 'vollstaendiger_name':  user_name })
     if result is None:
         raise ValueError(f'{messages.FileImport.ERROR_PERSON_NOT_FOUND} {user_name}')
+    result['person_institution'] = {}
     return result
 
 def __get_document_type_concept(concept_id):
