@@ -124,7 +124,7 @@ def __import_file(file, import_object, database, fylr, logger):
     try:
         __validate(file, result['dokumententyp'], import_object, database)
         for importer in file['importers']:
-            __run_importer(importer, file, file['data'], import_object, database, fylr)
+            __run_importer(importer, file, file['data'], import_object, database, fylr, logger)
         result['fehlermeldung'] = messages.FileImport.SUCCESS
     except Exception as error:
         logger.debug(f'Import failed for file {file["name"]}', exc_info=True)
@@ -167,7 +167,7 @@ def __validate(file, file_type_object, import_object, database):
     if len(file['importers']) == 0:
         raise ValueError(messages.FileImport.ERROR_UNSUPPORTED_FILE_FORMAT_FOR_DOCUMENT_TYPE)
 
-def __run_importer(importer, file, file_data, import_object, database, fylr):
+def __run_importer(importer, file, file_data, import_object, database, fylr, logger):
     if importer == 'image':
         image_importer.run(file_data, file['name'], file['document_type_code'], file['has_worldfile'], database)
     elif importer == 'worldfile':
@@ -175,7 +175,7 @@ def __run_importer(importer, file, file_data, import_object, database, fylr):
     elif importer == 'csv':
         csv_importer.run(file_data, file['name'], database)
     elif importer == 'shapefile':
-        shapefile_importer.run(file_data, database)
+        shapefile_importer.run(file_data, database, logger)
     elif importer == 'fylr':
         fylr_importer.run(__get_cloned_asset(file, fylr), file['document_type_concept_id'], file['user_name'],
                           file['name'], import_object['vorgangsname'], fylr)

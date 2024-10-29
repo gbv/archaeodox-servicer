@@ -11,13 +11,13 @@ from app import settings, messages
 from app.dante.database import DanteDatabase
 
 
-def run(file_data, field_database):
+def run(file_data, field_database, logger):
     file_bytes = io.BytesIO(file_data)
     zip_file = ZipFile(file_bytes, 'r')
     geojson = __convert_to_geojson(zip_file)
     dante_database = DanteDatabase(settings.Dante.HOST_URL)
     for feature in geojson['features']:
-        __import_geometry(feature['geometry'], feature['properties'], field_database, dante_database)
+        __import_geometry(feature['geometry'], feature['properties'], field_database, dante_database, logger)
 
 def __convert_to_geojson(zip_file):
     try:
@@ -46,8 +46,11 @@ def __convert_to_geojson(zip_file):
     finally:
         rmtree(temp_directory)
 
-def __import_geometry(geometry, properties, field_database, dante_database):
+def __import_geometry(geometry, properties, field_database, dante_database, logger):
+    logger.debug(f'Importing from file: {properties["file_name"]}')
     import_type = __get_import_type(properties)
+    logger.debug(f'Import type: {import_type}')
+
     if import_type is None:
         return
 
@@ -64,9 +67,12 @@ def __import_geometry(geometry, properties, field_database, dante_database):
     feature_group_identifier = __get_identifier(properties.get('group'), 'FeatureGroup')
     feature_group_short_description_addendum = properties.get('group_info')
     feature_identifier = __get_identifier(properties.get('strat_unit'), 'Feature')
+    logger.debug(f'Feature identifier: {feature_identifier}')
+    logger.debug(f'Fetching short description from Dante...')
     find_or_feature_short_description = __get_short_description_from_dante(
         properties, import_type, dante_database, properties['file_name']
     )
+    logger.debug(f'Short description: {find_or_feature_short_description}')
     feature_short_description_addendum = properties.get('info_alias')
     find_identifier = __get_identifier(properties.get('find'), 'Find')
 
@@ -74,6 +80,8 @@ def __import_geometry(geometry, properties, field_database, dante_database):
         planum_or_profile_identifier, planum_or_profile_category, feature_identifier,
         import_type, properties['file_name']
     )
+
+    logger.debug(f'Updating Field database...')
 
     excavation_area = __update_excavation_area(
         field_database, geometry if import_type == 'excavationArea' else None
@@ -95,7 +103,7 @@ def __import_geometry(geometry, properties, field_database, dante_database):
             find_or_feature_short_description, feature_short_description_addendum
         )
         __update_feature_segment(
-            field_database, excavation_area, planum_or_profile, feature, geometry
+            field_database, excavation_area, planum_or_profile, feature, geometry, logger
         )
     elif import_type == 'find' and find_identifier is not None:
         feature = __update_feature(
@@ -257,8 +265,10 @@ def __update_feature(field_database, excavation_area, planum_or_profile, feature
 
     return field_database.populate_resource(resource_data, extended_relations=['isPresentIn'])
 
-def __update_feature_segment(field_database, excavation_area, planum_or_profile, feature, geometry):
+def __update_feature_segment(field_database, excavation_area, planum_or_profile, feature, geometry, logger):
+    logger.debug('Fetching existing feature segments...')
     existing_feature_segments = __get_existing_feature_segments(feature['resource']['id'], field_database)
+    logger.debug('Finished fetching existing feature segments')
     if __is_existing(geometry, existing_feature_segments):
         return None
 
