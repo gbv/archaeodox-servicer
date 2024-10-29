@@ -265,13 +265,15 @@ def __update_feature_segment(field_database, excavation_area, planum_or_profile,
     resource_data = {
         'identifier': __get_feature_segment_identifier(feature, existing_feature_segments),
         'category': 'FeatureSegment',
-        'geometry': geometry,
         'relations': {
             'isRecordedIn': [excavation_area['resource']['id']],
             'liesWithin': [feature['resource']['id']],
             'isPresentIn': [planum_or_profile['resource']['id']],
         }
     }
+
+    if geometry is not None:
+        resource_data['geometry'] = geometry
 
     return field_database.populate_resource(resource_data)
 
@@ -283,11 +285,13 @@ def __update_find_or_sample(field_database, excavation_area, feature, identifier
     resource_data = {
         'identifier': identifier,
         'category': category,
-        'geometry': geometry,
         'relations': {
             'isRecordedIn': [excavation_area['resource']['id']]
         }
     }
+
+    if geometry is not None:
+        resource_data['geometry'] = geometry
 
     if short_description is not None:
         resource_data['shortDescription'] = short_description
