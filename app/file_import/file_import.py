@@ -142,11 +142,14 @@ def __get_cloned_asset(file, fylr):
 def __get_file_type_object(file, fylr):
     if file['format_settings'] is None:
         return None
-    else:
-        return fylr.get_object_by_field_values(
-            'import_ergebnis_dateityp',
-            { 'name': file['format_settings']['file_type'] }
-        )
+    object = fylr.get_object_by_field_values(
+        'import_ergebnis_dateityp',
+        { 'name': file['format_settings']['file_type'] }
+    )
+    if object is not None:
+        object['_mask'] = 'import_ergebnis_dateityp__servicer'
+        del object['import_ergebnis_dateityp']['name']
+    return object
 
 def __validate(file, file_type_object, import_object, database):
     if file['mimetype'] is None:
