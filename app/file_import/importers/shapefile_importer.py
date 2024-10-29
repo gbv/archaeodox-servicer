@@ -324,11 +324,16 @@ def __get_existing_feature_segments(feature_id, field_database):
     return field_database.search(query)
 
 def __get_number_from_feature_segment(document):
-    segments = document['resource']['identifier'].split('-')
+    identifier = document['resource']['identifier']
+    segments = identifier.split('-')
     if len(segments) < 2:
         return 0
     else:
-        return int(segments[1])
+        try:
+            return int(segments[1])
+        except Exception:
+            message = messages.FileImport.ERROR_SHAPEFILE_INVALID_FEATURE_SEGMENT_IDENTIFIER
+            raise ValueError(message.replace('$VALUE', identifier))
 
 def __get_base_identifier(document):
     category = document['resource']['category']
