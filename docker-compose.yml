@@ -12,14 +12,6 @@ services:
       hostnet: {}
     volumes:
     - .:/opt/servicer
-  
-  async_servicer_trigger:
-    container_name: async_servicer_trigger
-    build:
-      context: ./build_async_servicer_trigger
-    restart: unless-stopped
-    networks:
-      hostnet: {}
 
 networks:
   hostnet:

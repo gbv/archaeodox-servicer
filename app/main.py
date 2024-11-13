@@ -13,15 +13,6 @@ app = Flask(__name__)
 app.logger.setLevel(settings.Main.LOGGING_LEVEL)
 
 
-@app.route('/run-next-task', methods=['GET'])
-def run_next_task():
-    try:
-        task_label = task_queue.run_next()
-        return task_label, 200
-    except Exception as exception:
-        app.logger.exception(exception)
-        return str(exception), 500
-
 @app.route('/handle-new-objects/<string:object_type>', methods=['POST'])
 def handle(object_type):
     app.logger.debug(f'Handle new Fylr objects of type: {object_type}')

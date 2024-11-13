@@ -1,1 +1,0 @@
-curl http://servicer:5000/run-next-task | /dev/null
