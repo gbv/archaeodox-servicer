@@ -1,6 +1,7 @@
 FROM ghcr.io/osgeo/gdal:latest
 RUN apt update
 
+ENV PIP_BREAK_SYSTEM_PACKAGES=true
 RUN apt -y install python3-pip
 RUN pip3 install pipenv
 
