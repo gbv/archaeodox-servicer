@@ -1,5 +1,5 @@
 FROM ghcr.io/osgeo/gdal:latest
-RUN apt update
+RUN apt update --fix-missing
 
 ENV PIP_BREAK_SYSTEM_PACKAGES=true
 RUN apt -y install python3-pip
