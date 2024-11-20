@@ -39,6 +39,7 @@ def __get_files(import_object, fylr):
             'importers': __get_importers(format_settings, import_settings),
             'document_type_concept_id': __get_document_type_concept_id(import_settings),
             'detected_format': dp.get(file_information, 'technical_metadata/file_type_extension', default=None),
+            'georeferenced': import_settings.get('georeferenced', False),
             'original_index': index
         })
     
@@ -169,7 +170,7 @@ def __validate(file, file_type_object, import_object, database):
 
 def __run_importer(importer, file, file_data, import_object, database, fylr, logger):
     if importer == 'image':
-        image_importer.run(file_data, file['name'], file['document_type_code'], file['has_worldfile'], database)
+        image_importer.run(file_data, file['name'], file['document_type_code'], file['has_worldfile'], file['georeferenced'], database)
     elif importer == 'worldfile':
         worldfile_importer.run(file_data, file['name'], database)
     elif importer == 'csv':

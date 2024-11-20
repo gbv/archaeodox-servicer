@@ -150,7 +150,8 @@ class FileImport:
                 'worldfile': ['jgw', 'pgw', 'tfw'],
                 'fylr': ['pdf']
             },
-            'numbered': True
+            'numbered': True,
+            'georeferenced': True
         },
         'PRZ': {
             'document_type_concept_id': 'fa9d60ed-d1d4-4963-ae19-72d8c65e79c1',
@@ -159,7 +160,8 @@ class FileImport:
                 'worldfile': ['jgw', 'pgw', 'tfw'],
                 'fylr': ['pdf']
             },
-            'numbered': True
+            'numbered': True,
+            'georeferenced': True
         },
         'ZF': {
             'document_type_concept_id': 'ff294c40-4e16-4d59-bfd7-322d176f5be8',

@@ -6,7 +6,7 @@ from geotiff import GeoTiff
 from app import settings, messages
 
 
-def run(image_data, image_file_name, document_type_code, has_worldfile, field_database):
+def run(image_data, image_file_name, document_type_code, has_worldfile, georeferenced, field_database):
     image_document = field_database.get_or_create_document(image_file_name)
     id = image_document['_id']
     planum_or_profile_identifier = __get_planum_or_profile_identifier(image_file_name)
@@ -19,7 +19,7 @@ def run(image_data, image_file_name, document_type_code, has_worldfile, field_da
     is_geotiff = False
     if mimetype == 'image/tiff':
         is_geotiff = __append_georeference(image_document, image_object)
-    if not is_geotiff and not has_worldfile and planum_or_profile_identifier is not None:
+    if not is_geotiff and not has_worldfile and georeferenced:
         raise ValueError(messages.FileImport.ERROR_MISSING_GEOREFERENCE)
     
     format = basename(mimetype)
@@ -32,12 +32,12 @@ def run(image_data, image_file_name, document_type_code, has_worldfile, field_da
     field_database.update_document(id, image_document)
 
     if planum_or_profile_identifier is not None:
-        __set_relations(image_document, planum_or_profile_identifier, field_database)
+        __set_relations(image_document, planum_or_profile_identifier, georeferenced, field_database)
 
 def __get_planum_or_profile_identifier(image_file_name):
     planum_prefix = settings.FileImport.CATEGORY_PREFIXES['Planum']
     profile_prefix = settings.FileImport.CATEGORY_PREFIXES['Profile']
-    match = re.search(r'(' + planum_prefix + '|' + profile_prefix + ')\d+', image_file_name)
+    match = re.search(r'(' + planum_prefix + r'|' + profile_prefix + r')\d+', image_file_name)
     if match is not None:
         return match[0]
     else:
@@ -53,14 +53,15 @@ def __initialize_image_document(image_document, image_file_name, document_type_c
     if 'relations' not in resource:
         resource['relations'] = {}
 
-def __set_relations(image_document, planum_or_profile_identifier, field_database):
+def __set_relations(image_document, planum_or_profile_identifier, georeferenced, field_database):
     planum_or_profile_document = field_database.get_or_create_document(planum_or_profile_identifier)
-    project_document = field_database.get_or_create_document(field_database.name)
     __link_with_profile_or_planum(image_document, planum_or_profile_document)
-    __set_as_map_layer(image_document, project_document)
     field_database.update_document(planum_or_profile_document['resource']['id'], planum_or_profile_document)
-    field_database.update_document('project', project_document)
     field_database.update_document(image_document['resource']['id'], image_document)
+    if georeferenced:
+        project_document = field_database.get_or_create_document(field_database.name)
+        __set_as_map_layer(image_document, project_document)
+        field_database.update_document('project', project_document)
 
 def __link_with_profile_or_planum(image_document, planum_or_profile_document):
     __add_relation_target(planum_or_profile_document['resource'], 'isDepictedIn', image_document['resource']['id'])
