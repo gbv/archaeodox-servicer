@@ -230,6 +230,41 @@ class FileImport:
                 'fylr': ['csv', 'pdf'],
                 'csv': ['csv']
             }
+        },
+        'BU': {
+            'document_type_concept_id': 'c0012746-3338-4322-8a26-82196fbea189',
+            'importers': {
+                'fylr': ['csv', 'pdf'],
+                'csv': ['csv']
+            }
+        },
+        'BBA': {
+            'document_type_concept_id': '1f6c15d3-9b87-4fd0-b278-25474b9800d3',
+            'importers': {
+                'fylr': ['csv', 'pdf'],
+                'csv': ['csv']
+            }
+        },
+        'BFL': {
+            'document_type_concept_id': '65d76d1a-3379-4b16-9388-4c049c4d3f8b',
+            'importers': {
+                'fylr': ['csv', 'pdf'],
+                'csv': ['csv']
+            }
+        },
+        'BPR': {
+            'document_type_concept_id': 'ac585b7c-6f63-4b7b-88e4-13d63b3b92cb',
+            'importers': {
+                'fylr': ['csv', 'pdf'],
+                'csv': ['csv']
+            }
+        },
+        'BFP': {
+            'document_type_concept_id': '187438f9-91d0-474f-9af5-bc7cdb4dfa1d',
+            'importers': {
+                'fylr': ['csv', 'pdf'],
+                'csv': ['csv']
+            }
         }
     }
     FORMATS = {
