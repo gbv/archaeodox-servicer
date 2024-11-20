@@ -13,7 +13,7 @@ class FileImport:
     ERROR_SHAPEFILE_MISSING_STRAT_UNIT = 'Das Attribut "strat_unit" in der Attributtabelle des Shapefiles muss ausgefüllt sein:'
     ERROR_SHAPEFILE_CONCEPT_NOT_FOUND = 'Für das Attribut "info" in der Attributtabelle des Shapefiles konnte keine Konzept-ID aus Dante ermittelt werden:'
     ERROR_SHAPEFILE_INVALID_FEATURE_SEGMENT_IDENTIFIER = 'Der Bezeichner "$VALUE" eines Befundanschnitts in der Field-Datenbank ist ungültig, da er nicht-numerische Zeichen nach dem Bindestrich enthält. Bitte korrigieren Sie den Bezeichner und starten den Import anschließend erneut.'
-    ERROR_MISSING_GEOREFERENCE = 'Zu diesem Bild wurden keine Georeferenzierungsdaten gefunden. Es dürfen ausschließlich georeferenzierte Bilder (GeoTIFF oder zusätzlicher Import eines Worldfiles) als Planzeichnungen importiert werden.'
+    ERROR_MISSING_GEOREFERENCE = 'Zu diesem Bild wurden keine Georeferenzierungsdaten gefunden. Es dürfen ausschließlich georeferenzierte Bilder (GeoTIFF oder zusätzlicher Import eines Worldfiles) als Plan- oder Profilzeichnungen importiert werden.'
     ERROR_NO_WORLDFILE_MATCH = 'Das Worldfile konnte nicht eindeutig einer Bilddatei zugewiesen werden.'
     ERROR_INVALID_WORLDFILE = 'Die Datei ist kein gültiges Worldfile.'
     ERROR_PERSON_NOT_FOUND = 'Für diese Person bzw. Institution konnte kein Datensatz gefunden werden:'
