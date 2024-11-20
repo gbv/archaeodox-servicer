@@ -7,21 +7,21 @@ from app import settings, messages
 
 
 def run(image_data, image_file_name, document_type_code, has_worldfile, georeferenced, field_database):
-    image_document = field_database.get_or_create_document(image_file_name)
-    id = image_document['_id']
     planum_or_profile_identifier = __get_planum_or_profile_identifier(image_file_name)
 
     image_object = io.BytesIO(image_data)
     image = Image.open(io.BytesIO(image_object.getvalue()))
-    __initialize_image_document(image_document, image_file_name, document_type_code, image)
+    width, height = image.size
 
-    mimetype, encoding = mimetypes.guess_type(image_file_name)
-    is_geotiff = False
+    mimetype, _ = mimetypes.guess_type(image_file_name)
+    georeference = None
     if mimetype == 'image/tiff':
-        is_geotiff = __append_georeference(image_document, image_object)
-    if not is_geotiff and not has_worldfile and georeferenced:
+        georeference = __get_georeference(image_object, width, height)
+    if not georeference and not has_worldfile and georeferenced:
         raise ValueError(messages.FileImport.ERROR_MISSING_GEOREFERENCE)
-    
+
+    image_document = __create_image_document(field_database, image_file_name, document_type_code, width, height, georeference)
+    id = image_document['_id']
     format = basename(mimetype)
     
     response = field_database.upload_image(id, __get_image_bytes(image, format), mimetype, 'original_image')
@@ -29,7 +29,6 @@ def run(image_data, image_file_name, document_type_code, has_worldfile, georefer
         field_database.upload_image(id, __generate_thumbnail(image), mimetype, 'thumbnail_image')
     else:
         raise ConnectionError(response.content)
-    field_database.update_document(id, image_document)
 
     if planum_or_profile_identifier is not None:
         __set_relations(image_document, planum_or_profile_identifier, georeferenced, field_database)
@@ -43,15 +42,18 @@ def __get_planum_or_profile_identifier(image_file_name):
     else:
         return None
 
-def __initialize_image_document(image_document, image_file_name, document_type_code, image):
-    width, height = image.size
+def __create_image_document(field_database, image_file_name, document_type_code, width, height, georeference):
+    image_document = field_database.get_or_create_document(image_file_name)
     resource = image_document['resource']
     resource['category'] = settings.ImageImporter.CATEGORIES[document_type_code]
     resource['width'] = width
     resource['height'] = height
     resource['originalFilename'] = image_file_name
+    if georeference is not None:
+        resource['georeference'] = georeference
     if 'relations' not in resource:
         resource['relations'] = {}
+    return image_document
 
 def __set_relations(image_document, planum_or_profile_identifier, georeferenced, field_database):
     planum_or_profile_document = field_database.get_or_create_document(planum_or_profile_identifier)
@@ -92,10 +94,7 @@ def __generate_thumbnail(pil_image_object):
     converted_image.thumbnail((10 * settings.ImageImporter.THUMBNAIL_HEIGHT, settings.ImageImporter.THUMBNAIL_HEIGHT))
     return __get_image_bytes(converted_image, 'jpeg', quality=settings.ImageImporter.THUMBNAIL_JPEG_QUALITY)
 
-def __append_georeference(image_document, image_data):
-    width = image_document['resource']['width']
-    height = image_document['resource']['height']
-
+def __get_georeference(image_data, width, height):
     try:
         geotiff = GeoTiff(io.BytesIO(image_data.getvalue()))
         original_crs = geotiff.crs_code
@@ -105,11 +104,10 @@ def __append_georeference(image_document, image_data):
         upper_right = geotiff.get_coords(width, height)
         lower_left = geotiff.get_coords(0, 0)
     
-        image_document['resource']['georeference'] = {
+        return {
             'topLeftCoordinates': [upper_left[1], upper_left[0]],
             'topRightCoordinates': [upper_right[1], upper_right[0]],
             'bottomLeftCoordinates': [lower_left[1], lower_left[0]]
         }
-        return True
     except Exception:
-        return False
+        return None
