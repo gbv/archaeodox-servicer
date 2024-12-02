@@ -51,7 +51,13 @@ class VorgangHandler(FylrHandler):
         fields_data = {
             'db_name': identifier,
             'passwort': password,
-            'lk_vorgang': self.data
+            'lk_vorgang': {
+                '_objecttype': 'vorgang',
+                '_mask': 'vorgang__servicer',
+                'vorgang': {
+                    '_id': self.object_data['_id'] 
+                }
+            }
         }
 
         self.fylr.create_object('field_datenbank', fields_data)
