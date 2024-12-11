@@ -33,6 +33,8 @@ def run(image_data, image_file_name, document_type_code, has_worldfile, georefer
     if planum_or_profile_identifier is not None:
         __set_relations(image_document, planum_or_profile_identifier, georeferenced, field_database)
 
+    field_database.update_document(image_document['resource']['id'], image_document)
+
 def __get_planum_or_profile_identifier(image_file_name):
     planum_prefix = settings.FileImport.CATEGORY_PREFIXES['Planum']
     profile_prefix = settings.FileImport.CATEGORY_PREFIXES['Profile']
@@ -59,7 +61,6 @@ def __set_relations(image_document, planum_or_profile_identifier, georeferenced,
     planum_or_profile_document = field_database.get_or_create_document(planum_or_profile_identifier)
     __link_with_profile_or_planum(image_document, planum_or_profile_document)
     field_database.update_document(planum_or_profile_document['resource']['id'], planum_or_profile_document)
-    field_database.update_document(image_document['resource']['id'], image_document)
     if georeferenced:
         project_document = field_database.get_or_create_document(field_database.name)
         __set_as_map_layer(image_document, project_document)
