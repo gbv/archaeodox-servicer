@@ -39,7 +39,7 @@ def __get_files(import_object, fylr):
             'importers': __get_importers(format_settings, import_settings),
             'document_type_concept_id': __get_document_type_concept_id(import_settings),
             'detected_format': dp.get(file_information, 'technical_metadata/file_type_extension', default=None),
-            'georeferenced': import_settings.get('georeferenced', False),
+            'georeferenced': __get_georeferenced(import_settings),
             'original_index': index
         })
     
@@ -97,9 +97,15 @@ def __get_base_name(file_name):
 
 def __get_document_type_concept_id(import_settings):
     if import_settings is None:
-        return None;
+        return None
     else:
         return import_settings['document_type_concept_id']
+
+def __get_georeferenced(import_settings):
+    if import_settings is None:
+        return None
+    else:
+        return import_settings.get('georeferenced', False)
 
 def __get_sorting_value(file):
     sorting_value = len(settings.FileImport.ORDER)
