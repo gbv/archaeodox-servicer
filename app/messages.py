@@ -22,5 +22,6 @@ class FileImport:
     ERROR_CSV_IDENTIFIER_NOT_FOUND = 'Die Spalte "identifier" in der CSV-Datei muss ausgefüllt sein.'
     ERROR_CSV_CATEGORY_NOT_FOUND = 'Im Dateinamen konnte keine Kategoriebezeichnung gefunden werden.'
     ERROR_CSV_CATEGORY_NOT_CONFIGURED = 'Im Dateinamen ist eine Kategorie angegeben, die in der Field-Datenbank nicht konfiguriert ist:'
+    ERROR_CSV_INVALID_FORMAT = 'Die Datei ist keine gültige CSV-Datei. Bitte achten Sie darauf, dass als Trennzeichen das Semikolon verwendet wird und alle Feldwerte, die ein Semikolon enthalten, in Anführungszeichen gesetzt sind.'
     ERROR_MIMETYPE_NOT_DETECTED = 'Der Medientyp der Datei konnte nicht ermittelt werden.'
     ERROR_VORGANG_NOT_FOUND = 'Der Vorgang konnte nicht gefunden werden:'

@@ -50,6 +50,8 @@ def __get_filled_in_fields(row):
     return resource
 
 def __inflate(resource):
+    if None in resource.keys():
+        raise ValueError(messages.FileImport.ERROR_CSV_INVALID_FORMAT)
     nested_keys = list(filter(lambda k: '.' in k, resource.keys()))
     for key in nested_keys:
         dp.new(resource, key, resource[key], separator='.')
