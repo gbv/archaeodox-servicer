@@ -5,6 +5,8 @@ from geotiff import GeoTiff
 
 from app import settings, messages
 
+Image.MAX_IMAGE_PIXELS = None
+
 
 def run(image_data, image_file_name, document_type_code, has_worldfile, georeferenced, field_database):
     planum_or_profile_identifier = __get_planum_or_profile_identifier(image_file_name)
