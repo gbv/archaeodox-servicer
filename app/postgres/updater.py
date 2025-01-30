@@ -8,10 +8,15 @@ def run(field_documents):
     database = PostgresDatabase()
     try:
         database.open_connection()
-        for field_document in field_documents:
+        for field_document in __get_sorted_documents(field_documents):
             __update_record(field_document, database)
     finally:
         database.close_connection()
+
+def __get_sorted_documents(field_documents):
+    result = field_documents.copy()
+    result.sort(key=lambda field_document: settings.Postgres.UPDATE_ORDER.index(field_document['resource']['category']))
+    return result
 
 def __update_record(field_document, database):
     sql = __get_sql(field_document)

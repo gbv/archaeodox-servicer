@@ -45,7 +45,18 @@ class Postgres:
         'Project': 'project',
         'Sample': 'sample'
     }
-
+    UPDATE_ORDER = [
+        'Project',
+        'ExcavationArea',
+        'Planum',
+        'Profile',
+        'FeatureGroup',
+        'Feature',
+        'FeatureSegment',
+        'Find',
+        'Sample',
+        'PlanDrawing'
+    ]
 
 class ValuelistsUpdater:
     VALUELISTS_PROJECT_NAME = ''
