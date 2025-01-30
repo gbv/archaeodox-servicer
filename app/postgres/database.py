@@ -18,8 +18,18 @@ class PostgresDatabase:
         if self.connection is not None:
             self.connection.close()
             self.connection = None
+
+    def execute_read_query(self, query):
+        return self.__execute_query(query, True)
     
-    def execute_query(self, query):
+    def execute_write_query(self, query):
+        return self.__execute_query(query)
+
+    def __execute_query(self, query, read = False):
         with self.connection.cursor() as cursor:
             cursor.execute(query)
             self.connection.commit()
+            if read:
+                return cursor.fetchall()
+            else:
+                return None
