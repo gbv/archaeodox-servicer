@@ -49,6 +49,7 @@ def __get_values(field_document):
         'relations_is_recorded_in': __get_relation_value(field_document, 'resource/relations/isRecordedIn'),
         'relations_lies_within': __get_relation_value(field_document, 'resource/relations/liesWithin'),
         'relations_is_present_in': __get_relation_value(field_document, 'resource/relations/isPresentIn'),
+        'geom': __get_geometry(field_document),
         'mtime': 'current_timestamp'
     }
     return { key: value for key, value in values.items() if value is not None }
@@ -74,7 +75,21 @@ def __get_relation_value(field_document, field_path):
         return __add_quotes(targetIds[0])
 
 def __add_quotes(value):
-    if value is not None:
-        return '\'' + value + '\''
-    else:
+    if value is None:
         return None
+    else:
+        return '\'' + value + '\''
+
+def __get_geometry(field_document):
+    geojson = __get_geojson(field_document)
+    if geojson is None:
+        return None
+    else:
+        return 'ST_GeomFromGeoJSON(\'' + geojson + '\')'
+
+def __get_geojson(field_document):
+    geometry = dp.get(field_document, 'resource/geometry', default=None)
+    if geometry is None:
+        return None
+    else:
+        return str(geometry).replace('\'', '"')
