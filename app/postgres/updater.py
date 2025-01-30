@@ -46,6 +46,9 @@ def __get_values(field_document):
         'identifier': __get_string_value(field_document, 'resource/identifier'),
         'short_description': __get_text_field_value(field_document, 'resource/shortDescription'),
         'short_description_addendum': __get_text_field_value(field_document, 'resource/shortDescriptionAddendum'),
+        'relations_is_recorded_in': __get_relation_value(field_document, 'resource/relations/isRecordedIn'),
+        'relations_lies_within': __get_relation_value(field_document, 'resource/relations/liesWithin'),
+        'relations_is_present_in': __get_relation_value(field_document, 'resource/relations/isPresentIn'),
         'mtime': 'current_timestamp'
     }
     return { key: value for key, value in values.items() if value is not None }
@@ -62,6 +65,13 @@ def __get_text_field_value(field_document, field_path):
         return __add_quotes(value)
     else:
         return __add_quotes(value.get('de', None))
+    
+def __get_relation_value(field_document, field_path):
+    targetIds = dp.get(field_document, field_path, default=None)
+    if targetIds is None or len(targetIds) == 0:
+        return None
+    else:
+        return __add_quotes(targetIds[0])
 
 def __add_quotes(value):
     if value is not None:
