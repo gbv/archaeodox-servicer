@@ -28,6 +28,25 @@ class FieldHub:
     PROJECT_URL = ''
     TEMPLATE_PROJECT_NAME = ''
 
+class Postgres:
+    HOST_URL= ''
+    USER_NAME = ''
+    PASSWORD = ''
+    DATABASE_NAME = ''
+    TABLE_NAMES = {
+        'ExcavationArea': 'excavation_area',
+        'Feature': 'feature',
+        'FeatureGroup': 'feature_group',
+        'FeatureSegment': 'feature_segment',
+        'Find': 'find',
+        'PlanDrawing': 'plan_drawing',
+        'Planum': 'planum_profile',
+        'Profile': 'planum_profile',
+        'Project': 'project',
+        'Sample': 'sample'
+    }
+
+
 class ValuelistsUpdater:
     VALUELISTS_PROJECT_NAME = ''
 
