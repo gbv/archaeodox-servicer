@@ -49,8 +49,12 @@ def __get_values(field_document, database, column_names):
     values = {
         'pkey': __get_string_value(field_document, 'resource/id'),
         'identifier': __get_string_value(field_document, 'resource/identifier'),
+        'short_name': __get_text_field_value(field_document, 'resource/shortName'),
         'short_description': __get_text_field_value(field_document, 'resource/shortDescription'),
         'short_description_addendum': __get_text_field_value(field_document, 'resource/shortDescriptionAddendum'),
+        'documentation_unit': __get_string_array_value(field_document, 'resource/archaeoDox:documentationUnit'),
+        'web_gis_id': __get_number_value(field_document, 'resource/webGisId'),
+        'epsg_id': __get_number_value(field_document, 'resource/epsgId'),
         'geom': __get_geometry(field_document),
         'mtime': 'current_timestamp'
     }
@@ -61,6 +65,8 @@ def __get_values(field_document, database, column_names):
 def __add_relations(values, field_document, database):
     values['relations_is_recorded_in'] = __get_relation_value(field_document, 'resource/relations/isRecordedIn')
     values['relations_is_present_in'] = __get_relation_value(field_document, 'resource/relations/isPresentIn')
+    values['relations_depicts'] = __get_relation_value(field_document, 'resource/relations/depicts')
+    values['relations_is_map_layer_of'] = __get_relation_value(field_document, 'resource/relations/isMapLayerOf')
 
     if field_document['resource']['category'] == 'Sample':
         __add_lies_within_relation_values_for_sample(values, field_document, database)
@@ -83,8 +89,18 @@ def __add_lies_within_relation_for_sample(values, target_id, table_name, databas
 
 def __get_string_value(field_document, field_path):
     value = dp.get(field_document, field_path, default=None)
-    return __add_quotes(value)
-    
+    if value is None:
+        return 'NULL'
+    else:
+        return __add_quotes(value)
+
+def __get_string_array_value(field_document, field_path):
+    values = dp.get(field_document, field_path, default=None)
+    if values is None or len(values) == 0:
+        return 'NULL'
+    else:
+        return __add_quotes(','.join(values))
+
 def __get_text_field_value(field_document, field_path):
     value = dp.get(field_document, field_path, default=None)
     if value is None:
@@ -93,6 +109,13 @@ def __get_text_field_value(field_document, field_path):
         return __add_quotes(value)
     else:
         return __add_quotes(value.get('de', None))
+
+def __get_number_value(field_document, field_path):
+    value = dp.get(field_document, field_path, default=None)
+    if value is None:
+        return 'NULL'
+    else:
+        return str(value)
     
 def __get_relation_value(field_document, field_path):
     targetIds = dp.get(field_document, field_path, default=None)
