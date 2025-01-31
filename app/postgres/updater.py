@@ -53,7 +53,7 @@ def __get_table_settings(field_document):
 
 def __get_values(field_document, database, column_names):
     values = {
-        'pkey': __get_string_value(field_document, 'resource/id'),
+        'pkey': __get_pkey(field_document, database),
         'identifier': __get_string_value(field_document, 'resource/identifier'),
         'short_name': __get_text_field_value(field_document, 'resource/shortName'),
         'short_description': __get_text_field_value(field_document, 'resource/shortDescription'),
@@ -92,6 +92,22 @@ def __add_lies_within_relation_for_sample(values, target_id, table_name, databas
         values['relations_lies_within_' + table_name] = __add_quotes(target_id)
     else:
         values['relations_lies_within_' + table_name] = 'NULL'
+
+def __get_pkey(field_document, database):
+    if field_document['resource']['category'] == 'Project':
+        return __get_project_pkey(field_document, database)
+    else:
+        return __get_string_value(field_document, 'resource/id')
+    
+def __get_project_pkey(project_document, database):
+    identifier = dp.get(project_document, 'resource/identifier', default=None)
+    if identifier is None:
+        return 'NULL'
+    results = database.execute_read_query('SELECT pkey FROM project WHERE identifier = \'' + identifier + '\'')
+    if len(results) == 0:
+        return __add_quotes(str(uuid4()))
+    else:
+        return __add_quotes(str(results[0][0]))
 
 def __get_string_value(field_document, field_path):
     value = dp.get(field_document, field_path, default=None)
