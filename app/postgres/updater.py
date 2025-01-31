@@ -174,7 +174,7 @@ def __update_processors(project_document, database):
     processors = dp.get(project_document, 'resource/staff', default=[])
     for processor in processors:
         name = __get_processor_name(processor)
-        if name is not None and not __is_processor_existing(name, database):
+        if name is not None and __get_processor_pkey(name, database) is None:
             __create_processor(name, database)
 
 def __get_processor_name(processor):
@@ -183,12 +183,12 @@ def __get_processor_name(processor):
     else:
         return processor.get('value', None)
 
-def __is_processor_existing(processor_name, database):
-    results = database.execute_read_query('SELECT * FROM processor WHERE name = \'' + processor_name + '\'')
+def __get_processor_pkey(processor_name, database):
+    results = database.execute_read_query('SELECT pkey FROM processor WHERE name = \'' + processor_name + '\'')
     if len(results) == 0:
-        return False
+        return None
     else:
-        return True
+        return str(results[0][0])
 
 def __create_processor(processor_name, database):
     pkey = str(uuid4())
