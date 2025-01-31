@@ -1,4 +1,5 @@
 from dpath import util as dp
+from uuid import uuid4
 
 from app import settings
 from app.postgres.database import PostgresDatabase
@@ -9,7 +10,7 @@ def run(field_documents):
     try:
         database.open_connection()
         for field_document in __get_sorted_documents(field_documents):
-            __update_record(field_document, database)
+            __process_record(field_document, database)
     finally:
         database.close_connection()
 
@@ -17,6 +18,11 @@ def __get_sorted_documents(field_documents):
     result = field_documents.copy()
     result.sort(key=lambda field_document: settings.Postgres.UPDATE_ORDER.index(field_document['resource']['category']))
     return result
+
+def __process_record(field_document, database):
+    __update_record(field_document, database)
+    if field_document['resource']['category'] == 'Project':
+        __update_processors(field_document, database)
 
 def __update_record(field_document, database):
     sql = __get_sql(field_document, database)
@@ -143,7 +149,31 @@ def __get_geojson(field_document):
         return None
     else:
         return str(geometry).replace('\'', '"')
-
+    
 def __is_existing(target_id, table_name, database):
     results = database.execute_read_query('SELECT * FROM ' + table_name + ' WHERE pkey = \'' + target_id + '\'')
     return len(results) == 1
+
+def __update_processors(project_document, database):
+    processors = dp.get(project_document, 'resource/staff', default=[])
+    for processor in processors:
+        name = __get_processor_name(processor)
+        if name is not None and not __is_processor_existing(name, database):
+            __create_processor(name, database)
+
+def __get_processor_name(processor):
+    if isinstance(processor, str):
+        return processor
+    else:
+        return processor.get('value', None)
+
+def __is_processor_existing(processor_name, database):
+    results = database.execute_read_query('SELECT * FROM processor WHERE name = \'' + processor_name + '\'')
+    if len(results) == 0:
+        return False
+    else:
+        return True
+
+def __create_processor(processor_name, database):
+    pkey = str(uuid4())
+    database.execute_write_query(f'INSERT INTO processor (pkey, name) VALUES (\'{pkey}\', \'{processor_name}\')')
