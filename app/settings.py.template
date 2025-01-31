@@ -33,17 +33,54 @@ class Postgres:
     USER_NAME = ''
     PASSWORD = ''
     DATABASE_NAME = ''
-    TABLE_NAMES = {
-        'ExcavationArea': 'excavation_area',
-        'Feature': 'feature',
-        'FeatureGroup': 'feature_group',
-        'FeatureSegment': 'feature_segment',
-        'Find': 'find',
-        'PlanDrawing': 'plan_drawing',
-        'Planum': 'planum_profile',
-        'Profile': 'planum_profile',
-        'Project': 'project',
-        'Sample': 'sample'
+    CATEGORIES = {
+        'ExcavationArea': {
+            'table_name': 'excavation_area',
+            'columns': ['pkey', 'mtime', 'version', 'geom', 'identifier', 'short_description', 'documentation_unit', 'web_gis_id', 'project']
+        },
+        'Feature': {
+            'table_name': 'feature',
+            'columns': ['pkey', 'short_description', 'short_description_addendum', 'identifier', 'relations_is_recorded_in',
+                        'relations_lies_within', 'relations_is_present_in', 'processor', 'mtime', 'version', 'documentation_unit']
+        },
+        'FeatureGroup': {
+            'table_name': 'feature_group',
+            'columns': ['pkey', 'short_description_addendum', 'short_description', 'documentation_unit', 'processor', 'mtime', 'version',
+                        'relations_is_present_in', 'relations_is_recorded_in', 'identifier']
+        },
+        'FeatureSegment': {
+            'table_name': 'feature_segment',
+            'columns': ['pkey', 'short_description_addendum', 'short_description', 'relations_is_present_in', 'processor', 'mtime', 'version',
+                        'geom', 'identifier', 'documentation_unit', 'relations_lies_within', 'relations_is_recorded_in']
+        },
+        'Find': {
+            'table_name': 'find',
+            'columns': ['pkey', 'short_description_addendum', 'short_description', 'relations_lies_within', 'processor', 'mtime', 'version',
+                        'geom', 'height', 'identifier', 'relations_is_recorded_in', 'documentation_unit']
+        },
+        'PlanDrawing': {
+            'table_name': 'plan_drawing',
+            'columns': ['pkey', 'identifier', 'short_description', 'documentation_unit', 'processor', 'relations_depicts', 'url',
+                        'relations_is_map_layer_of', 'mtime', 'version']
+        },
+        'Planum': {
+            'table_name': 'planum_profile',
+            'columns': ['pkey', 'short_description', 'processor', 'mtime', 'version', 'geom', 'documentation_unit', 'identifier']
+        },
+        'Profile': {
+            'table_name': 'planum_profile',
+            'columns': ['pkey', 'short_description', 'processor', 'mtime', 'version', 'geom', 'documentation_unit', 'identifier']
+        },
+        'Project': {
+            'table_name': 'project',
+            'columns': ['pkey', 'short_name', 'short_description', 'mtime', 'version', 'epsg_id', 'identifier', 'documentation_unit']
+        },
+        'Sample': {
+            'table_name': 'sample',
+            'columns': ['pkey', 'short_description_addendum', 'short_description', 'processor', 'mtime', 'version', 'geom', 'height',
+                        'documentation_unit', 'identifier', 'relation_lies_within_feature', 'relations_lies_within_find',
+                        'relations_is_recorded_in']
+        }
     }
     UPDATE_ORDER = [
         'Project',
