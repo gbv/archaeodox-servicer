@@ -157,7 +157,7 @@ def __get_geometry(field_document):
     if geojson is None:
         return 'NULL'
     else:
-        return 'ST_GeomFromGeoJSON(\'' + geojson + '\')'
+        return 'ST_MakeValid(ST_GeomFromGeoJSON(\'' + geojson + '\'))'
 
 def __get_geojson(field_document):
     geometry = dp.get(field_document, 'resource/geometry', default=None)
