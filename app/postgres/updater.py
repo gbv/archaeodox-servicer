@@ -5,12 +5,12 @@ from app import settings
 from app.postgres.database import PostgresDatabase
 
 
-def run(field_documents):
+def run(field_documents, project_identifier):
     database = PostgresDatabase()
     try:
         database.open_connection()
         for field_document in __get_sorted_documents(field_documents):
-            __process_record(field_document, database)
+            __process_record(field_document, project_identifier, database)
     finally:
         database.close_connection()
 
@@ -19,22 +19,22 @@ def __get_sorted_documents(field_documents):
     result.sort(key=lambda field_document: settings.Postgres.UPDATE_ORDER.index(field_document['resource']['category']))
     return result
 
-def __process_record(field_document, database):
-    __update_record(field_document, database)
+def __process_record(field_document, project_identifier, database):
+    __update_record(field_document, project_identifier, database)
     if field_document['resource']['category'] == 'Project':
         __update_processors(field_document, database)
 
-def __update_record(field_document, database):
-    sql = __get_sql(field_document, database)
+def __update_record(field_document, project_identifier, database):
+    sql = __get_sql(field_document, project_identifier, database)
     if sql is not None:
         database.execute_write_query(sql)
 
-def __get_sql(field_document, database):
+def __get_sql(field_document, project_identifier, database):
     table_settings = __get_table_settings(field_document)
     if (table_settings is None):
         return None
 
-    values = __get_values(field_document, database, table_settings['columns'])
+    values = __get_values(field_document, project_identifier, database, table_settings['columns'])
     return (
         'INSERT INTO ' + table_settings['table_name'] + ' (' + ', '.join(values.keys()) + ', version) '
         'VALUES (' + ', '.join(values.values()) + ', 0) '
@@ -51,7 +51,7 @@ def __get_table_settings(field_document):
     category = field_document['resource']['category']
     return settings.Postgres.CATEGORIES.get(category, None)
 
-def __get_values(field_document, database, column_names):
+def __get_values(field_document, project_identifier, database, column_names):
     values = {
         'pkey': __get_pkey(field_document, database),
         'identifier': __get_string_value(field_document, 'resource/identifier'),
@@ -65,6 +65,7 @@ def __get_values(field_document, database, column_names):
         'mtime': 'current_timestamp'
     }
     __add_relations(values, field_document, database)
+    __add_project(values, field_document, project_identifier, database)
 
     return { column_name: value for column_name, value in values.items() if value is not None and column_name in column_names }
 
@@ -78,6 +79,11 @@ def __add_relations(values, field_document, database):
         __add_lies_within_relation_values_for_sample(values, field_document, database)
     else:
         values['relations_lies_within'] = __get_relation_value(field_document, 'resource/relations/liesWithin')
+
+def __add_project(values, field_document, project_identifier, database):
+    if field_document['resource']['category'] != 'ExcavationArea':
+        return
+    values['project'] = __get_project_pkey(project_identifier, database)
 
 def __add_lies_within_relation_values_for_sample(values, field_document, database):
     target_ids = dp.get(field_document, 'resource/relations/liesWithin', default=None)
@@ -95,17 +101,24 @@ def __add_lies_within_relation_for_sample(values, target_id, table_name, databas
 
 def __get_pkey(field_document, database):
     if field_document['resource']['category'] == 'Project':
-        return __get_project_pkey(field_document, database)
+        return __get_or_create_project_pkey(field_document, database)
     else:
         return __get_string_value(field_document, 'resource/id')
     
-def __get_project_pkey(project_document, database):
+def __get_or_create_project_pkey(project_document, database):
     identifier = dp.get(project_document, 'resource/identifier', default=None)
     if identifier is None:
         return 'NULL'
-    results = database.execute_read_query('SELECT pkey FROM project WHERE identifier = \'' + identifier + '\'')
-    if len(results) == 0:
+    pkey = __get_project_pkey(identifier, database)
+    if pkey is not None:
+        return pkey
+    else:
         return __add_quotes(str(uuid4()))
+    
+def __get_project_pkey(project_identifier, database):
+    results = database.execute_read_query('SELECT pkey FROM project WHERE identifier = \'' + project_identifier + '\'')
+    if len(results) == 0:
+        return None
     else:
         return __add_quotes(str(results[0][0]))
 
