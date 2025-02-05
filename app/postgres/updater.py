@@ -171,7 +171,7 @@ def __get_geometry(field_document):
     if geojson is None:
         return 'NULL'
     else:
-        return 'ST_MakeValid(ST_GeomFromGeoJSON(\'' + geojson + '\'))'
+        return 'ST_Force3D(ST_MakeValid(ST_SetSRID(ST_GeomFromGeoJSON(\'' + geojson + '\'), 25832)))'
     
 def __get_geojson(field_document):
     geometry = dp.get(field_document, 'resource/geometry', default=None)
