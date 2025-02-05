@@ -62,6 +62,7 @@ def __get_values(field_document, project_identifier, database, column_names):
         'web_gis_id': __get_number_value(field_document, 'resource/webGisId'),
         'epsg_id': __get_number_value(field_document, 'resource/epsgId'),
         'geom': __get_geometry(field_document),
+        'height': __get_height(field_document),
         'mtime': 'current_timestamp'
     }
     __add_relations(values, field_document, database)
@@ -171,14 +172,21 @@ def __get_geometry(field_document):
         return 'NULL'
     else:
         return 'ST_MakeValid(ST_GeomFromGeoJSON(\'' + geojson + '\'))'
-
+    
 def __get_geojson(field_document):
     geometry = dp.get(field_document, 'resource/geometry', default=None)
     if geometry is None:
         return None
     else:
         return str(geometry).replace('\'', '"')
-    
+
+def __get_height(field_document):
+    geometry = dp.get(field_document, 'resource/geometry', default=None)
+    if geometry is None or geometry['type'] != 'Point' or len(geometry['coordinates']) != 3:
+        return 'NULL'
+    else:
+        return str(geometry['coordinates'][2])
+
 def __is_existing(target_id, table_name, database):
     results = database.execute_read_query('SELECT * FROM ' + table_name + ' WHERE pkey = \'' + target_id + '\'')
     return len(results) == 1
