@@ -36,6 +36,19 @@ class FieldDatabase(CouchDatabase):
                 data=image_data.getvalue()
             )
 
+    def download_image(self, id, image_type):
+        target_url = self.media_url + id
+        params = { 'type': image_type }
+        response = requests.get(
+            target_url,
+            params=params,
+            auth=self.auth
+        )
+        if response.ok:
+            return response.content
+        else:
+            raise ValueError(response.text)
+
     def populate_resource(self, resource_data, identifier=None, extended_relations=[]):
         if identifier is None:
             identifier = resource_data['identifier']

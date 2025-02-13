@@ -28,6 +28,12 @@ class FieldHub:
     PROJECT_URL = ''
     TEMPLATE_PROJECT_NAME = ''
 
+class Geoserver:
+    URL = ''
+    USER_NAME = ''
+    PASSWORD = ''
+    WORKSPACE_NAME = ''
+
 class Postgres:
     HOST_URL= ''
     USER_NAME = ''

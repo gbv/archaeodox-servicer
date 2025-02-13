@@ -1,28 +1,48 @@
 from dpath import util as dp
 from uuid import uuid4
+from pathlib import Path
 
-from app import settings
-from app.postgres.database import PostgresDatabase
+from app import settings, messages
+from app.geo.postgres_database import PostgresDatabase
+from app.geo.geoserver import Geoserver
+from app.field.hub import FieldHub
+from app.field.database import FieldDatabase
 
 
-def run(field_documents, project_identifier):
-    database = PostgresDatabase()
+def run(field_documents, project_identifier, logger):
+    postgres_database = PostgresDatabase()
+    field_database = __get_field_database(project_identifier)
     try:
-        database.open_connection()
+        postgres_database.open_connection()
         for field_document in __get_sorted_documents(field_documents):
-            __process_record(field_document, project_identifier, database)
+            __process_record(field_document, project_identifier, postgres_database, Geoserver(), field_database, logger)
     finally:
-        database.close_connection()
+        postgres_database.close_connection()
+
+def __get_field_database(project_identifier):
+    field_hub = FieldHub(
+        settings.Couch.HOST_URL,
+        settings.FieldHub.TEMPLATE_PROJECT_NAME,
+        auth_from_module=True
+    )
+    return FieldDatabase(
+        field_hub,
+        project_identifier,
+        settings.Couch.ADMIN_USER,
+        settings.Couch.ADMIN_PASSWORD
+    )
 
 def __get_sorted_documents(field_documents):
     result = field_documents.copy()
     result.sort(key=lambda field_document: settings.Postgres.UPDATE_ORDER.index(field_document['resource']['category']))
     return result
 
-def __process_record(field_document, project_identifier, database):
+def __process_record(field_document, project_identifier, database, geoserver, field_database, logger):
     __update_record(field_document, project_identifier, database)
     if field_document['resource']['category'] == 'Project':
         __update_processors(field_document, database)
+    elif field_document['resource']['category'] == 'PlanDrawing':
+        __update_wms_layer(field_document, geoserver, field_database, logger)
 
 def __update_record(field_document, project_identifier, database):
     sql = __get_sql(field_document, project_identifier, database)
@@ -214,3 +234,19 @@ def __get_processor_pkey(processor_name, database):
 def __create_processor(processor_name, database):
     pkey = str(uuid4())
     database.execute_write_query(f'INSERT INTO processor (pkey, name) VALUES (\'{pkey}\', \'{processor_name}\')')
+
+def __update_wms_layer(image_document, geoserver, field_database, logger):
+    image_data = __fetch_image_data(image_document, field_database, logger)
+    layer_name = __get_wms_layer_name(image_document)
+    geoserver.create_or_update_wms_layer(layer_name, image_data)
+
+def __get_wms_layer_name(image_document):
+    identifier = image_document['resource']['identifier']
+    return Path(identifier).stem.replace(' ', '_').replace('.', '_')
+
+def __fetch_image_data(image_document, field_database, logger):
+    try:
+        return field_database.download_image(image_document['resource']['id'], 'original_image')
+    except Exception:
+        message = messages.GeoUpdater.ERROR_IMAGE_DOWNLOAD_FAILED
+        raise ValueError(message.replace('$VALUE', image_document['resource']['identifier']))

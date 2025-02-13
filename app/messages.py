@@ -25,3 +25,6 @@ class FileImport:
     ERROR_CSV_INVALID_FORMAT = 'Die Datei ist keine gültige CSV-Datei. Bitte achten Sie darauf, dass als Trennzeichen das Semikolon verwendet wird und alle Feldwerte, die ein Semikolon enthalten, in Anführungszeichen gesetzt sind.'
     ERROR_MIMETYPE_NOT_DETECTED = 'Der Medientyp der Datei konnte nicht ermittelt werden.'
     ERROR_VORGANG_NOT_FOUND = 'Der Vorgang konnte nicht gefunden werden:'
+
+class GeoUpdater:
+    ERROR_IMAGE_DOWNLOAD_FAILED = 'Die Bilddatei $VALUE konnte nicht vom Field-Server heruntergeladen werden.'
