@@ -3,7 +3,6 @@ import requests
 from app import settings
 from app.couchdb.server import CouchDBServer
 from app.couchdb.database import CouchDatabase
-from app.dante.vocabulary import DanteVocabulary
 from app.field import document_utility
 
 
