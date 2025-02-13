@@ -13,17 +13,17 @@ app = Flask(__name__)
 app.logger.setLevel(settings.Main.LOGGING_LEVEL)
 
 
-@app.route('/handle-new-objects/<string:object_type>', methods=['POST'])
-def handle(object_type):
-    app.logger.debug(f'Handle new Fylr objects of type: {object_type}')
+@app.route('/handle-new-object/<string:object_type>/<string:request_id>', methods=['POST'])
+def handle(object_type, request_id):
+    app.logger.debug(f'Handle new Fylr object of type "{object_type}" with Servicer request ID "{request_id}"')
     try:
-        task_label = 'Handle_new_objects_' + str(time.time())
+        task_label = 'Handle_new_object_' + str(time.time())
         task = Task(
             task_label,
             app.logger,
-            handler_factory.run_handlers,
+            handler_factory.run_handler,
             object_type=object_type,
-            task_creation_time=datetime.now(timezone.utc)
+            request_id=request_id
         )
         task_queue.append(task)
         return task_label, 200
@@ -46,7 +46,7 @@ def update_valuelists():
 def status():
     return get_status(), 200
 
-task_queue = Queue(app.logger, 4)
+task_queue = Queue(app.logger, 3)
 
 
 def get_status():

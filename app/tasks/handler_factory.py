@@ -1,58 +1,41 @@
-from datetime import datetime, timedelta
+from time import sleep
 
 from app import settings
 from app.fylr.database import Fylr
 from app.handlers.vorgang_handler import VorgangHandler
 from app.handlers.import_handler import ImportHandler
 
-handled_objects_ids = []
-date_format = '%Y-%m-%dT%H:%M:%S%z'
-time_margin = 5 # Minutes
+MAX_WAITING_TIME = 120
+LOOP_WAITING_TIME = 5
 
-
-def run_handlers(object_type, task_creation_time, logger):
-    handlers = __create_handlers(object_type, task_creation_time, logger)
-    for handler in handlers:
+def run_handler(object_type, request_id, logger):
+    handler = __create_handler(object_type, request_id, logger)
+    if handler is not None:
         handler.process_request()
 
-def __create_handlers(object_type, task_creation_time, logger):
+def __create_handler(object_type, request_id, logger):
     fylr = Fylr(settings.Fylr.HOST_URL, logger)
-    new_objects = __fetch_new_objects(object_type, task_creation_time, fylr)
-    if new_objects is None:
-        return
-    
-    handlers = []
-    for new_object in new_objects:
-        id = new_object['_global_object_id']
-        if id not in handled_objects_ids and __is_newly_created(new_object, task_creation_time):
-            handlers.append(__create_handler(object_type, new_object, logger, fylr))
-            handled_objects_ids.append(id)
-    return handlers
-
-def __fetch_new_objects(object_type, task_creation_time, fylr):
-    delta = timedelta(hours=0, minutes=time_margin)
-    from_date = task_creation_time - delta
-    to_date = task_creation_time + delta
-
     fylr.acquire_access_token()
 
-    return fylr.changelog_search(
-        object_type,
-        from_date.strftime(date_format),
-        to_date.strftime(date_format),
-        'INSERT'
-    )
+    new_object = __fetch_object(object_type, request_id, fylr, logger)
+    if new_object is not None:
+        return __build_handler_object(object_type, new_object, fylr, logger)
 
-def __create_handler(object_type, object, logger, fylr):
+def __fetch_object(object_type, request_id, fylr, logger, waiting_time = 0):
+    object = fylr.get_object_by_field_values(object_type, { 'servicer_request_id': request_id })
+    if object is not None:
+        return object
+    elif waiting_time < MAX_WAITING_TIME:
+        sleep(LOOP_WAITING_TIME)
+        return __fetch_object(object_type, request_id, fylr, logger, waiting_time + LOOP_WAITING_TIME)
+    else:
+        logger.warn(f'Max waiting time exceeded for object of type {object_type} with Servicer request ID {request_id}')
+        return None
+
+def __build_handler_object(object_type, object, fylr, logger):
     handler_map = {
         'vorgang': VorgangHandler,
         'dokumente_extern': ImportHandler
     }
-    del object['_score']
     handler_class = handler_map[object_type]
     return handler_class(object, logger, fylr)
-
-def __is_newly_created(object, task_creation_time):
-    object_creation_time = datetime.strptime(object['_created'], date_format)
-    min_creation_time = task_creation_time - timedelta(hours=0, minutes=time_margin)
-    return object_creation_time > min_creation_time

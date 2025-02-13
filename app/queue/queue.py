@@ -8,7 +8,7 @@ class Queue():
         self.tasks = []
         self.logger = logger
         self.delay = delay
-        threading.Thread(name='task_trigger', target=self._trigger_tasks).start()
+        threading.Thread(name='task_trigger', target=self.__trigger_tasks).start()
 
     def append(self, task):
         time_stamp = time.time()
@@ -27,7 +27,7 @@ class Queue():
         except Exception:
             return 0
         
-    def _trigger_tasks(self):
+    def __trigger_tasks(self):
         while True:
             self.__run_next()
             time.sleep(1)
@@ -36,14 +36,14 @@ class Queue():
         if self.is_running():
             return 
         
-        def sufficiently_aged(time_task_pair):
+        def is_sufficiently_aged(time_task_pair):
             now = time.time()
             max_time_stamp = now - self.delay
             return time_task_pair[0] <= max_time_stamp
 
-        matured_tasks = list(filter(sufficiently_aged, self.tasks))
+        is_ready = len(list(filter(is_sufficiently_aged, self.tasks))) > 0
 
-        if matured_tasks:
+        if is_ready:
             _, next_task = self.tasks.pop(0)
             threading.Thread(name='task_runner', target=next_task.run, args=[self.__update_task_count]).start()
 
