@@ -26,7 +26,7 @@ def run(image_data, image_file_name, document_type_code, has_worldfile, georefer
     id = image_document['_id']
     format = basename(mimetype)
     
-    response = field_database.upload_image(id, __get_image_bytes(image, format), mimetype, 'original_image')
+    response = field_database.upload_image(id, image_data, mimetype, 'original_image')
     if response.ok:
         field_database.upload_image(id, __generate_thumbnail(image), mimetype, 'thumbnail_image')
     else:
@@ -84,18 +84,15 @@ def __add_relation_target(resource, relation_name, relation_target_id):
     if relation_target_id not in resource['relations'][relation_name]:
         resource['relations'][relation_name].append(relation_target_id)
 
-def __get_image_bytes(pil_image_object, format, quality=None):
-    out_bytes = io.BytesIO()
-    if quality is not None:
-        pil_image_object.save(out_bytes, format, quality=quality)
-    else:
-        pil_image_object.save(out_bytes, format)
-    return out_bytes
-
 def __generate_thumbnail(pil_image_object):
     converted_image = pil_image_object.convert('RGB')
     converted_image.thumbnail((10 * settings.ImageImporter.THUMBNAIL_HEIGHT, settings.ImageImporter.THUMBNAIL_HEIGHT))
-    return __get_image_bytes(converted_image, 'jpeg', quality=settings.ImageImporter.THUMBNAIL_JPEG_QUALITY)
+    return __apply_compression(converted_image, 'jpeg', settings.ImageImporter.THUMBNAIL_JPEG_QUALITY)
+
+def __apply_compression(pil_image_object, format, quality):
+    out_bytes = io.BytesIO()
+    pil_image_object.save(out_bytes, format, quality=quality)
+    return out_bytes.getvalue()
 
 def __get_georeference(image_data, width, height):
     try:

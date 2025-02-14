@@ -27,14 +27,13 @@ class FieldDatabase(CouchDatabase):
         target_url = self.media_url + id
         params = { 'type': image_type }
         headers = { 'Content-type': mimetype }
-        with image_data:
-            return requests.put(
-                target_url,
-                headers=headers,
-                params=params,
-                auth=self.auth,
-                data=image_data.getvalue()
-            )
+        return requests.put(
+            target_url,
+            headers=headers,
+            params=params,
+            auth=self.auth,
+            data=image_data
+        )
 
     def populate_resource(self, resource_data, identifier=None, extended_relations=[]):
         if identifier is None:
