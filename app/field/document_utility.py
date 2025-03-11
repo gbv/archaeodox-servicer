@@ -14,7 +14,7 @@ def add_modified_entry(document):
 
 def __get_action():
     return {
-        'user': 'fylr',
+        'user': 'archaeoDox',
         'date': __get_date()
     }
 
