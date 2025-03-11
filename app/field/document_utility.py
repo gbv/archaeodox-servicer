@@ -10,6 +10,8 @@ def get_document(id, resource):
     }
 
 def add_modified_entry(document):
+    if 'modified' not in document:
+        document['modified'] = []
     document['modified'].append(__get_action())
 
 def __get_action():
