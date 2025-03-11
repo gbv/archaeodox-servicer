@@ -323,8 +323,8 @@ class ShapefileImporter:
         'featureSegment': ['Stratigraphic_Interfaces', 'Befunde'],
         'find': ['Finds', 'Funde']
     }
-    EXCAVATION_AREA_KEYWORD = 'grabungsgrenze'
-    SAMPLE_KEYWORD = 'probe'
+    EXCAVATION_AREA_KEYWORDS = ['Grabungsgrenze', 'Untersuchungsfläche', 'Untersuchungsflaeche']
+    SAMPLE_KEYWORD = 'Probe'
     SHORT_DESCRIPTION_DANTE_VOCABULARIES = {
         'featureSegment': 'amh_befunde',
         'find': 'amh_objektbezeichnung'

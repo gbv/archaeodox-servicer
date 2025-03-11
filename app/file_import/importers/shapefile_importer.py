@@ -180,7 +180,10 @@ def __get_sample_identifier(properties):
         return None
 
 def __is_excavation_area(properties):
-    return settings.ShapefileImporter.EXCAVATION_AREA_KEYWORD.lower() in properties.get('info', '').lower()
+    for keyword in settings.ShapefileImporter.EXCAVATION_AREA_KEYWORDS:
+        if keyword.lower() in properties.get('info', '').lower():
+            return True
+    return False
 
 def __is_sample(properties):
     return settings.ShapefileImporter.SAMPLE_KEYWORD.lower() in properties.get('info', '').lower()
