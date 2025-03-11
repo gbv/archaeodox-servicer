@@ -57,7 +57,7 @@ def __parse_file_name(file_name):
     elif re.match(r'^[A-Z]{1,3}\d+$', document_type_code):
         document_type_code = re.search(r'^[A-Z]{1,3}', document_type_code)[0]
         import_settings = settings.FileImport.IMPORT_MAPPING.get(document_type_code, None)
-        if import_settings.get('numbered', False) == False:
+        if import_settings is not None and import_settings.get('numbered', False) == False:
             import_settings = None
     else:
         import_settings = settings.FileImport.IMPORT_MAPPING.get(document_type_code, None)
