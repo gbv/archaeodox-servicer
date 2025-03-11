@@ -22,6 +22,10 @@ class FieldDatabase(CouchDatabase):
             created_document = self.create_document(id, document)
             document['_rev'] = created_document['rev']
             return document
+    
+    def update_document(self, id, document):
+        document_utility.add_modified_entry(document)
+        return super().update_document(id, document)
 
     def upload_image(self, id, image_data, mimetype, image_type):
         target_url = self.media_url + id
