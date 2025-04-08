@@ -8,6 +8,7 @@ class FileImport:
     ERROR_DOCUMENT_TYPE_CODE_NOT_FOUND = 'Aus dem Dateinamen konnte kein gültiges Dokumententyp-Kürzel ausgelesen werden.'
     ERROR_UNSUPPORTED_FILE_FORMAT = 'Das Dateiformat wird nicht unterstützt.'
     ERROR_UNSUPPORTED_FILE_FORMAT_FOR_DOCUMENT_TYPE = 'Das Dateiformat wird für diesen Dokumententyp nicht unterstützt.'
+    ERROR_SHAPEFILE_INVALID_FILE = 'Das Shapefile "$VALUE" konnte nicht gelesen werden. Bitte stellen Sie sicher, dass im Zip-Archiv neben der .shp-Datei auch alle zugehörigen Dateien (.dbf, .shx etc.) enthalten sind.'
     ERROR_SHAPEFILE_INVALID_NAME = 'Im Dateinamen des Shapefiles muss entweder die Zeichenfolge "FLZ" (bei Flächenzeichnungen) oder "PRZ" (für Profile) enthalten sein:'
     ERROR_SHAPEFILE_MISSING_EXCA_INT = 'Das Attribut "exca_int" in der Attributtabelle des Shapefiles muss ausgefüllt sein:'
     ERROR_SHAPEFILE_MISSING_STRAT_UNIT = 'Das Attribut "strat_unit" in der Attributtabelle des Shapefiles muss ausgefüllt sein:'

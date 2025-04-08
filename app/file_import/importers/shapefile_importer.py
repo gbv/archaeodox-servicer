@@ -31,13 +31,17 @@ def __convert_to_geojson(zip_file):
         for shape_file in shape_files:
             shape_file_name = basename(shape_file)
             gdal.VectorTranslate(geojson_path, shape_file, options=options)
-        
-            with open(geojson_path, 'r') as geojson_data:
-                collection = json.load(geojson_data)
-                for feature in collection['features']:
-                    feature['properties'] = { key: value for key, value in feature['properties'].items() if value is not None }
-                    feature['properties']['file_name'] = shape_file_name
-            features += collection['features']
+
+            try:
+                with open(geojson_path, 'r') as geojson_data:
+                    collection = json.load(geojson_data)
+                    for feature in collection['features']:
+                        feature['properties'] = { key: value for key, value in feature['properties'].items() if value is not None }
+                        feature['properties']['file_name'] = shape_file_name
+                features += collection['features']
+            except Exception:
+                message = messages.FileImport.ERROR_SHAPEFILE_INVALID_FILE
+                raise ValueError(message.replace('$VALUE', shape_file_name))
             
         return {
             'type': 'FeatureCollection',
