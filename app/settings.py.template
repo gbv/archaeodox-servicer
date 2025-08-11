@@ -83,6 +83,18 @@ class FileImport:
                 'fylr': ['pdf', 'txt']
             }
         },
+        'DR': {
+            'document_type_concept_id': 'c5278ba5-2fe7-48af-95f1-5e4779bdb140',
+            'importers': {
+                'fylr': ['pdf', 'txt']
+            }
+        },
+        'DL': {
+            'document_type_concept_id': '52f60ced-d9ac-4622-a0ac-3f274f76574d',
+            'importers': {
+                'fylr': ['pdf', 'txt']
+            }
+        },
         'VP': {
             'document_type_concept_id': 'd28474f2-6946-4eb7-b14d-aac27e322aa0',
             'importers': {
